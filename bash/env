@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# env part
+## 路径
+export PATH=${PATH}:./:~/bin
+
+# TeXLive
+texlive_man_path=/usr/local/texlive/2017/texmf-dist/doc/man
+texlive_bin_path=/usr/local/texlive/2017/bin/x86_64-linux
+texlive_info_path=/usr/local/texlive/2017/texmf-dist/doc/info
+
+if [ -d ${texlive_man_path} ]
+then
+    export MANPATH=${MANPATH}:${texlive_man_path}
+fi
+
+if [ -d ${texlive_bin_path} ]
+then
+    export PATH=${PATH}:${texlive_bin_path}
+fi
+
+if [ -d ${texlive_info_path} ]
+then
+    export INFOPATH=${INFOPATH}:${texlive_info_path}
+fi

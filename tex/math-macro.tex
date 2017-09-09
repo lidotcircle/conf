@@ -1,0 +1,26 @@
+%{{{ math macro
+
+%{{{ 向量矩阵
+% 行向量
+\def\linevec#1{{({#1}_1, {#1}_2, \ldots, {#1}_n)}}
+% 矩阵
+\long\def\relmat#1{%
+    \begin{pmatrix}
+        {#1}_{11} & {#1}_{12} & \ldots & {#1}_{1n}\cr
+        {#1}_{21} & {#1}_{22} & \ldots & {#1}_{2n}\cr
+        \vdots & \vdots & \ddots & \vdots\cr
+        {#1}_{n1} & {#1}_{n2} & \ldots & {#1}_{nn}\cr
+    \end{pmatrix}%
+}
+% 列向量
+\long\def\colvec#1{%
+    \begin{pmatrix}
+        {#1}_{1}\cr
+        {#1}_{2}\cr
+        \vdots\cr
+        {#1}_{n}\cr
+    \end{pmatrix}%
+}
+%}}} end 向量矩阵
+
+%}}} end math macro
