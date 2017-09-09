@@ -59,7 +59,7 @@ function back_inst()
     if (Test-Path $HOME/.tex){
         Move-Item -Path $HOME/.tex -Destination ./backup;
     }
-    Copy-Item -Path ./tex -Destination $HOME/.tex;
+    Copy-Item -Recurse -Path ./tex -Destination $HOME/.tex;
 
 
 ## Finish backup and install
