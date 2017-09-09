@@ -1,0 +1,8 @@
+# ignore backup file
+backup*
+
+# ignore vim swap file
+*.swp
+
+# ycm file
+.ropeproject*
