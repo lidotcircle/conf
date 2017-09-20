@@ -26,6 +26,9 @@ set encoding=utf-8
 " 文件格式设置为 unix
 autocmd BufReadPost * set fileformat=unix
 
+" linespace
+set linespace=5
+
 " }}}
 
 " 显示界面 {{{
