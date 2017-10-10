@@ -174,5 +174,16 @@ endfunction " }}}
 
 autocmd BufRead *.tex,*.sty call Foldmethod_Marker_TeX()
 " }}} End
+"
+" Clang fold {{{
+
+function! Foldmethod_Marker_Clang() " {{{
+  set foldmethod=marker
+  set foldmarker=//{,//}
+  return 1
+endfunction " }}}
+
+autocmd FileType c,cpp call Foldmethod_Marker_Clang()
+" }}} End
 
 " }}}
