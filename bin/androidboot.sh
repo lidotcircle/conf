@@ -75,7 +75,8 @@ unpackbootimg_func()
     boot_tagoff=$(cat "${1}-tagsoff") && rm "${1}-tagsoff" && \
         echo "boot_tags_offset=\"--tags_offset ${boot_tagoff}\"" >> "${1}.par"
     return 0
-}#} End function : unpackbootimg
+}
+#} End function : unpackbootimg
 
 # parameter 1 : kernel
 # parameter 2 : ramdisk
@@ -92,7 +93,7 @@ packbootimg()
     fi
     boot_kernel="--kernel $1"
     boot_output="-o $2"
-    if [ ! -z $RAMDISK]; then
+    if [ ! -z $RAMDISK ]; then
         boot_ramdisk="--ramdisk $RAMDISK"
     fi
     if [ ! -z $SECOND ]; then
@@ -103,26 +104,25 @@ packbootimg()
     fi
     #{ Table eval
     if [ ! -z ${3} ] && [ -f ${3} ]; then
-        i=1; temp_eval=`sed -n "${i}p" ${boot_table}`
+        i=1; temp_eval=`sed -n "${i}p" ${TABLE}`
         while [ ! -z "${temp_eval}" ]; do
-            if (echo ${temp_eval} | grep '[=]' >> /dev/null) && (echo ${temp_eval} | grep '--[a-z_]* [0-z]*' >> /dev/null); then
+            if (echo ${temp_eval} | grep '[=]' >> /dev/null) && (echo ${temp_eval} | grep '[-]\{2\}[a-z_]* [\"0-z]*' >> /dev/null); then
                 eval ${temp_eval}
             fi
             i=$[${i} + 1]
-            temp_eval=`sed -n "${i}p" ${5}`
+            temp_eval=`sed -n "${i}p" ${TABLE}`
         done
     fi
     #} end Table eval
-
-    mkbootimg ${boot_kernel} ${boot_ramdisk} ${boot_dt}\
+    eval "mkbootimg ${boot_kernel} ${boot_ramdisk} ${boot_dt} ${boot_cmdline}\
         ${boot_base} ${boot_pagesize}\
-        ${boot_cmdline}\
         ${boot_kernel_offset}  ${boot_ramdisk_offset}\
         ${boot_second_offset} ${boot_tags_offset}\
         ${boot_os_version} ${boot_os_patch_level}\
-        ${boot_hash} ${boot_second} ${boot_output}
+        ${boot_hash} ${boot_second} ${boot_output}"
     return 0
-}#} end function : packbootimg
+}
+#} end function : packbootimg
 
 #{ Deal with the parameters
 flags=0
@@ -145,42 +145,76 @@ while [ ! -z $1 ]; do
         fi
         shift && continue
     elif [ $1 = "--kernel" ]; then
-        KERNEL=$2
+        if [ ! -z $2 ]; then
+            KERNEL=$2
+        else
+            echo "Error, Need specify a file."
+            exit 1
+        fi
         if [ ! -f $KERNEL ]; then
             echo "the file \"$KERNEL\" don't exist, check again."
             exit 1
         fi
         shift 2 && continue
     elif [ $1 = "--second" ]; then
-        SECOND=$2
+        if [ ! -z $2 ]; then
+            SECOND=$2
+        else
+            echo "Error, Need specify a file."
+            exit 1
+        fi
         if [ ! -f $SECOND ]; then
             echo "the file \"$SECOND\" don't exist, check again."
             exit 1
         fi
         shift 2 && continue
     elif [ $1 = "--ramdisk" ]; then
-        RAMDISK=$2
+        if [ ! -z $2 ]; then
+            RAMDISK=$2
+        else
+            echo "Error, Need specify a file."
+            exit 1
+        fi
         if [ ! -f $RAMDISK ]; then
             echo "the file \"$RAMDISK\" don't exist, check again."
             exit 1
         fi
         shift 2 && continue
     elif [ $1 = "--dt" ]; then
-        DT=$2
+        if [ ! -z $2 ]; then
+            DT=$2
+        else
+            echo "Error, Need specify a file."
+            exit 1
+        fi
         if [ ! -f $DT ]; then
             echo "The file \"$DT\" don't exist, check again."
             exit 1
         fi
         shift 2 && continue
     elif [ $1 = "--table" ]; then
-        TABLE=$2
+        if [ ! -z $2 ]; then
+            TABLE=$2
+        else
+            echo "Error, Need specify a file."
+            exit 1
+        fi
         if [ ! -f $TABLE ]; then
             echo "The file \"$TABLE\" don't exist, check again."
             exit 1
         fi
         shift 2 && continue
     elif [ $1 = "--input" ]; then
-        INPUT=$2
+        if [ ! -z $2 ]; then
+            INPUT=$2
+        else
+            echo "Error, Need specify a file."
+            exit 1
+        fi
+        if [ ! -f $INPUT ]; then
+            echo "The file \"$INPUT\" don't exist, check again."
+            exit 1
+        fi
         shift 2 && continue
     elif [ $1 = "--output" ]; then
         OUTPUT=$2
