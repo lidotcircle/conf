@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+#{ help
 HELP="
 Usage:
     creat the boot image:
@@ -10,7 +11,9 @@ Usage:
     help:
         androidboot.sh {-h | --help}
 "
+#} end help
 
+#{ Help and dependencies check
 if (echo $@ | grep '\(^-h$\|^--help$\)' >> /dev/null); then
     echo "$HELP"
     exit 0
@@ -21,9 +24,11 @@ if [ -z $(which unpackbootimg) ] || [ -z $(which mkbootimg) ]; then
     echo "Need 'unpackbootimg' and 'mkbootimg'."
     exit 1
 fi
+#} End
 
 # parameter 1 : input file
 # parameter 2 : output directory
+#{ function : unpackbootimg_func
 unpackbootimg_func()
 {
     # parameter check
@@ -48,29 +53,29 @@ unpackbootimg_func()
     # generate the boot parameter table
     cd ${2}
     boot_base=$(cat "${1}-base") && rm "${1}-base" && \
-        echo "boot_base=${boot_base} " >> "${1}.par"
+        echo "boot_base=\"--base ${boot_base}\"" >> "${1}.par"
     boot_board=$(cat "${1}-board") && rm "${1}-board" && \
-        echo "boot_board ${boot_board}" >> "${1}.par"
+        echo "boot_board=\"--board ${boot_board}\"" >> "${1}.par"
     boot_cmdline=$(cat "${1}-cmdline") && rm "${1}-cmdline" && \
-        echo "boot_cmdline=\"${boot_cmdline}\"" >> "${1}.par"
+        echo "boot_cmdline=\"--cmdline \\\"${boot_cmdline}\\\"\"" >> "${1}.par"
     boot_hash=$(cat "${1}-hash") && rm "${1}-hash" && \
-        echo "boot_hash=${boot_hash}" >> "${1}.par"
+        echo "boot_hash=\"--hash ${boot_hash}\"" >> "${1}.par"
     boot_kerneloff=$(cat "${1}-kerneloff") && rm "${1}-kerneloff" && \
-        echo "boot_kernel_offset=${boot_kerneloff}" >> "${1}.par"
+        echo "boot_kernel_offset=\"-kernel_offset ${boot_kerneloff}\"" >> "${1}.par"
     boot_oslevel=$(cat "${1}-oslevel") && rm "${1}-oslevel" && \
-        echo "boot_os_patch_level=${boot_oslevel}" >> "${1}.par"
+        echo "boot_os_patch_level=\"--os_patch_level ${boot_oslevel}\"" >> "${1}.par"
     boot_osversion=$(cat "${1}-osversion") && rm "${1}-osversion" && \
-        echo "boot_os_version=${boot_osversion}" >> "${1}.par"
+        echo "boot_os_version=\"--os_version ${boot_osversion}\"" >> "${1}.par"
     boot_pagesize=$(cat "${1}-pagesize") && rm "${1}-pagesize" && \
-        echo "boot_pagesize=${boot_pagesize}" >> "${1}.par"
+        echo "boot_pagesize=\"--pagesize ${boot_pagesize}\"" >> "${1}.par"
     boot_ramdiskoff=$(cat "${1}-ramdiskoff") && rm "${1}-ramdiskoff" && \
-        echo "boot_ramdisk_offset=${boot_ramdiskoff}" >> "${1}.par"
+        echo "boot_ramdisk_offset=\"--ramdisk-offset ${boot_ramdiskoff}\"" >> "${1}.par"
     boot_secondoff=$(cat "${1}-secondoff") && rm "${1}-secondoff" && \
-        echo "boot_second_offset=${boot_secondoff}" >> "${1}.par"
+        echo "boot_second_offset=\"--second_offset ${boot_secondoff}\"" >> "${1}.par"
     boot_tagoff=$(cat "${1}-tagsoff") && rm "${1}-tagsoff" && \
-        echo "boot_tags_offset=${boot_tagoff}" >> "${1}.par"
+        echo "boot_tags_offset=\"--tags_offset ${boot_tagoff}\"" >> "${1}.par"
     return 0
-}
+}#} End function : unpackbootimg
 
 # parameter 1 : kernel
 # parameter 2 : ramdisk
@@ -78,38 +83,50 @@ unpackbootimg_func()
 # parameter 4 : output file
 # parameter 5 : parameter table file
 # parameter 6 : second ( option )
+#{ function : packbootimg
 packbootimg()
 {
-    # parameter check
-    if [ ${#@} -lt 5 ]; then
+    if [ ${#@} -lt 2 ]; then
         echo "Parameter count error in packbootimg() function"
         exit 1
-    elif [ ${#@} -eq 5 ]; then
-        option=""
-    else
-        option="--second ${6}"
     fi
-    i=1; temp_eval=`sed -n "${i}p" ${5}`
-    while [ ! -z "${temp_eval}" ]; do
-        if (echo ${temp_eval} | grep '[=]' >> /dev/null); then
-            eval ${temp_eval}
-        fi
-        i=$[${i} + 1]
-        temp_eval=`sed -n "${i}p" ${5}`
-    done
-    mkbootimg --kernel ${1} --ramdisk ${2} --dt ${3}\
-        --base ${boot_base} --pagesize ${boot_pagesize}\
-        --cmdline "${boot_cmdline}"\
-        --kernel_offset ${boot_kernel_offset} --ramdisk_offset ${boot_ramdisk_offset}\
-        --second_offset ${boot_second_offset} --tags_offset ${boot_tags_offset}\
-        --os_version ${boot_os_version} --os_patch_level ${boot_os_patch_level}\
-        --hash ${boot_hash} ${option} -o ${4}
-    return 0
-}
+    boot_kernel="--kernel $1"
+    boot_output="-o $2"
+    if [ ! -z $RAMDISK]; then
+        boot_ramdisk="--ramdisk $RAMDISK"
+    fi
+    if [ ! -z $SECOND ]; then
+        boot_second="--second $SECOND"
+    fi
+    if [ ! -z $DT ]; then
+        boot_dt="--dt $DT"
+    fi
+    #{ Table eval
+    if [ ! -z ${3} ] && [ -f ${3} ]; then
+        i=1; temp_eval=`sed -n "${i}p" ${boot_table}`
+        while [ ! -z "${temp_eval}" ]; do
+            if (echo ${temp_eval} | grep '[=]' >> /dev/null) && (echo ${temp_eval} | grep '--[a-z_]* [0-z]*' >> /dev/null); then
+                eval ${temp_eval}
+            fi
+            i=$[${i} + 1]
+            temp_eval=`sed -n "${i}p" ${5}`
+        done
+    fi
+    #} end Table eval
 
+    mkbootimg ${boot_kernel} ${boot_ramdisk} ${boot_dt}\
+        ${boot_base} ${boot_pagesize}\
+        ${boot_cmdline}\
+        ${boot_kernel_offset}  ${boot_ramdisk_offset}\
+        ${boot_second_offset} ${boot_tags_offset}\
+        ${boot_os_version} ${boot_os_patch_level}\
+        ${boot_hash} ${boot_second} ${boot_output}
+    return 0
+}#} end function : packbootimg
+
+#{ Deal with the parameters
 flags=0
 mode=-1
-# deal with parameters
 while [ ! -z $1 ]; do
     if [ $1 = "-c" ]; then
         if [ $flags -eq 0 ]; then
@@ -129,18 +146,38 @@ while [ ! -z $1 ]; do
         shift && continue
     elif [ $1 = "--kernel" ]; then
         KERNEL=$2
+        if [ ! -f $KERNEL ]; then
+            echo "the file \"$KERNEL\" don't exist, check again."
+            exit 1
+        fi
         shift 2 && continue
     elif [ $1 = "--second" ]; then
         SECOND=$2
+        if [ ! -f $SECOND ]; then
+            echo "the file \"$SECOND\" don't exist, check again."
+            exit 1
+        fi
         shift 2 && continue
     elif [ $1 = "--ramdisk" ]; then
         RAMDISK=$2
+        if [ ! -f $RAMDISK ]; then
+            echo "the file \"$RAMDISK\" don't exist, check again."
+            exit 1
+        fi
         shift 2 && continue
     elif [ $1 = "--dt" ]; then
         DT=$2
+        if [ ! -f $DT ]; then
+            echo "The file \"$DT\" don't exist, check again."
+            exit 1
+        fi
         shift 2 && continue
     elif [ $1 = "--table" ]; then
         TABLE=$2
+        if [ ! -f $TABLE ]; then
+            echo "The file \"$TABLE\" don't exist, check again."
+            exit 1
+        fi
         shift 2 && continue
     elif [ $1 = "--input" ]; then
         INPUT=$2
@@ -153,11 +190,12 @@ while [ ! -z $1 ]; do
         shift
     fi
 done
+#} Deal with the parameters end
 
-# parameter recheck
+#{ parameter error check
 if [ $mode -eq 0 ]; then
-    if [ -z $KERNEL ] || [ -z $RAMDISK ] || [ -z $DT ] || [ -z $OUTPUT ] || [ -z $TABLE ]; then
-        echo "To creat a boot image need \"kernel ramdisk dt table\" specify."
+    if [ -z $KERNEL ] || [ -z $OUTPUT ]; then
+        echo "To creat a boot image need \"kernel\" and output file specify."
         echo "$HELP"
         echo "Exit!"
         exit 1
@@ -175,8 +213,8 @@ elif [ $mode -eq 1 ]; then
         echo "Exit!"
         exit 1
     fi
-    if [ ! -z $KERNEL$RAMDISK$DT$SECOND ]; then
-        echo "can't spcify \"--kernel\", \"--ramdisk\", \"--dt\" and \"--second\" parameter in decompress the boot image."
+    if [ ! -z $KERNEL$RAMDISK$DT$SECOND$TABLE ]; then
+        echo "can't spcify \"--kernel\", \"--ramdisk\", \"--dt\", \"--table\" and \"--second\" parameter in decompress the boot image."
         echo "$HELP"
         echo "Exit!"
         exit 1
@@ -187,20 +225,12 @@ else
     echo "Exit!"
     exit 1
 fi
+#} End parameter check
 
-while (true); do
-    break
-    echo "OUTPUT is $OUTPUT"
-    echo "INPUT is $INPUT"
-    exit 0
-done
-
+#{ Main
 if [ $mode -eq 1 ]; then
     unpackbootimg_func $INPUT $OUTPUT
 else
-    if [ -z $SECOND ]; then
-        packbootimg $KERNEL $RAMDISK $DT $OUTPUT $TABLE
-    else
-        packbootimg $KERNEL $RAMDISK $DT $OUTPUT $TABLE $SECOND
-    fi
+    packbootimg $KERNEL $OUTPUT $TABLE
 fi
+#} End Main
