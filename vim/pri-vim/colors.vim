@@ -8,7 +8,8 @@ if has('gui_running')
     "colorscheme phd
 else
     set background=dark
+    colorscheme molokai
     "set background=light
-    colorscheme solarized
+    "colorscheme solarized
     "colorscheme phd
 endif
