@@ -55,7 +55,6 @@ function! s:conque_gdb() " {{{
 if g:islinux && (g:load_conque_gdb == 1)
     Bundle 'vim-scripts/Conque-GDB'
     let g:load_conque_gdb = 0
-    echo "load_conque_gdb"
 endif
 endfunction " }}}
 autocmd FileType c,cpp call s:conque_gdb()
