@@ -4,15 +4,6 @@
 autocmd BufWritePost $MYVIMRC,~/$MYRTP/pri-vim/* source $MYVIMRC
 " }}}
 
-" vimscript的折行 {{{
-function! Foldmethod_Marker() " {{{
-  set foldmethod=marker
-  set foldmarker={{{,}}}
-  return 1
-endfunction " }}}
-autocmd FileType vim call Foldmethod_Marker()
-" }}}
-
 " g:html_view, g:rm_tool, g:eps_viewer, g:svg_viewer{{{
 " g:rm_tool
 if g:islinux
@@ -164,6 +155,17 @@ autocmd FileType mp call commands#run_metapost_map()
 
 " }}}
 
+"{{{ Fold
+
+" vimscript fold {{{
+function! Foldmethod_Marker() " {{{
+  set foldmethod=marker
+  set foldmarker={{{,}}}
+  return 1
+endfunction " }}}
+autocmd FileType vim call Foldmethod_Marker()
+" }}}
+
 " TeX fold {{{
 
 function! Foldmethod_Marker_TeX() " {{{
@@ -174,5 +176,29 @@ endfunction " }}}
 
 autocmd BufRead *.tex,*.sty call Foldmethod_Marker_TeX()
 " }}} End
+
+" Clang fold {{{
+
+function! Foldmethod_Marker_Clang() " {{{
+  set foldmethod=marker
+  set foldmarker=//{,//}
+  return 1
+endfunction " }}}
+
+autocmd FileType c,cpp call Foldmethod_Marker_Clang()
+" }}} End
+
+"{{{ shell, python fold
+
+function! Foldmethod_Marker_shell_python() " {{{
+  set foldmethod=marker
+  set foldmarker=#{,#}
+  return 1
+endfunction " }}}
+
+autocmd FileType sh,python call Foldmethod_Marker_shell_python()
+"}}} end shell fold
+
+"}}} End fold
 
 " }}}
