@@ -199,6 +199,17 @@ endfunction " }}}
 autocmd FileType sh,python call Foldmethod_Marker_shell_python()
 "}}} end shell fold
 
+"{{{ autoLISP and CLISP
+function! Foldmethod_Marker_LISP() " {{{
+  set foldmethod=marker
+  set foldmarker=;{{{,;}}}
+  return 1
+endfunction " }}}
+
+autocmd FileType lisp call Foldmethod_Marker_LISP()
+
+"}}}
+
 "}}} End fold
 
 " }}}
