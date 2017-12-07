@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+## This file need rewrite ...
+
 ## exit code
 SUCCESS=0
 FAIL=1
@@ -14,15 +16,15 @@ back_inst()
 {
     echo "Begin backup and install"
 
-	if [ -d ./backup ]
-	then
-		rm -rf ./backup
-		mkdir ./backup
+    if [ -d ./backup ]
+    then
+        rm -rf ./backup
+        mkdir ./backup
         mkdir ./backup/.vim
-	else
-		mkdir ./backup
+    else
+        mkdir ./backup
         mkdir ./backup/.vim
-	fi
+    fi
 
     if [ -d ~/bin ]
     then
@@ -39,12 +41,16 @@ back_inst()
         cp -r ./bin/x86_64/* ~/bin
     fi
 
-	if [ -f ~/.vimrc ]
-	then
-		mv ~/.vimrc ./backup
-	fi
-	cp ./vimrc ~/.vimrc
-
+    if [ -f ~/.vimrc ]
+    then
+        mv ~/.vimrc ./backup
+    fi
+    cp ./vimrc ~/.vimrc
+    if [ -f ~/ycm_extra_conf.py ]
+    then
+        mv ~/ycm_extra_conf.py ./backup
+    fi
+    cp ycm_extra_conf.py ~/.ycm_extra_conf.py
     if [ -f ~/.bashrc ]
     then
         mv ~/.bashrc ./backup
@@ -57,8 +63,8 @@ back_inst()
     fi
     cp -r ./bash ~/.bash
 
-	if [ -d ~/.vim ]
-	then
+    if [ -d ~/.vim ]
+    then
         for fff in ~/.vim/*
         do
             if [ ! ${fff##*\/} = "bundle" ]
@@ -73,7 +79,7 @@ back_inst()
         done
     else
         cp -r ./vim ~/.vim
-	fi
+    fi
 
     if [ -f ~/texrc.tex ]
     then
@@ -89,38 +95,38 @@ back_inst()
 
     echo "End backup and install"
 
-	install_flags=1
+    install_flags=1
 }
 
 vim_inst_vundle()
 {
-	if [ -d ~/.vim/bundle/Vundle.vim ]&&[ -d ~/.vim/bundle/vim-powerline ]
-	then
-		echo "Plugins have installed."
-		return 0
-	fi
+    if [ -d ~/.vim/bundle/Vundle.vim ]&&[ -d ~/.vim/bundle/vim-powerline ]
+    then
+        echo "Plugins have installed."
+        return 0
+    fi
 
-	if [ ${install_flags} -eq 0 ]
-	then
-		echo "run install config function first"
-		exit ${FAIL}
-	fi
-	if !(ping -c 1 ${github} > /dev/null)
-	then
-		echo "can't connect to github.com"
-		exit ${FAIL}
-	fi
-	if [ $(which git) = "" ]
-	then
-		echo "need install git first"
-		exit ${FAIL}
-	fi
+    if [ ${install_flags} -eq 0 ]
+    then
+        echo "run install config function first"
+        exit ${FAIL}
+    fi
+    if !(ping -c 1 ${github} > /dev/null)
+    then
+        echo "can't connect to github.com"
+        exit ${FAIL}
+    fi
+    if [ $(which git) = "" ]
+    then
+        echo "need install git first"
+        exit ${FAIL}
+    fi
 
-	echo "Begin install plugins"
-	if [ ! -d ~/.vim/bundle ]
-	then
-		mkdir ~/.vim/bundle
-	fi
+    echo "Begin install plugins"
+    if [ ! -d ~/.vim/bundle ]
+    then
+        mkdir ~/.vim/bundle
+    fi
 ## Install Plugins
 ### Vundle
     if [ ! -d ~/.vim/bundle/Vundle.vim ]

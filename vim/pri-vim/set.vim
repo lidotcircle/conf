@@ -24,7 +24,7 @@ let mapleader = ","
 set encoding=utf-8
 
 " 文件格式设置为 unix
-autocmd BufReadPost * set fileformat=unix
+autocmd BufReadPost * if &modifiable | set fileformat=unix | endif
 
 " linespace
 set linespace=5

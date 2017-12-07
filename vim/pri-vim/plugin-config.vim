@@ -44,8 +44,12 @@ let g:ycm_use_ultisnips_comleter = 1        " YCM使用ultisnips补全,默认值
 " }}}
 
 " YCM {{{
+" default ycm_extra_conf
 let g:ycm_global_ycm_extra_conf =
-\'~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+\'~/.ycm_extra_conf.py'
+
+" turn off the tip in load .ycm_extra_conf.py
+let g:ycm_confirm_extra_conf = 0
 
 function! s:ycm_shortcut_c_sopport() " {{{
     " 刷新编译文件
