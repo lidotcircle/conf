@@ -1,155 +1,114 @@
 #!/usr/bin/env bash
 
-## This file need rewrite ...
+#{ Check the dependencies
+## git
+[ -z $(which git) ] && echo "Need install git, exit." && return 1 || clear
+#}
+#{ Some variables
+## Exit status
+readonly SUCCESS=0
+readonly FAIL=1
 
-## exit code
-SUCCESS=0
-FAIL=1
+## Backup directory
+readonly BACKUP_DIRE=./backup
 
-## github
-github="github.com"
+## Git clone flags
+GIT_CLONE_FLAGS='--recurse-submodules'
+## Git update
+GIT_UPDATE='git fetch origin >> /dev/null && git merge origin/master >>/dev/null && git submodule update --init --recursive >> /dev/null'
+## Git clone address
+GIT_REP='https://github.com/'
 
-### Begin install vim config
-install_flags=0
+## Plugins directory
+PLUG_DEST=${HOME}/.vim/bundle
 
-back_inst()
+## error counter and warning count
+declare error_count=0
+declare warning_count=0
+#}
+#{ Install list
+Plugin_list=("VundleVim/Vundle.vim" \
+    "Lokaltog/vim-powerline")
+
+File_list=("./vimrc|${HOME}/.vimrc" \
+    "./bashrc|${HOME}/.bashrc" \
+    "./texrc.tex|${HOME}/texrc.tex" \
+    "./vim/colors|${HOME}/.vim/colors" \
+    "./vim/pri-vim|${HOME}/.vim/pri-vim" \
+    "./vim/pri-plugins|${HOME}/.vim/pri-plugins" \
+    "./bash|${HOME}/.bash" \
+    "./tex|${HOME}/.tex")
+#}
+## WARNING and ERROR functions
+#{ function : __warning()
+__warning()
 {
-    echo "Begin backup and install"
-
-    if [ -d ./backup ]
-    then
-        rm -rf ./backup
-        mkdir ./backup
-        mkdir ./backup/.vim
-    else
-        mkdir ./backup
-        mkdir ./backup/.vim
-    fi
-
-    if [ -d ~/bin ]
-    then
-        mv ~/bin ./backup/bin
-    fi
-    if [ ! -d ~/bin ]; then
-        mkdir ~/bin
-    fi
-    cp -r $(find ./bin -maxdepth 1 -type f) ~/bin
-    CPU_ARCH=`uname -m`
-    if [ ${CPU_ARCH} == "aarch64" ]; then
-        cp -r ./bin/aarch64/* ~/bin
-    elif [ ${CPU_ARCH} == "x86_64" ]; then
-        cp -r ./bin/x86_64/* ~/bin
-    fi
-
-    if [ -f ~/.vimrc ]
-    then
-        mv ~/.vimrc ./backup
-    fi
-    cp ./vimrc ~/.vimrc
-    if [ -f ~/ycm_extra_conf.py ]
-    then
-        mv ~/ycm_extra_conf.py ./backup
-    fi
-    cp ycm_extra_conf.py ~/.ycm_extra_conf.py
-    if [ -f ~/.bashrc ]
-    then
-        mv ~/.bashrc ./backup
-    fi
-    cp ./bashrc ~/.bashrc
-
-    if [ -d ~/.bash ]
-    then
-        mv ~/.bash ./backup
-    fi
-    cp -r ./bash ~/.bash
-
-    if [ -d ~/.vim ]
-    then
-        for fff in ~/.vim/*
-        do
-            if [ ! ${fff##*\/} = "bundle" ]
-            then
-                mv ${fff} ./backup/.vim
-            fi
-        done
-
-        for aaa in ./vim/*
-        do
-            cp -r ${aaa} ~/.vim
-        done
-    else
-        cp -r ./vim ~/.vim
-    fi
-
-    if [ -f ~/texrc.tex ]
-    then
-        mv ~/texrc.tex ./backup
-    fi
-    cp texrc.tex ~/
-
-    if [ -d ~/.tex ]
-    then
-        mv ~/.tex ./backup
-    fi
-    cp -r ./tex ~/.tex
-
-    echo "End backup and install"
-
-    install_flags=1
+    __warning "< ${1} >" && warning_count=$[$warning_count + 1] && return 0
 }
-
-vim_inst_vundle()
+#}
+#{ function : __error()
+__error()
 {
-    if [ -d ~/.vim/bundle/Vundle.vim ]&&[ -d ~/.vim/bundle/vim-powerline ]
-    then
-        echo "Plugins have installed."
-        return 0
-    fi
-
-    if [ ${install_flags} -eq 0 ]
-    then
-        echo "run install config function first"
-        exit ${FAIL}
-    fi
-    if !(ping -c 1 ${github} > /dev/null)
-    then
-        echo "can't connect to github.com"
-        exit ${FAIL}
-    fi
-    if [ $(which git) = "" ]
-    then
-        echo "need install git first"
-        exit ${FAIL}
-    fi
-
-    echo "Begin install plugins"
-    if [ ! -d ~/.vim/bundle ]
-    then
-        mkdir ~/.vim/bundle
-    fi
-## Install Plugins
-### Vundle
-    if [ ! -d ~/.vim/bundle/Vundle.vim ]
-    then
-        echo "Begin install Vundle.vim:"
-        git clone http://github.com/VundleVim/Vundle.vim ~/.vim/bundle/Vundle.vim       # install vundle
-    fi
-### vim-powerline
-    if [ ! -d ~/.vim/bundle/vim-powerline ]
-    then
-        echo "Begin install vim-powerline:"
-        git clone http://github.com/Lokaltog/vim-powerline ~/.vim/bundle/vim-powerline  # install vim-powerline
-    fi
-
-    echo "End install plugins"
+    __error "< ${1} >" && error_count=$[$error_count + 1] && return 0
 }
+#}
+# Install <src> to <dest>, <dest> must be a full filepath,
+# not just a directory of destination
+#{ function : install_fil()
+install_fil()
+{
+    # parameter check.
+    [ $# -eq 2 ] || (__error "parameter error, in install_fil()" && return $FAIL)
+    [ -e $1 ] || (__error "File $1 don't exist, exit!"; return $FAIL)
 
-# Main part
-while true; do
-    back_inst
-    vim_inst_vundle
-    break
+    # if <dest> already exist, move it to backup directory.
+    [ -e $2 ] && mv -f $2 $BACKUP_DIRE >> /dev/null || \
+        __warning "backup file $2 fail, but continue"
+
+    # final coppy $1 to $2
+    cp -rf $1 $2 && return $SUCCESS >> /dev/null || \
+        (__error "install \"$1\" to \"$2\" FAILED." && return $FAIL)
+}
+#}
+# Install <Vundle> plugin for vim
+#{ function : install_plug()
+install_plug()
+{
+    [ $# -eq 1 ] || (__error "Error parameter, in install_plug()." && return $FAIL)
+    # pushd to PLUG_DEST
+    pushd $PLUG_DEST >> /dev/null || \
+        (__error "pushd to $PLUG_DEST fail, exit." && return $FAIL)
+    if [ -e ${1##*/} ]; then
+        echo "Already installed <${1##*/}> , just update it, proccess..."
+        pushd ${1##*/} >> /dev/null || (__error "pushd ${1##*/} failed" && return $FAIL)
+        if (eval $GIT_UPDATE >> /dev/null); then
+            echo "update ${1##*/} success." && popd >> /dev/null && return $SUCCESS
+        else
+            __warning "update ${1##*/} fail, remove it and continue to install it." && \
+                popd && rm -rf ${1##*/}
+        fi
+    fi
+    echo "Installing ${1#*/}..."
+    git clone $GIT_CLONE_FLAGS ${GIT_REP}${1} >> /dev/null && (popd; return $SUCCESS) || \
+        (popd && __error "install ${1##*/} failed!" && return $FAIL)
+}
+#}
+#{ Main proccess
+while (true); do
+    echo "**REMOVE** previous backup." && rm -rf ./backup && mkdir ./backup
+    echo "***BEGIN** install files..."
+    for __file in ${File_list[@]}; do
+        install_fil ${__file%%\|*} ${__file##*\|}
+    done
+    echo "**FINISH** install files!"
+
+    echo "***BEGIN** install vim plugins..."
+    for __plug in ${Plugin_list[@]}; do
+        install_plug ${__plug}
+    done
+    echo "**FINISH** install vim plugins!"
+
+    echo "**FINISH** Install, total ERROR is $error_count, total WARNING is $error_count"
+    [ $error_count -eq 0 ] && exit $SUCCESS || exit $FAIL
 done
-
-exit ${SUCCESS}
-### End vim install config
+#}
