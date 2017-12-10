@@ -1,9 +1,9 @@
 ;; Autocad autolisp file
 ;; set this script autoload in autocad
 
-;{{{ command: Toggle orthogonal mode
+;{{{ command -- tgr: Toggle orthogonal mode
 (
- defun C:tgor (/)
+ defun toggle_orthogonal_mode (/)
  (
   if (< (getvar "ORTHOMODE") 1)
    (progn (setvar "ORTHOMODE" 1)(princ "open orthogonal mode."))
@@ -11,11 +11,15 @@
  )
  (princ)
 )
+(
+ defun C:tgr (/)
+ (toggle_orthogonal_mode)
+)
 ;}}} end command
 
-;{{{ command: Toggle object snap
+;{{{ command -- tgs: Toggle object snap
 (
- defun C:tgos (/)
+ defun toggle_object_snap (/)
  (
   if (> (getvar "osmode") 16384)
    (progn (setvar "osmode" (- (getvar "osmode") 16384))(princ "Object snap open."))
@@ -26,12 +30,15 @@
     )
  )
 )
+(
+ defun C:tgs (/)
+ (toggle_object_snap)
+)
 ;}}} end command
 
-
-;{{{ commmand: Toggle line width
+;{{{ command -- tgw: Toggle line width
 (
-  defun C:tglw (/)
+  defun toggle_line_width_display (/)
   (
    if (< (getvar "LWDISPLAY") 1)
     (progn (setvar "LWDISPLAY" 1)
@@ -44,19 +51,26 @@
     )
   )
 )
+(
+ defun C:tgw (/)
+ (toggle_line_width_display)
+)
 ;}}} end command
 
-;{{{ command: Toggle menu bar
+;{{{ command -- tgv: Toggle menu bar
 (
- defun C:tgmb (/)
+ defun toggle_menu_bar (/)
  (
   if (< (getvar "MENUBAR") 1)
    (progn (setvar "MENUBAR" 1)(princ "Open menu bar.")(princ))
    (progn (setvar "MENUBAR" 0)(princ "Close menu bar.")(princ))
  )
 )
+(
+ defun C:tgv (/)
+ (toggle_menu_bar)
+)
 ;}}} end command
-
 
 ;{{{ command: reload this file
 (

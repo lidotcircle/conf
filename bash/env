@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
 # env part
-## 路径
+
+#{ PATH
 export PATH=${PATH}:./:~/bin
 
 # TeXLive
-texlive_man_path=/usr/local/texlive/2017/texmf-dist/doc/man
-texlive_bin_path=/usr/local/texlive/2017/bin/x86_64-linux
-texlive_info_path=/usr/local/texlive/2017/texmf-dist/doc/info
+if [ -d /usr/local/texlive ]; then
+    TEXLIVE=$(ls /usr/local/texlive | grep ".*[0-9]\{4\}")
+    texlive_man_path=$TEXLIVE/texmf-dist/doc/man
+    texlive_bin_path=$TEXLIVE/bin/x86_64-linux
+    texlive_info_path=$TEXLIVE/texmf-dist/doc/info
+fi
 
 if [ -d ${texlive_man_path} ]
 then
@@ -23,3 +27,4 @@ if [ -d ${texlive_info_path} ]
 then
     export INFOPATH=${INFOPATH}:${texlive_info_path}
 fi
+#}

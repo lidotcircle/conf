@@ -85,10 +85,14 @@ endif
 
 " 输入,语法,缩进 {{{
 
-" <Tab>的有关设置
+" <TAB>与缩进的有关设置
+"" <TAB>的显示空格数
 set tabstop=4
+"" 语法缩进的单位
 set shiftwidth=4
+"" 是否以空格代替<TAB>
 set expandtab
+"" 用于调整插入<TAB>时插入的缩进量 = (softtabstop/tabstop)*<TAB> + (softtabstop%tabstop)*<SPACE>
 set softtabstop=4
 
 " 实时搜索

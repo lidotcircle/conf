@@ -38,12 +38,14 @@ Bundle 'mattn/emmet-vim'
 " 7. YCM
 " 只在python支持加载YCM
 if has('python') || has('python3')
-    " YCM
     Bundle 'Valloric/YouCompleteMe'
 endif
 
 " 8. Python mode
-Bundle 'klen/python-mode'
+" Unkown reason for pymode work always error in windows ...
+if g:islinux
+    Bundle 'klen/python-mode'
+endif
 
 " 9. ctrlp
 Bundle 'kien/ctrlp.vim'

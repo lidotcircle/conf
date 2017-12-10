@@ -188,7 +188,7 @@ endfunction " }}}
 autocmd FileType c,cpp call Foldmethod_Marker_Clang()
 " }}} End
 
-"{{{ shell, python fold
+"{{{ powrshell, shell, python fold
 
 function! Foldmethod_Marker_shell_python() " {{{
   set foldmethod=marker
@@ -196,7 +196,7 @@ function! Foldmethod_Marker_shell_python() " {{{
   return 1
 endfunction " }}}
 
-autocmd FileType sh,python call Foldmethod_Marker_shell_python()
+autocmd FileType sh,python,ps1 call Foldmethod_Marker_shell_python()
 "}}} end shell fold
 
 "{{{ autoLISP and CLISP
