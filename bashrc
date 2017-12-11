@@ -2,18 +2,19 @@
 
 # 加载配置文件
 ## log file
-ERROR_LOG=$HOME/bashrc_error_log
+ERROR_LOG=$HOME/.bashrc_error_log
 ## file list
-soc_lis=("~/.bash/alias" \
-    "~/.bash/env" \
-    "~/.extra_bashrc")
+soc_lis=("$HOME/.bash/alias" \
+    "$HOME/.bash/env" \
+    "$HOME/.extra_bashrc")
 
 # Usage : error_handle <message>
 #{ function : error_handle()
 error_handle()
 {
     [ $# -eq 0 ] && (echo "**CALL** Error handle fail." >> $ERROR_LOG && return 0) || \
-        (echo "**WARNING** : $@" >> $ERROR_LOG && return 0)
+        (echo "[$(date "+%m-%d %H:%M:%S")]:**WARNING** : $@" \
+        >> $ERROR_LOG && return 0)
 }
 #}
 
@@ -36,6 +37,6 @@ while(true); do
     for soc_fil in ${soc_lis[@]}; do
         try_source_fil $soc_fil
     done
-    exit 0
+    break
 done
 #}
