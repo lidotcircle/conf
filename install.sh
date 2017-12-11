@@ -43,13 +43,15 @@ File_list=("./vimrc|${HOME}/.vimrc" \
 #{ function : __warning()
 __warning()
 {
-    __warning "< ${1} >" && warning_count=$[$warning_count + 1] && return 0
+    echo "**WARNING** : < ${1} >" && \
+        warning_count=$[$warning_count + 1] && return 0
 }
 #}
 #{ function : __error()
 __error()
 {
-    __error "< ${1} >" && error_count=$[$error_count + 1] && return 0
+    error "**ERROR** : < ${1} >" && \
+        error_count=$[$error_count + 1] && return 0
 }
 #}
 # Install <src> to <dest>, <dest> must be a full filepath,
