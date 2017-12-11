@@ -1,4 +1,4 @@
-"   插件配置 {{{
+" Plugins configure
 
 " Statusline {{{
 " 设置statusline样式
@@ -104,6 +104,4 @@ augroup END
 
 let g:ps1_nofold_sig = 1
 let g:ps1_nofold_blocks = 1
-" }}}
-
 " }}}

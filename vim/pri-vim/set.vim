@@ -1,29 +1,29 @@
-" 重要 {{{
+" Setting
 
-"不和vi兼容
+" Important {{{
+
+" nocompatible with vi
 set nocompatible
 set backspace=indent,eol,start
 
-"开启文件类型检测
+" turn on file type check
 filetype on
-"根据检测到文件加载对应的插件
+" according to file type to load plugin
 filetype plugin on
-
-"开启语法高亮
-syntax enable
-"允许指定语法高亮替换
-syntax on
-
-" 代码智能缩进
+" indent, accroding to filetype
 filetype indent on
 
-"map leader设置为,
+" turn on syntax
+syntax enable
+syntax on
+
+" the <mapleader>
 let mapleader = ","
 
-" 编码设置为utf-8
+" file encoding
 set encoding=utf-8
 
-" 文件格式设置为 unix
+" set fileformat to unix
 autocmd BufReadPost * if &modifiable | set fileformat=unix | endif
 
 " linespace
@@ -31,13 +31,13 @@ set linespace=5
 
 " }}}
 
-" 显示界面 {{{
+" Display {{{
 
-" 左侧行号显示
+" Line number in left side
 set number
 set numberwidth=4
 
-" 折行
+" wrap the line
 set wrap
 
 " min column
@@ -69,7 +69,7 @@ set guioptions-=R
 set guioptions-=m
 set guioptions-=T
 
-" 字体
+" Font
 if has('gui_running')
     set columns=110 lines=60
     if g:islinux
@@ -83,7 +83,7 @@ endif
 
 " }}}
 
-" 输入,语法,缩进 {{{
+" Miscellaneous {{{
 
 " <TAB>与缩进的有关设置
 "" <TAB>的显示空格数
@@ -102,10 +102,7 @@ set ignorecase
 " vim 自身命令行智能补全
 set wildmenu
 
-" }}}
-
-"设置自动写在buffer跳转的操作下
 set autowrite
-
-" 无swap文件
 set noswapfile
+
+" }}}

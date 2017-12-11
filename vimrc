@@ -1,4 +1,4 @@
-" 判别系统 {{{
+" OS {{{
 
 let g:islinux = 0
 let g:iswindows = 0
@@ -11,7 +11,7 @@ endif
 
 " }}}
 
-"加载其他的个人配置 {{{
+" Load config files {{{
 
 ""设置个环境变量
 if(islinux)
@@ -23,6 +23,11 @@ else
     else
         let $MYRTP = 'vimfiles'
     endif
+endif
+
+""" before source main configure
+if filereadable(expand("~/$MYRTP/extra_pre.vim"))
+    source ~/$MYRTP/extra_pre.vim
 endif
 
 """ set.vim
@@ -53,5 +58,10 @@ endif
 """ commands.vim
 if filereadable(expand("~/$MYRTP/pri-vim/commands.vim"))
     source ~/$MYRTP/pri-vim/commands.vim
+endif
+
+""" after source main configure
+if filereadable(expand("~/$MYRTP/extra_post.vim"))
+    source ~/$MYRTP/extra_post.vim
 endif
 " }}} 

@@ -1,6 +1,6 @@
-" autocmd {{{
+" autocmd
 
-" 自动更新vimrc文件 {{{
+" resource $MYVIMRC, when change some vim sourced files {{{
 autocmd BufWritePost $MYVIMRC,~/$MYRTP/pri-vim/* source $MYVIMRC
 " }}}
 
@@ -76,7 +76,7 @@ endif
 
 " }}}
 
-"" markdown的配置 {{{
+" Markdown configure {{{
 function!  commands#markdown_pre_view() " {{{
     if exists('g:html_view') && executable('pandoc')
         nnoremap <silent><buffer> <leader>mm
@@ -95,7 +95,7 @@ autocmd FileType markdown call commands#markdown_pre_view()
 autocmd BufUnload,BufLeave *.md,*MD call commands#markdown_pre_view_html_clean()
 " }}}
 
-"" html的配置{{{
+" HTML configure {{{
 
 function! commands#html_pre_view() " {{{
     if exists('g:html_view')
@@ -107,7 +107,7 @@ endfunction "}}}
 autocmd FileType html call commands#html_pre_view()
 " }}}
 
-" Metapost编译, 预览 {{{
+" Metapost compile shortcut, and preview {{{
 
 "" Linux and Windows metapost viewer function {{{
 
@@ -211,5 +211,3 @@ autocmd FileType lisp call Foldmethod_Marker_LISP()
 "}}}
 
 "}}} End fold
-
-" }}}

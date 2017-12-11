@@ -12,7 +12,7 @@ Bundle 'VundleVim/Vundle.vim'
 
 " }}}
 
-"" Plugins list {{{
+" Plugins list {{{
 
 " 1. Statusline
 Bundle 'Lokaltog/vim-powerline'
