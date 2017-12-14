@@ -106,7 +106,7 @@ while($true){
         Write-Output ("File <{0}> to <{1}>." -f $dictEnt.key, $dictEnt.value);
     }
     Write-Output "**FINISH** install files!";
-    if(-not Test-Path $PLU_INS){
+    if(-not (Test-Path $PLU_INS)){
         new-item -itemType 'directory' $PLU_INS >> $null;
     }
     Write-Output "***BEGIN** install plugins...";
