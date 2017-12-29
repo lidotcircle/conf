@@ -1,8 +1,8 @@
-%{{{ math macro
+%% macro for math formula
 
-%{{{ 向量矩阵
 % 行向量
 \def\linevec#1{{({#1}_1, {#1}_2, \ldots, {#1}_n)}}
+
 % 矩阵
 \long\def\relmat#1{%
     \begin{pmatrix}
@@ -21,6 +21,3 @@
         {#1}_{n}\cr
     \end{pmatrix}%
 }
-%}}} end 向量矩阵
-
-%}}} end math macro

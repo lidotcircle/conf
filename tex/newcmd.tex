@@ -1,0 +1,12 @@
+%% Some \def and \newcommand macro
+
+\long\def\uphrule{\newskip\ruledist \ruledist=2pt%
+\newskip\ruleneg \ruleneg=\baselineskip \advance\ruleneg by-\ruledist%
+\vbox{\hbox to\hsize{\vrule width\hsize height0.6em depth-0.5em}%
+\vskip-\ruleneg\hbox to\hsize{\vrule width\hsize height0.55em depth-0.5em}}}
+
+\long\def\downhrule{\newskip\ruledist \ruledist=2pt%
+\newskip\ruleneg \ruleneg=\baselineskip \advance\ruleneg by-\ruledist%
+\ruledist=.05em\advance\ruleneg by-\ruledist%
+\vbox{\hbox to\hsize{\vrule width\hsize height0.55em depth-0.5em}%
+\vskip-\ruleneg\hbox to\hsize{\vrule width\hsize height0.6em depth-0.5em}}}

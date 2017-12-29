@@ -1,0 +1,21 @@
+%% New Environment
+
+%{{{ env : design for descripting some factor
+\newenvironment{descfactor}{\bgroup\hskip.1\hsize\hbox to.8\hsize\bgroup%
+\vbox\bgroup\begin{minipage}{.7\hsize}\begin{description}\baselineskip=.2em}%
+{\end{description}\end{minipage}\egroup\egroup\egroup}
+%}}} end env
+
+%{{{ env : better environment to descript factor below equations.
+\long\def\desc@line{{\hbox to3em{%
+\hskip.25em\vrule width2.25em height.35em depth-.28em\hskip.5em}}}
+% Defining a count and and macro for alignment is essential.
+\newcount\factorcount \long\def\cc@ccr{\cr}
+\newenvironment{descff}{\vskip1.5em\global\factorcount=1 \baselineskip=.5em%
+\newcommand{\factor}[1]{\ifnum\factorcount>1 \hfill$\square$\fi%
+\egroup\egroup\ifnum\factorcount>1 \cc@ccr\fi\global\advance\factorcount by1%
+\medskip{\bf ##1} & \desc@line\hbox\bgroup\hsize=.7\hsize\vtop\bgroup\tt}%
+\parindent=0pt\hskip.1\hsize\hbox to.9\hsize\bgroup\vbox\bgroup\begin{minipage}{.85\hsize}%
+\halign\bgroup\hfil## & ##\cr%
+\bgroup\bgroup}{\hfill$\square$\egroup\egroup\cr\egroup\end{minipage}\egroup\egroup\vskip1.5em}
+%}}}
