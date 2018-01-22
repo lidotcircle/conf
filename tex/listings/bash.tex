@@ -1,0 +1,56 @@
+% Define {listings:Language : MYBASH}
+\ifdefined\texrc@package@config@listings@bash\else
+\def\texrc@package@config@listings@bash{LOADED}
+
+%{{{ New listings language: MYBASH => for bash
+
+%% Define Highlight Colors
+\definecolor{bash@string}{rgb}{0.4, 0.7, 0.2}
+\definecolor{bash@keyword}{rgb}{0.1, 0.3, 0.8}
+\definecolor{bash@exec}{rgb}{0.5, 0.4, 0.9}
+\definecolor{bash@operator}{rgb}{0.9, 0.2, 0.2}
+\definecolor{bash@builtin}{rgb}{0.8, 0.6, 0.1}
+\definecolor{bash@var}{rgb}{0.2, 0.8, 0.2}
+\lstdefinelanguage{MYBASH}{%
+    sensitive=true,% case sensitive
+    basicstyle=\ttfamily,%
+    %{{{ keywords
+    keywordsprefix=\$,%
+    morekeywords=[2]{daemon, killall, killproc, nice, %
+        reload, restart, start, status, %
+        stopcommand, compgenchmod, clear, complete, %
+        du, egrep, expr, fgrep, %
+        find, gnufind, gnugrep, grep, %
+        less, ls, mkdir, mv, %
+        rm, rmdir, rpm, sed, sleep, sort, strip, tail},%
+    morekeywords=[3]{asdf},%
+    morekeywords=[4]{bind, builtin, dirs, disown, enable,%
+        help, logout, popd, pushd, shopt, source,%
+        login, newgrp},%
+    morekeywords=[5]{if, else, fi, do, %
+        done, for, until, case, %
+        esac, in, while, elif, %
+        then, break, cd, chdir, %
+        continue, eval, exec, exit, %
+        kill, newgrp, pwd, read, %
+        readonly, return, shift, test, %
+        trap, ulimit, umask, wait},%
+    keywordstyle=\bfseries\color{bash@var},%
+    keywordstyle=[2]{\bfseries\color{bash@exec}},%
+    keywordstyle=[3]{\bfseries\color{bash@operator}},%
+    keywordstyle=[4]{\bfseries\color{bash@builtin}},%
+    keywordstyle=[5]{\bfseries\color{bash@keyword}},%
+    %}}}
+    %{{{ comments
+    comment=[l]{\#}, % line comments
+    commentstyle=\it\small,%
+    %}}}
+    %{{{ String
+    morestring=[b]",%
+    morestring=[b]',%
+    stringstyle=\color{bash@string}%
+    %}}} End String
+}
+%}}}
+
+\fi
