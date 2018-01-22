@@ -1,0 +1,32 @@
+% Define {listings:Language:MYTEX} and environment texcode[label]
+
+\ifdefined\texrc@package@config@listings@tex\else
+\def\texrc@package@config@listings@tex{LOADED}
+
+%{{{ New listings language: MYTEX => for tex
+
+
+%% Define Highlight Colors
+\definecolor{texctlsrt}{rgb}{0.1, 0.3, 0.8}
+\definecolor{texcomment}{rgb}{0.5, 0.4, 0.9}
+\definecolor{texother}{rgb}{0.8, 0.6, 0.1}
+\definecolor{texenv}{rgb}{0.1, 0.7, 0.9}
+
+\lstdefinelanguage{MYTEX}{%
+    sensitive=true,% case sensitive
+    basicstyle=\ttfamily,
+    %{{{ tex keyword
+    keywordsprefix=\\, % control sequent prefix
+    keywords={begin, end},%
+    morekeywords=[2]{article, book, report},%
+    morekeywords=[3]{document, lstlisting, quote},%
+    keywordstyle=\color{texctlsrt}\tt, keywordstyle=[2]\tt\color{texother},%
+    keywordstyle=[3]\tt\color{texenv},%
+    %}}} end tex keyword
+    comment=[l]{\%},% line comments
+    commentstyle=\it\small\color{texcomment}
+} 
+
+%}}} End define MYTEX
+
+\fi

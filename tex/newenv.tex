@@ -1,4 +1,6 @@
 %% New Environment
+\ifdefined\texrc@newenv\else
+\def\texrc@newenv{LOADED}
 
 %{{{ env : design for descripting some factor
 \newenvironment{descfactor}{\bgroup\hskip.1\hsize\hbox to.8\hsize\bgroup%
@@ -29,8 +31,6 @@
 %}}}
 
 %{{{ env : for commenting a c languge function
-\ifdefined\cfunc@env\else
-\def\cfunc@env{a}
 \definecolor{color@cfunc@type}{rgb}{0.1, 0.2, 0.8}
 \definecolor{color@cfunc@name}{rgb}{0.1, 0.2, 0.1}
 \definecolor{color@cfunc@header}{rgb}{0.2, 0.7, 0.2}
@@ -38,36 +38,38 @@
 \def\cfunc@type{\color{color@cfunc@type}\tt}
 \def\cfunc@name{\color{color@cfunc@name}\bf}
 \def\cfunc@header{\color{color@cfunc@header}\tt}
-\def\cfunc@desc{\color{color@cfunc@desc}\it}
+\def\cfunc@desc{\color{color@cfunc@desc}\em}
 \newcount\func@count
 
 \newenvironment{cfunc}[1]%
 % before
 {%
     \index{#1()}\label{#1}%
-    \def\cfuncname{#1}%
-    \newcommand{\header}[1]{\global\def\cfuncheader{##1}}%
-    \newcommand{\argu}[1]{\global\def\cfuncargu{##1}}%
-    \newcommand{\ret}[1]{\global\def\cfuncret{##1}}%
+    \def\cfuncname{{\cfunc@name #1}}%
+    \newcommand{\header}[1]{\global\def\cfuncheader{{\cfunc@header <##1>}}}%
+    \newcommand{\argu}[1]{\global\def\cfuncargu{{\cfunc@type ##1}}}%
+    \newcommand{\ret}[1]{\global\def\cfuncret{{\cfunc@type ##1}}}%
     \newbox\usa@ge 
-    \newenvironment{usage}[1][]{\global\setbox\usa@ge=\hbox to.8\hsize\bgroup%
-    \begin{minipage}{.8\hsize}}{\end{minipage}\egroup}
-    \newbox\cfunc@desc@cont \setbox\cfunc@desc@cont=\hbox to.8\hsize\bgroup\hsize=.8\hsize\vbox\bgroup
+    \newenvironment{usage}[1][]{\bgroup\rm\global\setbox\usa@ge=\hbox to.8\hsize\bgroup%
+    \begin{minipage}{.8\hsize}}{\end{minipage}\egroup\egroup}
+    \newbox\cfunc@desc@cont \setbox\cfunc@desc@cont=\hbox to.8\hsize\bgroup\hsize=.8\hsize\vbox\bgroup%
+    \cfunc@desc 
 }%
 %after
 {
     \egroup\egroup\begin{center}\begin{minipage}{.8\hsize}%
         \vskip .01\vsize \hskip -.1\hsize \global\advance\func@count by1%
         {\bfseries\itshape\large Function \thechapter.\the\func@count\ : %
-        {\cfunc@name \cfuncname()}}\hfill
-        \vskip .8ex
+        {\cfuncname()}}\hfill
+        \vskip 2ex
         \halign to\hsize\bgroup\quad##\hfil &\hfil\vrule\hfil##\quad\cr
         \noalign{\hrule}
-        \strut{\bf Proto:\quad\cfunc@type\cfuncret\ }%
+        \strut{\bf Proto:\quad\cfunc@type\ifdefined\cfuncret\cfuncret\else%
+        Omission\fi\ }%
         {\cfunc@name\cfuncname( }%
-        {\cfunc@type\cfuncargu}%
+        {\cfunc@type\ifdefined\cfuncargu\cfuncargu\else Omission\fi}%
         {\cfunc@name\ )} &
-        {\cfunc@header<\cfuncheader>}\cr
+        {\cfunc@header\ifdefined\cfuncheader\cfuncheader\else Omission\fi}\cr
         \noalign{\hrule\vskip.5em}
         \multispan2\box\cfunc@desc@cont\cr
         \ifvoid\usa@ge\noalign{\vskip.5em\hrule}\else
@@ -79,13 +81,12 @@
     \egroup\end{minipage}\end{center}%
     \vskip .01\vsize
 }
-\fi
 %}}}
 
 %{{{ env : descript a tex/latex macro or enviroment
 \definecolor{tex@macro@color}{rgb}{.1, .6, .5}
 \definecolor{tex@package@color}{rgb}{.5, .1, .5}
-\definecolor{tex@argus@color}{rgb}{.3, .2, .8}
+\definecolor{tex@argu@color}{rgb}{.3, .2, .8}
 \newenvironment{texm}[1]
 %before
 {}
@@ -93,3 +94,54 @@
 {}
 
 %}}}
+
+%{{{ env : using this envrionment to descript a lisp function
+\definecolor{lisp@func@color}{rgb}{.1, .6, .5}
+\definecolor{lisp@argu@color}{rgb}{.5, .1, .5}
+\definecolor{lisp@ret@color}{rgb}{.3, .2, .8}
+\definecolor{lisp@desc@color}{rgb}{0.1, 0.1, 0.2}
+\def\lisp@func@name{\color{lisp@func@color}\tt}
+\def\lisp@func@argu{\color{lisp@argu@color}\it}
+\def\lisp@func@ret{\color{lisp@ret@color}\it}
+\def\lisp@desc{\color{lisp@desc@color}\em}
+\newcount\lisp@func@count \lisp@func@count=0
+\newenvironment{lispfunc}[1]
+%before
+{
+    \index{#1}\label{#1}%
+    \def\lispfuncname{{\lisp@func@name #1}}%
+    \newcommand{\argu}[1]{\global\def\lispargu{{\lisp@func@argu ##1}}}%
+    \newcommand{\ret}[1]{\global\def\lispret{{\lisp@func@ret ##1}}}%
+    \newbox\usa@ge 
+    \newenvironment{usage}[1][]{\global\setbox\usa@ge=\hbox to.8\hsize\bgroup\rm%
+    \begin{minipage}{.8\hsize}}{\end{minipage}\egroup}
+    \newbox\lisp@func@desc@cont \setbox\lisp@func@desc@cont=\hbox to.8\hsize%
+    \bgroup\hsize=.8\hsize\vbox\bgroup
+}
+%after
+{
+    \egroup\egroup\begin{center}\begin{minipage}{.8\hsize}%
+        \vskip .01\vsize \hskip -.1\hsize \global\advance\lisp@func@count by1%
+        {\bfseries\itshape\large Function \thechapter.\the\lisp@func@count\ : %
+        {\lispfuncname}}\hfill
+        \vskip 2ex
+        \halign to\hsize\bgroup\quad##\hfil\quad\cr
+        \noalign{\hrule}
+        \strut{\bf Proto:\quad({\lispfuncname\ }%
+            {\lisp@func@argu\ifdefined\lispargu\lispargu\else%
+            Omission\fi\ })\quad$\longrightarrow\quad$%
+        {\lisp@func@ret\ifdefined\lispret\lispret\else Omission\fi}}\cr
+        \noalign{\hrule\vskip.5em}
+        \omit\box\lisp@func@desc@cont\cr
+        \ifvoid\usa@ge\noalign{\vskip.5em\hrule}\else
+        \noalign{\vskip.5em \hrule\vskip.5em}
+        \bf Usage:\cr
+        \noalign{\vskip 2ex}
+        \omit\hfill\box\usa@ge\hfill\cr
+        \noalign{\hrule}\fi
+    \egroup\end{minipage}\end{center}%
+    \vskip .01\vsize
+}
+%}}}
+
+\fi

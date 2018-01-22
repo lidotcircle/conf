@@ -1,3 +1,6 @@
+\ifdefined\texrc@mathcmd\else
+\def\texrc@mathcmd{LOADED}
+
 %% macro for math formula
 
 % 行向量
@@ -21,3 +24,5 @@
         {#1}_{n}\cr
     \end{pmatrix}%
 }
+
+\fi

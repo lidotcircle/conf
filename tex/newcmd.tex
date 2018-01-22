@@ -1,3 +1,6 @@
+\ifdefined\texrc@newcmd\else
+\def\texrc@newcmd{LOADED}
+
 %% Some \def and \newcommand macro
 
 \long\def\uphrule{\newskip\ruledist \ruledist=2pt%
@@ -10,3 +13,5 @@
 \ruledist=.05em\advance\ruleneg by-\ruledist%
 \vbox{\hbox to\hsize{\vrule width\hsize height0.55em depth-0.5em}%
 \vskip-\ruleneg\hbox to\hsize{\vrule width\hsize height0.6em depth-0.5em}}}
+
+\fi

@@ -1,3 +1,6 @@
+\ifdefined\texrc@package\else
+\def\texrc@package{LOADED}
+
 % chinese environment
 \usepackage[UTF8]{ctex}
 
@@ -26,7 +29,9 @@
 \usepackage{marginnote}
 
 % listings macro for code
+\ifdefined\no@need@listings\else
 \usepackage{listings}
+\fi
 
 % graphicx
 \usepackage{graphicx}
@@ -72,3 +77,5 @@
 % amsfonts
 \usepackage{amsfonts}
 %}}} end math
+
+\fi
