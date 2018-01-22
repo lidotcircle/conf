@@ -7,15 +7,89 @@
 %}}} end env
 
 %{{{ env : better environment to descript factor below equations.
+%% macro for a short desc line
 \long\def\desc@line{{\hbox to3em{%
 \hskip.25em\vrule width2.25em height.35em depth-.28em\hskip.5em}}}
-% Defining a count and and macro for alignment is essential.
-\newcount\factorcount \long\def\cc@ccr{\cr}
-\newenvironment{descff}{\vskip1.5em\global\factorcount=1 \baselineskip=.5em%
+\newenvironment{descff}
+% before
+{% initial work
+\long\def\cc@ccr{\cr\noalign{\vskip.6em}}\newcount\factorcount \factorcount=1 \parindent=0pt%
+% skip some space at the beginning.
+\vskip1.5em%
+% new command in this environment : \factor
 \newcommand{\factor}[1]{\ifnum\factorcount>1 \hfill$\square$\fi%
 \egroup\egroup\ifnum\factorcount>1 \cc@ccr\fi\global\advance\factorcount by1%
-\medskip{\bf ##1} & \desc@line\hbox\bgroup\hsize=.7\hsize\vtop\bgroup\tt}%
-\parindent=0pt\hskip.1\hsize\hbox to.9\hsize\bgroup\vbox\bgroup\begin{minipage}{.85\hsize}%
+{\bf ##1} & \desc@line\hbox\bgroup\hsize=.7\hsize\vtop\bgroup\tt\baselineskip=.6em}%
+% main part
+\hskip.1\hsize\hbox to.9\hsize\bgroup\vbox\bgroup\begin{minipage}{.85\hsize}%
 \halign\bgroup\hfil## & ##\cr%
-\bgroup\bgroup}{\hfill$\square$\egroup\egroup\cr\egroup\end{minipage}\egroup\egroup\vskip1.5em}
+\bgroup\bgroup}%
+% after
+{\hfill$\square$\egroup\egroup\cr\egroup\end{minipage}\egroup\egroup\vskip1.5em}
+%}}}
+
+%{{{ env : for commenting a c languge function
+\ifdefined\cfunc@env\else
+\def\cfunc@env{a}
+\definecolor{color@cfunc@type}{rgb}{0.1, 0.2, 0.8}
+\definecolor{color@cfunc@name}{rgb}{0.1, 0.2, 0.1}
+\definecolor{color@cfunc@header}{rgb}{0.2, 0.7, 0.2}
+\definecolor{color@cfunc@desc}{rgb}{0.1, 0.1, 0.2}
+\def\cfunc@type{\color{color@cfunc@type}\tt}
+\def\cfunc@name{\color{color@cfunc@name}\bf}
+\def\cfunc@header{\color{color@cfunc@header}\tt}
+\def\cfunc@desc{\color{color@cfunc@desc}\it}
+\newcount\func@count
+
+\newenvironment{cfunc}[1]%
+% before
+{%
+    \index{#1()}\label{#1}%
+    \def\cfuncname{#1}%
+    \newcommand{\header}[1]{\global\def\cfuncheader{##1}}%
+    \newcommand{\argu}[1]{\global\def\cfuncargu{##1}}%
+    \newcommand{\ret}[1]{\global\def\cfuncret{##1}}%
+    \newbox\usa@ge 
+    \newenvironment{usage}[1][]{\global\setbox\usa@ge=\hbox to.8\hsize\bgroup%
+    \begin{minipage}{.8\hsize}}{\end{minipage}\egroup}
+    \newbox\cfunc@desc@cont \setbox\cfunc@desc@cont=\hbox to.8\hsize\bgroup\hsize=.8\hsize\vbox\bgroup
+}%
+%after
+{
+    \egroup\egroup\begin{center}\begin{minipage}{.8\hsize}%
+        \vskip .01\vsize \hskip -.1\hsize \global\advance\func@count by1%
+        {\bfseries\itshape\large Function \thechapter.\the\func@count\ : %
+        {\cfunc@name \cfuncname()}}\hfill
+        \vskip .8ex
+        \halign to\hsize\bgroup\quad##\hfil &\hfil\vrule\hfil##\quad\cr
+        \noalign{\hrule}
+        \strut{\bf Proto:\quad\cfunc@type\cfuncret\ }%
+        {\cfunc@name\cfuncname( }%
+        {\cfunc@type\cfuncargu}%
+        {\cfunc@name\ )} &
+        {\cfunc@header<\cfuncheader>}\cr
+        \noalign{\hrule\vskip.5em}
+        \multispan2\box\cfunc@desc@cont\cr
+        \ifvoid\usa@ge\noalign{\vskip.5em\hrule}\else
+        \noalign{\vskip.5em \hrule\vskip.5em}
+        \multispan2{\bf\quad Usage:}\cr
+        \noalign{\vskip 2ex}
+        \multispan2\hfill\box\usa@ge\hfill\cr
+        \noalign{\hrule}\fi
+    \egroup\end{minipage}\end{center}%
+    \vskip .01\vsize
+}
+\fi
+%}}}
+
+%{{{ env : descript a tex/latex macro or enviroment
+\definecolor{tex@macro@color}{rgb}{.1, .6, .5}
+\definecolor{tex@package@color}{rgb}{.5, .1, .5}
+\definecolor{tex@argus@color}{rgb}{.3, .2, .8}
+\newenvironment{texm}[1]
+%before
+{}
+%after
+{}
+
 %}}}

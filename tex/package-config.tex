@@ -132,6 +132,13 @@
         frame=trBL, frameround=fttt,%
         backgroundcolor=\color{clangcodebg}%
 }}{}
+
+\lstnewenvironment{sccode}[1][]{\lstset{language={MYCPP},%
+label=#1,%
+showtabs=false, showspaces=false, showstringspaces=false, tabsize=4,%
+frame=trbl, frameround=tttt, %
+backgroundcolor=\color{white}
+}}{}
 %}}} End clangcode
 
 %% Define {listings:Language:MYTEX} and environment texcode[label]
