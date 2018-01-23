@@ -2,4 +2,85 @@
 \ifdefined\texrc@package@config@listings@lisp\else
 \def\texrc@package@config@listings@lisp{LOADED}
 
+%{{{ New listings language: MYLISP => for lisp
+
+%% Define Highlight Colors
+\definecolor{lisp@string}{rgb}{0.4, 0.7, 0.2}
+\definecolor{lisp@key}{rgb}{0.1, 0.3, 0.8}
+\definecolor{lisp@var}{rgb}{0.9, 0.2, 0.2}
+\definecolor{lisp@func}{rgb}{0.7, 0.8, 0.2}
+\definecolor{lisp@comm}{rgb}{0.3, 0.5, 0.6}
+\lstdefinelanguage{MYlisp}{%
+    sensitive=true,% case sensitive
+    basicstyle=\ttfamily,%
+    %{{{ keywords
+    keywordsprefix=(,%
+    morekeywords=[2]{
+        :abort, :from-end, :overwrite, :adjustable, :gensym,
+        :predicate, :append, :host, :preserve-whitespace, :array,
+        :if-does-not-exist, :pretty, :base, :if-exists, 
+        :print, :case, :include, :print-function, :circle,
+        :index, :probe, :conc-name, :inherited, :radix,
+        :constructor, :initial-contents, :read-only, :copier,
+        :nitial-element, :rehash-size, :count, :initial-offset,
+        :rehash-threshold, :create, :initial-value, :rename,
+        :efault, :input, :rename-and-delete, :defaults, 
+        :internal, :size, :device, :io, :start, 
+        :direction, :junk-allowed, :start1, :directory, :key,
+        :start2, :displaced-index-offset, :length, :stream, 
+        :displaced-to, :level, :supersede, :element-type, 
+        :name, :test, :end, :named, :test-not, :end1,
+        :new-version, :type, :end2, :nicknames, :use, :error,
+        :output, :verbose, :escape, :output-file, :version, :external,
+        :documentation, :shadowing-import-from, :modern, :export, :case-sensitive,
+        :case-inverted, :shadow, :import-from, :intern, \&allow-other-keys,
+        \&aux, \&body, \&environment, \&key, \&optional, \&rest, \&whole,
+        :fill-pointer, :upcase, :downcase, :preserve, :invert, :load-toplevel,
+        :compile-toplevel, :execute, :while, :until, :for, :do,
+        :if, :then, :else, :when, :unless, :in, :across,
+        :finally, :collect, :nconc, :maximize, :minimize, :sum, :and,
+        :with, :initially, :append, :into, :count, :end, :repeat,
+        :always, :never, :thereis, :from, :to, :upto, :downto,
+        :below, :above, :by, :on, :being, :each, :the,
+        :hash-key, :hash-keys, :hash-value, :hash-values,
+        :using, :of-type, :upfrom, :downfrom, :arguments, :return-type,
+        :library, :full, :malloc-free, :none, :alloca, :in,
+        :out, :in-out, :stdc-stdcall, :stdc, :c,
+        :language, :built-in, :typedef, :external, :fini, :init-once,
+    :init-always},
+    morekeywords=[3]{*applyhook*, *load-pathname*, *print-pprint-dispatch*, 
+        *break-on-signals*, *load-print*, *print-pprint-dispatch*, 
+        *break-on-signals*, *load-truename*, *print-pretty*, 
+        *break-on-warnings*, *load-verbose*, *print-radix*, 
+        *compile-file-pathname*, *macroexpand-hook*, *print-readably*, 
+        *compile-file-pathname*, *modules*, *print-right-margin*, 
+        *compile-file-truename*, *package*, *print-right-margin*, 
+        *compile-file-truename*, *print-array*, *query-io*, 
+        *compile-print*, *print-base*, *random-state*, 
+        *compile-verbose*, *print-case*, *read-base*, 
+        *compile-verbose*, *print-circle*, *read-default-float-format*, 
+        *debug-io*, *print-escape*, *read-eval*, 
+        *debugger-hook*, *print-gensym*, *read-suppress*, 
+        *default-pathname-defaults*, *print-length*, *readtable*, 
+        *error-output*, *print-level*, *standard-input*, 
+        *evalhook*, *print-lines*, *standard-output*, 
+        *features*, *print-miser-width*, *terminal-io*, 
+    *gensym-counter*, *print-miser-width*, *trace-output*},
+    keywordstyle=\bfseries\color{lisp@func},%
+    keywordstyle=[2]{\bfseries\color{lisp@key}},%
+    keywordstyle=[3]{\bfseries\color{lisp@var}},%
+    %}}}
+    %{{{ comments
+    comment=[l]{\;}, % line comments
+    commentstyle=\it\small\color{lisp@comm},%
+    morecomment=[s]{\#|}{|\#}, % block comments
+    commentstyle=\it\small\color{lisp@comm},%
+    %}}}
+    %{{{ String
+    morestring=[b]",%
+    stringstyle=\color{lisp@string}%
+    %}}} End String
+}
+%}}}
+
 \fi
