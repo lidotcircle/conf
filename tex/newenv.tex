@@ -35,9 +35,9 @@
 \definecolor{color@cfunc@name}{rgb}{0.1, 0.2, 0.1}
 \definecolor{color@cfunc@header}{rgb}{0.2, 0.7, 0.2}
 \definecolor{color@cfunc@desc}{rgb}{0.1, 0.1, 0.2}
-\def\cfunc@type{\color{color@cfunc@type}\tt}
-\def\cfunc@name{\color{color@cfunc@name}\bf}
-\def\cfunc@header{\color{color@cfunc@header}\tt}
+\def\cfunc@type#1{{\color{color@cfunc@type}\tt\small\lstinline!#1!}}
+\def\cfunc@name#1{{\color{color@cfunc@name}\bf\lstinline!#1!}}
+\def\cfunc@header#1{{\color{color@cfunc@header}\tt<\lstinline!#1!>}}
 \def\cfunc@desc{\color{color@cfunc@desc}\em}
 \newcount\func@count
 
@@ -45,13 +45,16 @@
 % before
 {%
     \index{#1()}\label{#1}%
-    \def\cfuncname{{\cfunc@name #1}}%
-    \newcommand{\header}[1]{\global\def\cfuncheader{{\cfunc@header <##1>}}}%
-    \newcommand{\argu}[1]{\global\def\cfuncargu{{\cfunc@type ##1}}}%
-    \newcommand{\ret}[1]{\global\def\cfuncret{{\cfunc@type ##1}}}%
+    \def\cfuncname{\cfunc@name{#1}}%
+    \newcommand{\header}[1]{\global\def\cfuncheader{\cfunc@header{##1}}}%
+    \newcommand{\argu}[1]{\global\def\cfuncargu{\cfunc@type{##1}}}%
+    \newcommand{\ret}[1]{\global\def\cfuncret{\cfunc@type{##1}}}%
+    \def\omission{\sl\cfunc@type{omission}}
     \newbox\usa@ge 
     \newenvironment{usage}[1][]{\bgroup\rm\global\setbox\usa@ge=\hbox to.8\hsize\bgroup%
-    \begin{minipage}{.8\hsize}}{\end{minipage}\egroup\egroup}
+        \begin{minipage}{.8\hsize}
+        \newcommand{\comout}{\vskip -.8ex{\bf\hskip -1.5em output:\hfill\newline}\vskip -2.8ex}}
+    {\end{minipage}\egroup\egroup}
     \newbox\cfunc@desc@cont \setbox\cfunc@desc@cont=\hbox to.8\hsize\bgroup\hsize=.8\hsize\vbox\bgroup%
     \cfunc@desc 
 }%
@@ -60,16 +63,16 @@
     \egroup\egroup\begin{center}\begin{minipage}{.8\hsize}%
         \vskip .01\vsize \hskip -.1\hsize \global\advance\func@count by1%
         {\bfseries\itshape\large Function \thechapter.\the\func@count\ : %
-        {\cfuncname()}}\hfill
+        {\tt\cfuncname()}}\hfill
         \vskip 2ex
         \halign to\hsize\bgroup\quad##\hfil &\hfil\vrule\hfil##\quad\cr
         \noalign{\hrule}
-        \strut{\bf Proto:\quad\cfunc@type\ifdefined\cfuncret\cfuncret\else%
-        Omission\fi\ }%
-        {\cfunc@name\cfuncname( }%
-        {\cfunc@type\ifdefined\cfuncargu\cfuncargu\else Omission\fi}%
-        {\cfunc@name\ )} &
-        {\cfunc@header\ifdefined\cfuncheader\cfuncheader\else Omission\fi}\cr
+        \strut{\hskip .5em\ifdefined\cfuncret\cfuncret\else%
+        \omission\fi\ }%
+        {\cfuncname\cfunc@name{(} }%
+        {\ifdefined\cfuncargu\cfuncargu\else\omission\fi}%
+        {\cfunc@name{ )}} &
+        {\ifdefined\cfuncheader\cfuncheader\else\omission\fi}\cr
         \noalign{\hrule\vskip.5em}
         \multispan2\box\cfunc@desc@cont\cr
         \ifvoid\usa@ge\noalign{\vskip.5em\hrule}\else

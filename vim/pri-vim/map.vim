@@ -78,3 +78,13 @@ vnoremap <c-c> "+y
 nnoremap <c-v> "+p
 vnoremap <c-x> "+c
 " }}}
+
+" ReadLine in insert mode {{{
+inoremap <silent><c-f> <right>
+inoremap <silent><c-b> <left>
+inoremap <silent><c-n> <down>
+inoremap <silent><c-p> <up>
+inoremap <silent><c-d> <backspace>
+inoremap <silent><a-f> <esc><right>wi
+inoremap <silent><a-b> <esc><right>bi
+"}}}
