@@ -4,4 +4,7 @@
 
 #{ PATH
 export PATH=${PATH}:./:~/bin
+if [ -n `which uname` ] && [ -n `uname -a | grep -o "Android\|genymotion"` ]; then
+    export PATH=${PATH}:~/bin/android
+fi
 #}

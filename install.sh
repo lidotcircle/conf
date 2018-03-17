@@ -37,7 +37,8 @@ File_list=("./vimrc|${HOME}/.vimrc" \
     "./vim/pri-vim|${HOME}/.vim/pri-vim" \
     "./vim/pri-plugins|${HOME}/.vim/pri-plugins" \
     "./bash|${HOME}/.bash" \
-    "./tex|${HOME}/.tex")
+    "./tex|${HOME}/.tex" \
+    "./bin|${HOME}/bin")
 #}
 ## WARNING and ERROR functions
 #{ function : __warning()
@@ -50,7 +51,7 @@ __warning()
 #{ function : __error()
 __error()
 {
-    error "**ERROR** : < ${1} >" && \
+    echo "**ERROR** : < ${1} >" && \
         error_count=$[$error_count + 1] && return 0
 }
 #}
@@ -98,6 +99,8 @@ install_plug()
 #{ Main proccess
 while (true); do
     echo "**REMOVE** previous backup." && rm -rf ./backup && mkdir ./backup
+    [ -d $HOME/.vim ] || mkdir $HOME/.vim
+    [ -d $PLUG_DEST ] || mkdir $PLUG_DEST
     echo "***BEGIN** install files..."
     for __file in ${File_list[@]}; do
         install_fil ${__file%%\|*} ${__file##*\|}

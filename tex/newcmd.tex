@@ -14,4 +14,13 @@
 \vbox{\hbox to\hsize{\vrule width\hsize height0.55em depth-0.5em}%
 \vskip-\ruleneg\hbox to\hsize{\vrule width\hsize height0.6em depth-0.5em}}}
 
+% generate a box that width equal to zero, but height and
+% depth is adjust by para2,3
+\def\adbox#1#2#3{\newdimen\d@p \d@p=\dp#1%
+    \newdimen\h@t \h@t=\ht#1%
+    \advance\d@p by #3%
+    \advance\h@t by #2%
+    \hbox{\vrule width0pt depth\d@p height\h@t}
+}
+
 \fi

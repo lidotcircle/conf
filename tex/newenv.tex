@@ -30,6 +30,37 @@
 {\hfill$\square$\egroup\egroup\cr\egroup\end{minipage}\egroup\egroup\vskip1.5em}
 %}}}
 
+%{{{ env : common version for descript one thing
+\newenvironment{comdes}[1]
+% before
+{%
+    \index{#1}%
+    \newbox\des@titl
+    \setbox\des@titl=\hbox to.75\hsize\bgroup\Large\tt\color{google@yellow}\quad #1\egroup
+    \newbox\exam@ple%
+    \newenvironment{example}[1][]{\bgroup\rm\global\setbox\exam@ple=\hbox to\hsize\bgroup%
+    \begin{minipage}{\hsize}\vskip .5ex{\bf\large\noindent\color{google@red}Example:}\newline%
+    \color{google@yellow}\noindent\quad}%
+    {\vskip .5ex\end{minipage}\egroup\egroup}%
+    \newbox\des@cont \setbox\des@cont=\hbox to.7\hsize\bgroup\hsize=.7\hsize%
+\vbox\bgroup\vskip .5ex{\bf\large\noindent\color{google@red}Description:}\newline%
+\color{google@blue}\noindent\quad}%
+% after
+{%
+    \vskip .5ex\egroup\egroup\begin{center}\begin{minipage}{.8\hsize}%
+        \colorbox{google@blue}{\vbox{\halign to\hsize\bgroup\quad##\quad\cr
+        \noalign{\hrule}
+        \omit\hskip .02\hsize\hss\colorbox{google@red}{\adbox{\des@titl}{1ex}{1ex}\box\des@titl}\hss\cr
+        \noalign{\hrule}
+        \omit\hskip .03\hsize\hss\colorbox{google@yellow}{\adbox{\des@cont}{1ex}{1ex}\box\des@cont}\hss\cr
+        \noalign{\hrule}
+        \ifvoid\exam@ple\else
+        \omit\hskip .03\hsize\hss\colorbox{google@green}{\adbox{\exam@ple}{1ex}{1ex}\box\exam@ple}\hss\cr
+        \noalign{\hrule}
+\fi\egroup}}\end{minipage}\end{center}
+}
+%}}}
+
 %{{{ env : for commenting a c languge function
 \definecolor{color@cfunc@type}{rgb}{0.1, 0.2, 0.8}
 \definecolor{color@cfunc@name}{rgb}{0.1, 0.2, 0.1}
@@ -81,8 +112,8 @@
         \noalign{\vskip 2ex}
         \multispan2\hfill\box\usa@ge\hfill\cr
         \noalign{\hrule}\fi
-    \egroup\end{minipage}\end{center}%
-    \vskip .01\vsize
+\egroup\end{minipage}\end{center}%
+\vskip .01\vsize
 }
 %}}}
 
