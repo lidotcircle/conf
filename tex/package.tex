@@ -1,28 +1,47 @@
 \ifdefined\texrc@package\else
 \def\texrc@package{LOADED}
 
-% chinese environment
+% chinese environment. remember writing code with utf8, which can display
+% chinese correctly, otherwise it will wrong.
 \usepackage[UTF8]{ctex}
 
-% hyperref package
+% hyperref package, which provide hyperref in documents.
+% It provide command \pdfbookmark, and the usage of this command is:
+% <\pdfbookmark[level]{bookmark text}{anchor name}>
 \usepackage{hyperref}
 
 % keyval package
+% This package implements a system of defining and using sets of parameters,
+% which are set using the syntax <key>=<value>.
+% For each keyword in such a set, there exists a function which is called whenever
+% the parameter appears in a parameter list. For instance if the set dpc is to have
+% the keyword scale then I would define.
 \usepackage{keyval}
 
-% pdf bookmark
+% bookmark package, which is used to create bookmark similar to 
+% the function provided by {hyperref} package.
+% usage is:
+% \bookmarksetup{<options>}
+% \bookmarksetupnext{<options>}, which only affect next \bookmark command
+% \bookmark{<options>}{title}
 \usepackage{bookmark}
 
 % pdf page
 \usepackage{pdfpages}
 
-% support color
+% provide color support
 \usepackage{xcolor}
 
 % index
 \usepackage{makeidx}
 
-% geometry macro
+% geometry package
+% This package provides a flexible and easy interface to page dimensions.
+% You can change the page layout with intuitive parameters. 
+% For instance, if you want to set a margin to 2cm from each edge of
+% the paper, you can type just \usepackage[margin=2cm]{geometry}. 
+% The page layout can be changed in the middle of the document 
+% with \newgeometry command.
 \usepackage{geometry}
 
 % margin note package
@@ -36,10 +55,20 @@
 % graphicx
 \usepackage{graphicx}
 
-% comment
+% comment, provide \begin{comment}...\end{comment} environment
 \usepackage{comment}
 
-% specify the title format
+% specify the title format, commands:
+% 1, \titlelabel{...}, \thetitle will represent such 1.2, 1.3 and so on.
+% 2, \titleformat*{command}{format} will change format of next title,
+% here <command> will be <\part>, <\chapter>, <\section>, <\subsection>,
+% <\subsubsection>, <\paragragh>, <\subparagragh>.
+% 3, \titleformat{command}[shape]{format}{label}{sep}{befor-code}[after-code], 
+% here <command> is same with above. 
+% 4, \titleclass{name}{class}[super-level-class], \titleclass{\subchapter}{straight}[\chapter]
+% also, need define new macro to complement that. \newcounter{subchapter} and 
+% \renewcommand{\thesubchapter}{\Alph{subchapter}
+% 5, \titlerule[<height>], \titleline[<align>lcr]{horizonal material}, \tilterule*[<height>]{text}
 \usepackage{titlesec}
 
 %{{{ tabular class

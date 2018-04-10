@@ -1,13 +1,13 @@
 \ifdefined\texrc@newcmd\else
 \def\texrc@newcmd{LOADED}
 
-%% Some \def and \newcommand macro
+%% Some \def and \newcommand macros
 
+%% It maybe used to a title.
 \long\def\uphrule{\newskip\ruledist \ruledist=2pt%
 \newskip\ruleneg \ruleneg=\baselineskip \advance\ruleneg by-\ruledist%
 \vbox{\hbox to\hsize{\vrule width\hsize height0.6em depth-0.5em}%
 \vskip-\ruleneg\hbox to\hsize{\vrule width\hsize height0.55em depth-0.5em}}}
-
 \long\def\downhrule{\newskip\ruledist \ruledist=2pt%
 \newskip\ruleneg \ruleneg=\baselineskip \advance\ruleneg by-\ruledist%
 \ruledist=.05em\advance\ruleneg by-\ruledist%
@@ -15,7 +15,7 @@
 \vskip-\ruleneg\hbox to\hsize{\vrule width\hsize height0.6em depth-0.5em}}}
 
 % generate a box that width equal to zero, but height and
-% depth is adjust by para2,3
+% depth can be adjusted by para2,3
 \def\adbox#1#2#3{\newdimen\d@p \d@p=\dp#1%
     \newdimen\h@t \h@t=\ht#1%
     \advance\d@p by #3%

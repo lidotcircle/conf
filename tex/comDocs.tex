@@ -1,0 +1,54 @@
+%{{{ Defining some document type
+
+% Report
+\long\def\myrep{
+\documentclass[oneside, a4paper]{report}
+\input{\string~/texrc.tex}
+\geometry{tmargin=1.5cm, rmargin=2cm, bmargin=2cm, lmargin=1.5cm}
+\begin{document}
+\pdfbookmark[0]{TOC}{toc}
+\setcounter{tocdepth}{2}
+\tableofcontents
+\newcommand{\finishdoc}{\end{document}}
+}
+
+% Article
+\long\def\myart{
+\documentclass[oneside, a4paper]{article}
+\input{\string~/texrc.tex}
+\geometry{tmargin=1.5cm, rmargin=2cm, bmargin=2cm, lmargin=1.5cm}
+\begin{document}
+\pdfbookmark[0]{TOC}{toc}
+\setcounter{tocdepth}{2}
+\tableofcontents
+\newcommand{\finishdoc}{\end{document}}
+}
+
+% Draft
+\long\def\mydrf{
+\documentclass[oneside, a4paper]{article}
+\input{\string~/texrc.tex}
+\geometry{tmargin=1.5cm, rmargin=2cm, bmargin=2cm, lmargin=1.5cm}
+\begin{document}
+\pdfbookmark[0]{TOC}{toc}
+\newcommand{\finishdoc}{\end{document}}
+}
+
+% Book
+\long\def\mybook{
+\documentclass[oneside, a4paper]{book}
+\input{\string~/texrc.tex}
+\geometry{tmargin=1.5cm, rmargin=2cm, bmargin=2cm, lmargin=1.5cm}
+\titleformat{\chapter}[display]{\bfseries\huge}%
+{\titlerule[2.5pt]\vskip.5ex{\it Chapter \thechapter}}{1ex}%
+{\begin{center}\color{purple}\relax}%
+[\end{center}\titlerule]
+\begin{document}
+\frontmatter
+\pdfbookmark[0]{TOC}{toc}
+\setcounter{tocdepth}{3}
+\tableofcontents
+\mainmatter
+\newcommand{\finishdoc}{\end{document}}
+}
+%}}}
