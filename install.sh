@@ -37,10 +37,10 @@ declare -a Plugin_list=("VundleVim/Vundle.vim" \
     "Lokaltog/vim-powerline")
 
 declare -A File_list=(["$PWD/vimrc"]="${HOME}/.vimrc" \
-    ["$PWD/bashrc"]="${HOME}/.bashrc" \
+    ["$PWD/bashrc_main"]="${HOME}/.bashrc_main" \
     ["$PWD/texrc.tex"]="${HOME}/texrc.tex")
 [ $android -eq 1 ] && \
-    File_list["$PWD/bin/exec_script/android/termux-sudo/sudo"]="${HOME}/bin/sudo"
+    File_list["$PWD/bin/exec_script/android/sudo"]="${HOME}/bin/sudo"
 
 declare -A Dirs_list_slink=(["$PWD/vim/colors"]="${HOME}/.vim/colors" \
     ["$PWD/vim/vim-conf"]="${HOME}/.vim/vim-conf" \
@@ -124,15 +124,35 @@ install_plug()
 }
 #}
 
+#{ function : make_trans()
+make_trans()
+{
+    [ -f ./otherRepo/translate-shell/build/trans ] && return 0
+    ([ ! -z $(which awk) ] || [ ! -z $(which gawk) ]) && return 1
+    pushd ./otherRepo/translate-shell && make
+    popd
+}
+#}
+#{ function : make_bash_it()
+make_bash_it()
+{
+    [ -f ./otherRepo/bash-it/install.sh ] || return 1
+    ./otherRepo/bash-it/install.sh --silent
+    return 0
+}
+#}
+
 # Main process
 #{ Main proccess
 # safely source this files
 [[ $0 =~ ^.*install\.sh$ ]] || return 0
 while (true); do
-    echo -e "$(green REMOVE\t) previous backup." && rm -rf ./backup && mkdir ./backup
+    echo -e "$(green REMOVE) previous backup." && rm -rf ./backup && mkdir ./backup
     [ -d $HOME/.vim ] || mkdir $HOME/.vim
     [ -d $PLUG_DEST ] || mkdir $PLUG_DEST
-    echo -e "$(green BEGIN\t) install files..."
+    echo -e "$(green BEGIN) install files..."
+    # try to make trans from source
+    make_trans >> /dev/null || __warning "build trans failure"
     for __file in ${!File_list[@]}; do
         install_fil ${__file} ${File_list[$__file]}
     done
@@ -142,16 +162,19 @@ while (true); do
     for __dir_link in ${!Dirs_Files_slink_list[@]}; do
        dir_files_link $__dir_link ${Dirs_Files_slink_list[$__dir_link]} 
    done
-    echo -e "$(green FINISH\t) install files!"
+    echo -e "$(green FINISH) install files!"
+    
+    echo -e "$(green "Install") $(green "bash-it")"
+    make_bash_it >> /dev/null || __warning "Install bash-it failure."
+    echo "source \$HOME/.bashrc_main" >> $HOME/.bashrc
 
-    echo -e "$(green BEGIN\t) install vim plugins..."
+    echo -e "$(green BEGIN) install vim plugins..."
     for __plug in ${Plugin_list[@]}; do
         install_plug ${__plug}
     done
-    echo -e "$(green FINISH\t) install vim plugins!"
+    echo -e "$(green FINISH) install vim plugins!"
 
-    echo -e "$(green FINISH Install), total $(yellow ERROR) is $(red $error_count), 
-                                      total $(yellow WARNING) is $(red $error_count)"
+    echo -e "$(green FINISH Installation)"
     [ $error_count -eq 0 ] && exit $SUCCESS || exit $FAIL
 done
 #}

@@ -106,7 +106,9 @@ dir_files_link_depth()
     [ -d $1 ] || (__warn "Directory $(purple $1)> don't exist." && return 0)
     [ -d $2 ] || (mkdir -p $2 || (_warning "Directory $(purple $2) don't exist, and can't make it." \
         || return 1))
-    for files in $(find $1 -maxdepth $3 -type f); do
+    all_fl=$(find $1 -maxdepth $3 -type f)
+    all_fl+=$(find $1 -maxdepth $3 -type l)
+    for files in $all_fl; do
         if ([ -e "$2/${files##*/}" ] || [ -h "$2/${files##*/}" ]); then
             _warn "$(purple "$2/${files##*/}") already exsits, give up"
             continue
