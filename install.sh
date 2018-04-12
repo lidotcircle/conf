@@ -29,7 +29,7 @@ declare error_count=0
 declare warning_count=0
 #}
 #{ OS TYPE
-[ ! -z $(uname -a | grep "Android") ] && android=1 || android=0
+[[ -n $(uname -a | grep "Android") ]] && android=1 || android=0
 machine=$(uname -m)
 #}
 #{ Install list
