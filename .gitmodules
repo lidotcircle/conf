@@ -1,6 +1,9 @@
-[submodule "bin/exec_script/android/termux-sudo"]
-	path = bin/exec_script/android/termux-sudo
+[submodule "otherRepo/bash-it"]
+	path = otherRepo/bash-it
+	url = https://github.com/Bash-it/bash-it.git
+[submodule "otherRepo/translate-shell"]
+	path = otherRepo/translate-shell
+	url = https://github.com/soimort/translate-shell.git
+[submodule "otherRepo/termux-sudo"]
+	path = otherRepo/termux-sudo
 	url = https://github.com/st42/termux-sudo.git
-[submodule "submOthers/bash-it"]
-	path = submOthers/bash-it
-	url = https://github.com/Bash-it/bash-it
