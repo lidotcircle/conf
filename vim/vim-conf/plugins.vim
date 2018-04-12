@@ -36,8 +36,8 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'mattn/emmet-vim'
 
 " 7. YCM
-" 只在python支持加载YCM
-if has('python') || has('python3')
+" 只在python支持加载YCM, and YCM DON'T support Android Termux
+if has('python') || has('python3') && !(g:isandroid)
     Bundle 'Valloric/YouCompleteMe'
 endif
 
@@ -69,11 +69,15 @@ endif
 " 12. powershell syntax and indent
 Bundle 'PProvost/vim-ps1'
 
-" 13. bufexplore
-Bundle 'jlanzarotta/bufexplorer'
+" 13. minibufexpl instead of bufexplore
+" Bundle 'jlanzarotta/bufexplorer'
+Bundle 'fholgado/minibufexpl.vim'
 
 " 14. haskell-vim
 Bundle 'neovimhaskell/haskell-vim'
+
+" 15. jedi-vim
+Bundle 'davidhalter/jedi-vim'
 
 " }}}
 

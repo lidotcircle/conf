@@ -78,7 +78,9 @@ if has('gui_running')
         set guifont=Bitstream_Vera_Sans_Mono:h11
     endif
 else
-    set columns=120 lines=60
+    if !(g:isandroid)
+        set columns=120 lines=60
+    endif
 endif
 
 " }}}

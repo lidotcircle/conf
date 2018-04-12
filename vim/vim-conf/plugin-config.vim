@@ -105,3 +105,13 @@ augroup END
 let g:ps1_nofold_sig = 1
 let g:ps1_nofold_blocks = 1
 " }}}
+
+"{{{ Python-mode
+let g:pymode_rope = 0
+"}}}
+
+"{{{ minibufexpl
+nnoremap <leader>mbe :MBEOpen<cr>
+nnoremap <leader>mbc :MBEClose<cr>
+nnoremap <leader>mbt :MBEToggle<cr>
+"}}}
