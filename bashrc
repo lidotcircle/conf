@@ -4,7 +4,8 @@
 ## log file
 ERROR_LOG=$HOME/.bashrc_error_log
 ## file list
-soc_lis=("$HOME/.bash/alias" \
+soc_lis=("$HOME/.bash/functions" \
+    "$HOME/.bash/alias" \
     "$HOME/.bash/env" \
     "$HOME/.extra_bashrc")
 

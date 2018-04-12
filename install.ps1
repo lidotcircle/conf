@@ -18,12 +18,12 @@ $BACKUP = "./backup"
 $Install_dict = @{"./vimrc"="$HOME/.vimrc";
 "./Profile.ps1"="$profile";
 "./texrc.tex"="$HOME/texrc.tex";
-"./acadrc.lsp"="$HOME/acadrc.lsp";
-"./vsvimrc"="$HOME/.vsvimrc";
-"./ycm_extra_conf.py"="$HOME/.ycm_extra_conf.py";
+"./Misc/acadrc.lsp"="$HOME/acadrc.lsp";
+"./Misc/vsvimrc"="$HOME/.vsvimrc";
+"./Misc/ycm_extra_conf.py"="$HOME/.ycm_extra_conf.py";
 "./vim/colors"="$HOME/.vim/colors";
-"./vim/pri-plugins"="$HOME/.vim/pri-plugins";
-"./vim/pri-vim"="$HOME/.vim/pri-vim";
+"./vim/self-plugins"="$HOME/.vim/self-plugins";
+"./vim/vim-conf"="$HOME/.vim/vim-conf";
 "./tex"="$HOME/.tex"
 };
 

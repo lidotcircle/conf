@@ -1,0 +1,120 @@
+" Info {{{
+
+" Description: Here is cVimrc file.
+"              It is config file for cvimrc plugin in google chrome.
+
+" FileName: cvimrc
+
+" Author: Lebesgauu
+
+" }}} End Info
+
+" {{{ Common part
+
+let mapleader = ","
+
+" map <..> to <:>
+map .. :
+
+" 退出<insert>&<visual>mode, 使用<leader>e
+imap <leader>e <esc>
+map <leader>e <esc>
+
+" 退出Tab
+map <leader>q :quit<cr>
+map <leader>qa :qall<cr>
+
+" bookmark, history搜索
+map <leader>b :bookmark
+map <leader>h :history
+
+" }}} End Common part
+
+" {{{ Switch Tab, Scroll in page
+
+" 解除<s>, <w>的map
+unmap s
+unmap w
+map s scrollPageDown
+map w scrollPageUp
+
+" 解除map
+"" <d><e><u>上下翻页, 只使用<s><w>
+unmap d
+unmap e
+unmap u
+"" <J><K><E><R>Tab页面切换, 只使用<gt><gT>
+unmap J
+unmap K
+unmap R
+unmap E
+"" <H><S><L><D>向前向后, 重新映射为<gB><gb>
+unmap H
+unmap S
+unmap L
+unmap D
+"" <x>, <leader>q
+unmap x
+
+"" |================================|
+"" |   shortcut   |   description   |
+"" |========+=====+=================|
+"" |       X      |     last Tab    |
+"" |--------------+-----------------|
+"" |       g0     |   最前的Tab页   |
+"" |--------------+-----------------|
+"" |       g$     |   最后的Tab页   |
+"" |--------------+-----------------|
+"" |       t      |     :tabnew     |
+"" |--------------+-----------------|
+"" |       T      |    :tabnew @%   |
+"" |--------------+-----------------|
+"" |       <      |   向前移动Tab   |
+"" |--------------+-----------------|
+"" |       >      |   向后移动Tab   |
+"" |--------------+-----------------|
+"" |       gp     |    pin当前Tab   |
+"" |================================|
+
+" 向前向后映射
+map gb goBack
+map gB goForward
+
+" }}} End Switch Tab, Scroll page
+
+" {{{ Text Box
+
+"" Defualt Shortcut
+"" |================================|
+"" |   ShortCut   |   Description   |
+"  |==============+=================|
+"" |    <c-i>     |     跳到行首    |
+"" |--------------+-----------------|
+"" |    <c-e>     |     跳到行尾    |
+"" |--------------+-----------------|
+"" |    <c-h>     |  向后一个word   |
+"" |--------------+-----------------|
+"" |    <c-l>     |  向前一个word   |
+"" |--------------+-----------------|
+"" |    <c-j>     |     向下一行    |
+"" |--------------+-----------------|
+"" |    <c-k>     |     向上一行    |
+"" |================================|
+
+" }}} End Text Box
+
+" {{{ QuickMark
+
+" |======================================|
+" |   ShortCut   |      Description      |
+" |==============+=======================|
+" |    M<mark>   |    设定页面为<mark>   |
+" |--------------+-----------------------|
+" |   go<mark>   |     跳转到<mark>处    |
+" |--------------+-----------------------|
+" |   gn<mark>   |   new Tab in <mark>   |
+" |--------------+-----------------------|
+" |   gw<mark>   |  new window in <mark> |
+" |=================================-====|
+
+" }}} End QuickMark

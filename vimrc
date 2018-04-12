@@ -1,67 +1,91 @@
-" OS {{{
+" FileName: .vimrc
+" FileType: vim
+" Description: First loaded file to config vim
 
+" Avoid to load this file cyclicly.
+if exists('g:vimrc_loaded')
+    finish
+endif
+let g:vimrc_loaded = 1
+
+" OS Type{{{
+
+"" Set some environment variables, for detemining current
+"" running environment
 let g:islinux = 0
 let g:iswindows = 0
+let g:isandroid = 0
 
 if (has("win32")||has("win64")||has("win95")||has("win16"))
     let g:iswindows = 1
 elseif (has('unix'))
     let g:islinux = 1
+    if !empty(system("uname -a | grep 'Android'"))
+        let g:isandroid = 1
+    endif
 endif
 
 " }}}
 
+" Functions for loading files {{{
+
+" FuncName: LoadDir
+function! s:LoadDir(_dir) "{{{
+    echo "Hello"
+endfunc "}}}
+
+" End loading functions }}}
+
 " Load config files {{{
 
-""设置个环境变量
-if(islinux)
-    let $MYRTP='.vim'
-else
-    if (filereadable(expand("~/.vim/bundle/Vundle.vim/README.md")))
-        set rtp+=~/.vim         "color需要
-        let $MYRTP = '.vim'
-    else
-        let $MYRTP = 'vimfiles'
-    endif
+"" Add '~/.vim/' to runtime path
+if (iswindows)
+    set rtp+=~/.vim
 endif
+
+"" Set loading path
+let $LOADPATH='~/.vim'
 
 """ before source main configure
-if filereadable(expand("~/$MYRTP/extra_pre.vim"))
-    source ~/$MYRTP/extra_pre.vim
+if filereadable(expand($LOADPATH."/extra_pre.vim"))
+    source $LOADPATH/extra_pre.vim
 endif
 
+" Main configure files {{{
 """ set.vim
-if filereadable(expand("~/$MYRTP/pri-vim/set.vim"))
-    source ~/$MYRTP/pri-vim/set.vim
+if filereadable(expand($LOADPATH."/vim-conf/set.vim"))
+    source $LOADPATH/vim-conf/set.vim
 endif
 """ map.vim
-if filereadable(expand("~/$MYRTP/pri-vim/map.vim"))
-    source ~/$MYRTP/pri-vim/map.vim
+if filereadable(expand($LOADPATH."/vim-conf/map.vim"))
+    source $LOADPATH/vim-conf/map.vim
 endif
 """ abbreviate.vim
-if filereadable(expand("~/s:MYRTP/pri-vim/abbreviate.vim"))
-    source ~/$MYRTP/pri-vim/abbreviate.vim
+if filereadable(expand($LOADPATH."/vim-conf/abbreviate.vim"))
+    source $LOADPATH/vim-conf/abbreviate.vim
 endif
 """ colors.vim
-if filereadable(expand("~/$MYRTP/pri-vim/colors.vim"))
-    source ~/$MYRTP/pri-vim/colors.vim
+if filereadable(expand($LOADPATH."/vim-conf/colors.vim"))
+    source $LOADPATH/vim-conf/colors.vim
 endif
 """ plugins.vim
-if filereadable(expand("~/$MYRTP/pri-vim/plugins.vim"))
-    source ~/$MYRTP/pri-vim/plugins.vim
+if filereadable(expand($LOADPATH."/vim-conf/plugins.vim"))
+    source $LOADPATH/vim-conf/plugins.vim
 endif
 """ plugin-config.vim
-if filereadable(expand("~/$MYRTP/pri-vim/plugin-config.vim"))
-    source ~/$MYRTP/pri-vim/plugin-config.vim
+if filereadable(expand($LOADPATH."/vim-conf/plugin-config.vim"))
+    source $LOADPATH/vim-conf/plugin-config.vim
 endif
 
 """ commands.vim
-if filereadable(expand("~/$MYRTP/pri-vim/commands.vim"))
-    source ~/$MYRTP/pri-vim/commands.vim
+if filereadable(expand($LOADPATH."/vim-conf/commands.vim"))
+    source $LOADPATH/vim-conf/commands.vim
 endif
+" End Main configure files}}}
 
 """ after source main configure
-if filereadable(expand("~/$MYRTP/extra_post.vim"))
-    source ~/$MYRTP/extra_post.vim
+if filereadable(expand($LOADPATH."/extra_post.vim"))
+    source $LOADPATH/extra_post.vim
 endif
-" }}} 
+
+" End Configure}}} 

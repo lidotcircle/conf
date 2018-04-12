@@ -2,7 +2,9 @@
 
 #{ Check the dependencies
 ## git
-[ -z $(which git) ] && echo "Need install git, exit." && return 1 || clear
+if [[ $0 =~ ^.*install\.sh$ ]]; then
+    [ -z $(which git) ] && echo "Need install git, exit." && return 1 || clear
+fi
 #}
 #{ Some variables
 ## Exit status
@@ -26,35 +28,50 @@ PLUG_DEST=${HOME}/.vim/bundle
 declare error_count=0
 declare warning_count=0
 #}
+#{ OS TYPE
+[ ! -z $(uname -a | grep "Android") ] && android=1 || android=0
+machine=$(uname -m)
+#}
 #{ Install list
-Plugin_list=("VundleVim/Vundle.vim" \
+declare -a Plugin_list=("VundleVim/Vundle.vim" \
     "Lokaltog/vim-powerline")
 
-File_list=("./vimrc|${HOME}/.vimrc" \
-    "./bashrc|${HOME}/.bashrc" \
-    "./texrc.tex|${HOME}/texrc.tex" \
-    "./vim/colors|${HOME}/.vim/colors" \
-    "./vim/pri-vim|${HOME}/.vim/pri-vim" \
-    "./vim/pri-plugins|${HOME}/.vim/pri-plugins" \
-    "./bash|${HOME}/.bash" \
-    "./tex|${HOME}/.tex" \
-    "./bin|${HOME}/bin")
+declare -A File_list=(["$PWD/vimrc"]="${HOME}/.vimrc" \
+    ["$PWD/bashrc"]="${HOME}/.bashrc" \
+    ["$PWD/texrc.tex"]="${HOME}/texrc.tex")
+[ $android -eq 1 ] && \
+    File_list["$PWD/bin/exec_script/android/termux-sudo/sudo"]="${HOME}/bin/sudo"
+
+declare -A Dirs_list_slink=(["$PWD/vim/colors"]="${HOME}/.vim/colors" \
+    ["$PWD/vim/vim-conf"]="${HOME}/.vim/vim-conf" \
+    ["$PWD/vim/self-plugins"]="${HOME}/.vim/self-plugins" \
+    ["$PWD/bash"]="${HOME}/.bash" \
+    ["$PWD/tex"]="${HOME}/.tex")
+
+declare -A Dirs_Files_slink_list=(["$PWD/bin"]="$HOME/bin" \
+    ["$PWD/bin/exec_script"]="$HOME/bin")
+[[ $machine =~ [xX]86[_]64 ]] && Dirs_Files_slink_list["$PWD/bin/x86_64"]="$HOME/bin"
 #}
+
+# load color functions
+source ./bash/functions
+
 ## WARNING and ERROR functions
 #{ function : __warning()
 __warning()
 {
-    echo "**WARNING** : < ${1} >" && \
+    echo -e "$(red WARNING) : $(blueb ${1} )" && \
         warning_count=$[$warning_count + 1] && return 0
 }
 #}
 #{ function : __error()
 __error()
 {
-    echo "**ERROR** : < ${1} >" && \
+    echo -e "$(red ERROR) : $(blueb ${1})" && \
         error_count=$[$error_count + 1] && return 0
 }
 #}
+
 # Install <src> to <dest>, <dest> must be a full filepath,
 # not just a directory of destination
 #{ function : install_fil()
@@ -65,14 +82,24 @@ install_fil()
     [ -e $1 ] || (__error "File $1 don't exist, exit!"; return $FAIL)
 
     # if <dest> already exist, move it to backup directory.
-    [ -e $2 ] && mv -f $2 $BACKUP_DIRE >> /dev/null || \
+    ([ -e $2 ] || [ -h $2 ]) && mv -f $2 $BACKUP_DIRE >> /dev/null || \
         __warning "backup file $2 fail, but continue"
 
     # final coppy $1 to $2
-    cp -rf $1 $2 && return $SUCCESS >> /dev/null || \
+    # if $1 is a files, then just make symlink
+    if [ -d $1 ]; then cp -rf $1 $2; else ln -s $1 $2; fi && return $SUCCESS >> /dev/null || \
         (__error "install \"$1\" to \"$2\" FAILED." && return $FAIL)
 }
 #}
+#{ function : dir_symbol_link()
+dir_symbol_link()
+{
+    [ ${#@} -eq 2 ] || return 1
+    ([ -e $2 ] || [ -h $2 ]) && mv $2 $BACKUP_DIRE
+    ln -s $1 $2
+}
+#}
+
 # Install <Vundle> plugin for vim
 #{ function : install_plug()
 install_plug()
@@ -96,24 +123,35 @@ install_plug()
         (popd && __error "install ${1##*/} failed!" && return $FAIL)
 }
 #}
+
+# Main process
 #{ Main proccess
+# safely source this files
+[[ $0 =~ ^.*install\.sh$ ]] || return 0
 while (true); do
-    echo "**REMOVE** previous backup." && rm -rf ./backup && mkdir ./backup
+    echo -e "$(green REMOVE\t) previous backup." && rm -rf ./backup && mkdir ./backup
     [ -d $HOME/.vim ] || mkdir $HOME/.vim
     [ -d $PLUG_DEST ] || mkdir $PLUG_DEST
-    echo "***BEGIN** install files..."
-    for __file in ${File_list[@]}; do
-        install_fil ${__file%%\|*} ${__file##*\|}
+    echo -e "$(green BEGIN\t) install files..."
+    for __file in ${!File_list[@]}; do
+        install_fil ${__file} ${File_list[$__file]}
     done
-    echo "**FINISH** install files!"
+    for __dir in ${!Dirs_list_slink[@]}; do
+        dir_symbol_link $__dir ${Dirs_list_slink[$__dir]}
+    done
+    for __dir_link in ${!Dirs_Files_slink_list[@]}; do
+       dir_files_link $__dir_link ${Dirs_Files_slink_list[$__dir_link]} 
+   done
+    echo -e "$(green FINISH\t) install files!"
 
-    echo "***BEGIN** install vim plugins..."
+    echo -e "$(green BEGIN\t) install vim plugins..."
     for __plug in ${Plugin_list[@]}; do
         install_plug ${__plug}
     done
-    echo "**FINISH** install vim plugins!"
+    echo -e "$(green FINISH\t) install vim plugins!"
 
-    echo "**FINISH** Install, total ERROR is $error_count, total WARNING is $error_count"
+    echo -e "$(green FINISH Install), total $(yellow ERROR) is $(red $error_count), 
+                                      total $(yellow WARNING) is $(red $error_count)"
     [ $error_count -eq 0 ] && exit $SUCCESS || exit $FAIL
 done
 #}

@@ -1,0 +1,6 @@
+[submodule "bin/exec_script/android/termux-sudo"]
+	path = bin/exec_script/android/termux-sudo
+	url = https://github.com/st42/termux-sudo.git
+[submodule "submOthers/bash-it"]
+	path = submOthers/bash-it
+	url = https://github.com/Bash-it/bash-it
