@@ -15,69 +15,93 @@ Bundle 'VundleVim/Vundle.vim'
 " Plugins list {{{
 
 " 1. Statusline
-Bundle 'Lokaltog/vim-powerline'
+if !exists('g:disable_vim_powerline')
+    Bundle 'Lokaltog/vim-powerline'
+endif
 
 " 2. TeX插件
-Bundle 'lervag/vimtex'
+if !exists('g:disable_vimtex')
+    Bundle 'lervag/vimtex'
+endif
 
 " 3. Tagbar
-Bundle 'majutsushi/tagbar'
+if !exists('g:disable_tagbar')
+    Bundle 'majutsushi/tagbar'
+endif
 
 " 4. Vim-markdown Markdown语法
-Bundle 'plasticboy/vim-markdown'
+if !exists('g:disable_vim_markdown')
+    Bundle 'plasticboy/vim-markdown'
+endif
 
 " 5. Tabular
-Bundle 'godlygeek/tabular'
+if !exists('g:disable_tabular')
+    Bundle 'godlygeek/tabular'
+endif
 
 " 6. NERDTree文件浏览
-Bundle 'scrooloose/nerdtree'
+if !exists('g:disable_nerdtree')
+    Bundle 'scrooloose/nerdtree'
+endif
 
 " HTML Complete, Emmet
-Bundle 'mattn/emmet-vim'
+if !exists('g:disable_emmet_vim')
+    Bundle 'mattn/emmet-vim'
+endif
 
 " 7. YCM
 " 只在python支持加载YCM, and YCM DON'T support Android Termux
-if has('python') || has('python3') && !(g:isandroid)
+if (has('python') || has('python3')) && !(g:isandroid) && !exists('g:disable_YouCompleteMe')
     Bundle 'Valloric/YouCompleteMe'
 endif
 
 " 8. Python mode
 " Unkown reason for pymode work always error in windows ...
-if g:islinux
+if g:islinux && !exists('g:disable_python_mode')
     Bundle 'klen/python-mode'
 endif
 
 " 9. ctrlp
-Bundle 'kien/ctrlp.vim'
+if !exists('g:disable_ctrlp.vim')
+    Bundle 'kien/ctrlp.vim'
+endif
 
 " 10. Conque-GDB
 "
 let g:load_conque_gdb = 1
 function! s:conque_gdb() " {{{
-if g:islinux && (g:load_conque_gdb == 1)
-    Bundle 'vim-scripts/Conque-GDB'
-    let g:load_conque_gdb = 0
-endif
+    if g:islinux && (g:load_conque_gdb == 1) && !exists('g:disable_Conque_GDB')
+        Bundle 'vim-scripts/Conque-GDB'
+        let g:load_conque_gdb = 0
+    endif
 endfunction " }}}
 autocmd FileType c,cpp call s:conque_gdb()
 
 " 11. ultisnips
-if has('python') || has('python3')
+if has('python') || has('python3') && !exists('g:disable_ultsnips')
     Bundle 'SirVer/ultisnips'
 endif
 
 " 12. powershell syntax and indent
-Bundle 'PProvost/vim-ps1'
+if !exists('g:disable_vim_ps')
+    Bundle 'PProvost/vim-ps'
+endif
 
 " 13. minibufexpl instead of bufexplore
 " Bundle 'jlanzarotta/bufexplorer'
-Bundle 'fholgado/minibufexpl.vim'
+if !exists('g:disable_minibufexpl_vim')
+    Bundle 'fholgado/minibufexpl.vim'
+endif
 
 " 14. haskell-vim
-Bundle 'neovimhaskell/haskell-vim'
+if !exists('g:disable_haskell_vim')
+    Bundle 'neovimhaskell/haskell-vim'
+endif
 
 " 15. jedi-vim
-Bundle 'davidhalter/jedi-vim'
+if !exists('g:disable_jedi_vim')
+    Bundle 'davidhalter/jedi-vim'
+endif
 
 " }}}
 
