@@ -83,8 +83,8 @@ if has('python') || has('python3') && !exists('g:disable_ultsnips')
 endif
 
 " 12. powershell syntax and indent
-if !exists('g:disable_vim_ps')
-    Bundle 'PProvost/vim-ps'
+if !exists('g:disable_vim_ps1')
+    Bundle 'PProvost/vim-ps1'
 endif
 
 " 13. minibufexpl instead of bufexplore
