@@ -18,24 +18,6 @@
 	* [wrapfig](#wrapfig)
 	* [subcaption](#subcaption)
 
-<style>
-.google_red {
-color: rgb(219,50,54);
-}
-
-.google_green {
-color: rgb(60, 186, 84);
-}
-
-.google_blue {
-color: rgb(72, 133, 237);
-}
-
-.google_yellow {
-color: rgb(244, 194, 13);
-}
-</style>
-
 ## packages used in here
 
 sorting by adding date.
@@ -134,9 +116,7 @@ some **key-val** options:
 |scale | scale factor |
 |angle | rotate angle |
 
-<div style="color:rgb(244, 194, 13);font-size: 110%">
 `\rotatebox[<key-val list>]{<angle>}{<text>}`
-</div>
 
 ### comment
 
