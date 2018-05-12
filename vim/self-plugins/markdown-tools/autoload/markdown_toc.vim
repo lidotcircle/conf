@@ -53,7 +53,7 @@ function! markdown_toc#map_mdtitle_to_toclink(key, val) "{{{ map markdown title 
     catch
         echo "catch " . v:exception . " in " . v:throwpoint . "."
     endtry
-    return ("(#" . temp. ")")
+    return temp
 endfunction "}}}
 
 function! markdown_toc#map_mdtitle_to_toctitle(key, val) "{{{ markdown title to toc title
@@ -68,7 +68,7 @@ function! markdown_toc#map_mdtitle_to_toctitle(key, val) "{{{ markdown title to 
     catch
         echo "catch " . v:exception . " in " . v:throwpoint . "."
     endtry
-    return ("* [" . temp. "]")
+    return temp
 endfunction "}}}
 
 function! s:level_map_easy(key, val) "{{{
@@ -81,18 +81,24 @@ function! markdown_toc#gen_final_list_by_three_list(levelList, titleList, linkLi
     let finalIndent = map(a:levelList, 's:level_map_easy(v:key,v:val)')
     let count_count = 0
     let final_result = []
+    let indent_temp = ""
     while (count_count < list_length)
         if (finalIndent[count_count] == 0)
-            let final_result = add(final_result,  a:titleList[count_count] . a:linkList[count_count])
+            let indent_temp = ""
         elseif (finalIndent[count_count] == 1)
-            let final_result = add(final_result,  "\t" . a:titleList[count_count] . a:linkList[count_count])
+            let indent_temp = "\t"
         elseif (finalIndent[count_count] == 2)
-            let final_result = add(final_result,  "\t\t" . a:titleList[count_count] . a:linkList[count_count])
+            let indent_temp = "\t\t"
         elseif (finalIndent[count_count] == 3)
-            let final_result = add(final_result,  "\t\t\t" . a:titleList[count_count] . a:linkList[count_count])
+            let indent_temp = "\t\t\t"
         elseif (finalIndent[count_count] == 4)
-            let final_result = add(final_result,  "\t\t\t\t" . a:titleList[count_count] . a:linkList[count_count])
+            let indent_temp = "\t\t\t\t"
         endif
+        let final_result = add(final_result,
+                    \ indent_temp . 
+                    \ "* [" . a:titleList[count_count] . "]" .
+                    \ "(#" . a:linkList[count_count] . ")"
+                    \ )
         let count_count = count_count + 1
     endwhile
     return final_result

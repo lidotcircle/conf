@@ -18,6 +18,24 @@
 	* [wrapfig](#wrapfig)
 	* [subcaption](#subcaption)
 
+<style>
+.google_red {
+color: rgb(219,50,54);
+}
+
+.google_green {
+color: rgb(60, 186, 84);
+}
+
+.google_blue {
+color: rgb(72, 133, 237);
+}
+
+.google_yellow {
+color: rgb(244, 194, 13);
+}
+</style>
+
 ## packages used in here
 
 sorting by adding date.
@@ -55,6 +73,7 @@ It can bookmark in document, and basic usage:
 It provide commands that can include whole pdfpage to single page
 
 <div style="color: rgb(219, 50, 54)">Basic Usage:</div>  
+
 ``` LaTeX
 \includepdf[<options>]{<file>}
 ```
@@ -63,7 +82,7 @@ It provide commands that can include whole pdfpage to single page
 
 It provide **color** support in LaTeX
 
-<div style="color: rgb(219, 50, 54)">Some commands:</dev>  
+<div style="color: rgb(219, 50, 54)">Some commands:</div>  
 
 * `\definecolor{<color name>}{<RGB or somes>}{<color value>}` define colors with this.
 * `\color{<color name>}` used to apply color in documents.
@@ -108,7 +127,7 @@ This package provides an alternative interface to the LaTeX graphics functions.
 some **key-val** options:
 
 | Keys | Desc |
-|:-----:-----:|
+|:----:|:-----|
 |width | width of the image, default unit is **bp**|
 |height | height of the image |
 |totalheight | height + depth |
