@@ -114,7 +114,17 @@ call vundle#end()
 
 " {{{ My Plugins Begin
 
-" Markdown Generate Contents
-autocmd FileType markdown if filereadable(expand('~/.vim/self-plugins/markdown-contents.vim')) | source ~/.vim/self-plugins/markdown-contents.vim | endif
+" plugins list
+let plugins_list_raw = [
+            \"$LOADPATH/self-plugins/markdown-tools",
+            \"$LOADPATH/self-plugins/various-exec"
+            \]
+let plugins_list_abs = map(plugins_list_raw, "expand(v:val)")
+
+for plugpath in plugins_list_abs
+    exec "set rtp+=".plugpath
+endfor
+
+" autocmd FileType markdown if filereadable(expand('~/.vim/self-plugins/markdown-contents.vim')) | source ~/.vim/self-plugins/markdown-contents.vim | endif
 
 " }}} My Plugins End

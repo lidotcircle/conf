@@ -3,10 +3,10 @@
 
 %% macro for math formula
 
-% 行向量
+% row vector
 \def\linevec#1{{({#1}_1, {#1}_2, \ldots, {#1}_n)}}
 
-% 矩阵
+% matrix
 \long\def\relmat#1{%
     \begin{pmatrix}
         {#1}_{11} & {#1}_{12} & \ldots & {#1}_{1n}\cr
@@ -15,7 +15,7 @@
         {#1}_{n1} & {#1}_{n2} & \ldots & {#1}_{nn}\cr
     \end{pmatrix}%
 }
-% 列向量
+% column vector
 \long\def\colvec#1{%
     \begin{pmatrix}
         {#1}_{1}\cr

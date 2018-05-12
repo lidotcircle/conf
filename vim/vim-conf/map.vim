@@ -77,6 +77,8 @@ endif
 vnoremap <c-c> "+y
 nnoremap <c-v> "+p
 vnoremap <c-x> "+c
+" clear search result
+nnoremap <silent><leader>cs :let @/ = ""<cr>
 " }}}
 
 " ReadLine in insert mode {{{
@@ -87,4 +89,25 @@ inoremap <silent><c-p> <up>
 inoremap <silent><c-d> <backspace>
 inoremap <silent><a-f> <esc><right>wi
 inoremap <silent><a-b> <esc><right>bi
+"}}}
+
+"{{{ source file
+" avoiding source this file by that functions
+function! Source_current_file() "{{{
+    let filename = expand('%:p')
+    if (&filetype != 'vim')
+        return 1
+    endif
+    exec "source ".filename
+    echo "source ".filename
+endfunction "}}}
+autocmd Filetype vim nnoremap <silent><buffer><leader>lc :call Source_current_file()<cr>
+" reload vimrc
+nnoremap <silent><leader>rl :exec 
+            \"if exists('g:vimrc_loaded') 
+            \\| unlet g:vimrc_loaded
+            \\| endif 
+            \\| source " . 
+            \expand("$HOME/.vimrc") . "
+            \\| echo \"reload vimrc.\""<cr>
 "}}}

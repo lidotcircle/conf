@@ -18,7 +18,8 @@ if filereadable(expand("$HOME/.vim/bundle/nerdtree/plugin/NERD_tree.vim"))
     endif
 
     " NERDTree Toggle
-    nnoremap <leader>d :NERDTreeToggle<cr>
+    nnoremap <leader>n :NERDTreeToggle<cr>
+    nnoremap <F7> :NERDTreeToggle<cr>
 endif
 " gt --- 下一个tab windows(normal mode)
 " gT --- 上一个tab windows
