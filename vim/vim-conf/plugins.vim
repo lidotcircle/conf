@@ -19,7 +19,7 @@ if !exists('g:disable_vim_powerline')
     Bundle 'Lokaltog/vim-powerline'
 endif
 
-" 2. TeX插件
+" 2. TeX plugin
 if !exists('g:disable_vimtex')
     Bundle 'lervag/vimtex'
 endif
@@ -29,7 +29,7 @@ if !exists('g:disable_tagbar')
     Bundle 'majutsushi/tagbar'
 endif
 
-" 4. Vim-markdown Markdown语法
+" 4. Markdown syntax
 if !exists('g:disable_vim_markdown')
     Bundle 'plasticboy/vim-markdown'
 endif
@@ -39,18 +39,18 @@ if !exists('g:disable_tabular')
     Bundle 'godlygeek/tabular'
 endif
 
-" 6. NERDTree文件浏览
+" NERDTree File Manager
 if !exists('g:disable_nerdtree')
     Bundle 'scrooloose/nerdtree'
 endif
 
-" HTML Complete, Emmet
+" HTML,CSS Completation
 if !exists('g:disable_emmet_vim')
     Bundle 'mattn/emmet-vim'
 endif
 
 " 7. YCM
-" 只在python支持加载YCM, and YCM DON'T support Android Termux
+" Only load YCM when python is supported, and YCM DON'T support Android Termux
 if (has('python') || has('python3')) && !(g:isandroid) && !exists('g:disable_YouCompleteMe')
     Bundle 'Valloric/YouCompleteMe'
 endif
@@ -101,6 +101,11 @@ endif
 " 15. jedi-vim
 if !exists('g:disable_jedi_vim')
     Bundle 'davidhalter/jedi-vim'
+endif
+
+" 16. webapi
+if !exists('g:disable_webapi_vim')
+    Bundle 'mattn/webapi-vim'
 endif
 
 " }}}
