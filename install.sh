@@ -38,7 +38,8 @@ declare -a Plugin_list=("VundleVim/Vundle.vim" \
 
 declare -A File_list=(["$PWD/vimrc"]="${HOME}/.vimrc" \
     ["$PWD/bashrc_main"]="${HOME}/.bashrc_main" \
-    ["$PWD/texrc.tex"]="${HOME}/texrc.tex")
+    ["$PWD/texrc.tex"]="${HOME}/texrc.tex" \
+    ["$PWD/tmux.conf"]="${HOME}/.tmux.conf")
 [ $android -eq 1 ] && \
     File_list["$PWD/bin/exec_script/android/sudo"]="${HOME}/bin/sudo"
 
