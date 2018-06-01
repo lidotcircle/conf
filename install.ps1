@@ -57,7 +57,12 @@ function install_fil()
     if(Test-path $args[1].toString()){
         move-item $args[1].toString() $BACKUP;
     }
-    Copy-Item -Force -Recurse $args[0].toString() $args[1].toString();
+    if(Test-Path -Path $args[0] -PathType leaf){
+        New-Item -ItemType HardLink -Path $args[1] -Value $args[0] >> $null;
+    } elseif (Test-Path -Path $args[0] -PathType Container){
+        New-Item -ItemType Junction -Path $args[1] -Value $args[0] >> $null;
+    }
+#    Copy-Item -Force -Recurse $args[0].toString() $args[1].toString();
 }
 #} End function
 
