@@ -11,3 +11,19 @@ vnoremap ui <esc>
 vnoremap <c-c> "+y
 nnoremap <c-v> "+p
 vnoremap <c-x> "+c
+
+" Move cursor in insert mode
+inoremap <c-f> <right>
+inoremap <c-b> <left>
+inoremap <c-n> <down>
+inoremap <c-p> <up>
+
+" For toggle some window
+"" Toggle designer
+map <leader>d :vsc View.ToggleDesigner<cr>
+"" Error check
+map <leader>el :vsc View.ErrorList<cr>
+map <leader>en :vsc View.NextError<cr>
+map <leader>ep :vsc View.PreviousError<cr>
+"" solution explorer
+map <leader>s  :vsc View.SolutionExplorer<cr>

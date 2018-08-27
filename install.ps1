@@ -24,7 +24,11 @@ $Install_dict = @{"./vimrc"="$HOME/.vimrc";
 "./vim/colors"="$HOME/.vim/colors";
 "./vim/self-plugins"="$HOME/.vim/self-plugins";
 "./vim/vim-conf"="$HOME/.vim/vim-conf";
-"./tex"="$HOME/.tex"
+"./tex"="$HOME/.tex";
+"./asyLib"="$HOME/asyLib";
+"./vscode/snippets"="$env:APPDATA/Code/User/snippets";
+"./vscode/keybindings.json"="$env:APPDATA/Code/User/keybindings.json";
+"./vscode/settings.json"="$env:APPDATA/Code/User/settings.json"
 };
 
 ## vim plugin list

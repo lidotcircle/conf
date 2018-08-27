@@ -39,7 +39,9 @@ declare -a Plugin_list=("VundleVim/Vundle.vim" \
 declare -A File_list=(["$PWD/vimrc"]="${HOME}/.vimrc" \
     ["$PWD/bashrc_main"]="${HOME}/.bashrc_main" \
     ["$PWD/texrc.tex"]="${HOME}/texrc.tex" \
-    ["$PWD/tmux.conf"]="${HOME}/.tmux.conf")
+    ["$PWD/tmux.conf"]="${HOME}/.tmux.conf" \
+    ["$PWD/vscode/keybindings.json"]="${HOME}/.config/Code/User/keybindings.json" \
+    ["$PWD/vscode/settings.json"]="${HOME}/.config/Code/User/settings.json")
 [ $android -eq 1 ] && \
     File_list["$PWD/bin/exec_script/android/sudo"]="${HOME}/bin/sudo"
 
@@ -47,7 +49,9 @@ declare -A Dirs_list_slink=(["$PWD/vim/colors"]="${HOME}/.vim/colors" \
     ["$PWD/vim/vim-conf"]="${HOME}/.vim/vim-conf" \
     ["$PWD/vim/self-plugins"]="${HOME}/.vim/self-plugins" \
     ["$PWD/bash"]="${HOME}/.bash" \
-    ["$PWD/tex"]="${HOME}/.tex")
+    ["$PWD/tex"]="${HOME}/.tex" \
+    ["$PWD/asyLib"]="${HOME}/asyLib" \
+    ["$PWD/vscode/snippets"]="${HOME}/.config/Code/User/snippets")
 
 declare -A Dirs_Files_slink_list=(["$PWD/bin"]="$HOME/bin" \
     ["$PWD/bin/exec_script"]="$HOME/bin")

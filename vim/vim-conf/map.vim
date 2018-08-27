@@ -111,3 +111,7 @@ nnoremap <silent><leader>rl :exec
             \expand("$HOME/.vimrc") . "
             \\| echo \"reload vimrc.\""<cr>
 "}}}
+
+"{{{ clear "/ register
+nnoremap <silent><leader>i :call setreg("/", "")<cr>
+"}}}

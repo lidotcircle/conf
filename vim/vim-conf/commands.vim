@@ -185,7 +185,7 @@ function! Foldmethod_Marker_Clang() " {{{
   return 1
 endfunction " }}}
 
-autocmd FileType c,cpp call Foldmethod_Marker_Clang()
+autocmd FileType c,cpp,asy call Foldmethod_Marker_Clang()
 " }}} End
 
 "{{{ powrshell, shell, python fold
