@@ -26,3 +26,291 @@
 }
 
 \fi
+
+\begin{comment}
+%{{{ tensor macro
+\newbox\final@box
+\newif\ifpre@sub
+\newif\ifpre@sup
+% symbol for base
+\def\base@sym{\bm{g}}
+\def\tensor@withbase#1{\setbox\final@box\hbox{}\char@code#1\end\box\final@box}
+\def\char@code{\futurelet\@get@char\check@char}
+\def\check@char{%
+\add@chartoken%
+\ifx\@get@char\end%
+    \expandafter\omit@end%
+\else%
+    \ifx\@get@char^%
+        \pre@suptrue%
+    \else%
+        \ifx\@get@char_%
+            \pre@subtrue%
+        \else%
+            \pre@subfalse%
+            \pre@supfalse%
+        \fi%
+    \fi%
+    \expandafter\continue@check%
+\fi%
+}
+\def\add@chartoken{%
+\ifpre@sub%
+    \setbox\final@box\hbox{\unhbox\final@box$\base@sym^\@get@char\hskip.1em$}
+    \pre@subfalse%
+\else%
+    \ifpre@sup%
+        \setbox\final@box\hbox{\unhbox\final@box$\base@sym_\@get@char\hskip.1em$}
+        \pre@supfalse%
+    \fi%
+\fi%
+}
+\def\omit@end#1{}
+\def\continue@check#1{\char@code}
+% final macro
+\def\tnsrbs#1#2{\tensor{#1}{#2}\>\tensor@withbase{#2}}
+%}}} end tensor macro
+\end{comment}
+
+%{{{ tensor \mytensor#1#2
+% dot symbol for tensor
+\def\adj@cdot#1{\mathpalette\adj@cdot@@{#1}}
+\def\adj@cdot@@#1#2{\mathbin{\vcenter{\hbox{\scalebox{#2}{$#1\m@th\bullet$}}}}}
+\def\smallcdot{\adj@cdot{.22}\relax}
+\def\smallcdots{\smallcdot\kern-.15em\smallcdot\kern-.15em\smallcdot}
+\def\medcdot{\adj@cdot{.3}\relax}
+\def\medcdots{\medcdot\kern-.2em\medcdot\kern-.2em\medcdot}
+\def\bigcdot{\adj@cdot{.42}\relax}
+\def\bigcdots{\bigcdot\kern-.25em\bigcdot\kern-.25em\bigcdot}
+
+% symbol for base
+\def\base@sym{\textsl{g}}
+\newbox\imdb@@\setbox\imdb@@\hbox{\scalebox{.4}{$\displaystyle\m@th\bullet$}}
+\newbox\imtb@@\setbox\imtb@@\hbox{\scalebox{.4}{$\textstyle\m@th\bullet$}}
+\newbox\imsb@@\setbox\imsb@@\hbox{\scalebox{.4}{$\scriptstyle\m@th\bullet$}}
+\newbox\imssb@@\setbox\imssb@@\hbox{\scalebox{.4}{$\scriptscriptstyle\m@th\bullet$}}
+\def\index@marker@{\mathchoice%
+{\mathbin{\vcenter{\copy\imdb@@}}}%
+{\mathbin{\vcenter{\copy\imtb@@}}}%
+{\mathbin{\vcenter{\copy\imsb@@}}}%
+{\mathbin{\vcenter{\copy\imssb@@}}}%
+}
+
+% box for calculating width of symbol
+\newbox\muskip@unit\setbox\muskip@unit\hbox{$\displaystyle\mkern1mu$}
+\newbox\sym@width@box\setbox\sym@width@box\hbox{$\displaystyle{}^{\index@marker@}$}
+\newbox\char@width@box 
+\def\char@width@box@get{\setbox\char@width@box\hbox{$\displaystyle{}^{\csname\temp@name\endcsname}$}}
+
+\newmuskip\difference@width
+\newcount\difference@width@count
+\def\get@difference@width{%
+    \char@width@box@get\relax%
+    \difference@width@count=\wd\char@width@box%
+    \advance\difference@width@count-\wd\sym@width@box%
+    \multiply\difference@width@count by1300% the width between two adjecent font box maybe not zero.
+    \divide\difference@width@count\wd\muskip@unit
+    \divide\difference@width@count\tw@%
+%    \message{width of space will be: \the\difference@width@count}
+    \difference@width=\difference@width@count mu\relax%
+    \divide\difference@width by1000%
+%    \message{width of space will be: \the\difference@width}
+}
+
+% allocate register for holding \muskip between supscript and subscript symbols.
+\newcount\alloc@muskip@loop \chardef\max@alloc@muskip@reg=32
+\def\muskip@temp@name{temp@muskip@reg\the\alloc@muskip@loop}
+\loop\expandafter\newmuskip\csname\muskip@temp@name\endcsname%
+    \advance\alloc@muskip@loop\@ne\ifnum%
+        \alloc@muskip@loop<\max@alloc@muskip@reg%
+\repeat
+
+% condition of char and its macros
+\newif\ifpre@sub
+\newif\ifpre@sup
+\newif\ifpre@ast
+\newif\ifpre@dem
+\def\only@true#1{%
+\pre@subfalse%
+\pre@supfalse%
+\pre@astfalse%
+\pre@demfalse%
+#1}
+
+% register for different name of \let\something
+\newcount\let@use%
+\def\temp@name{temp@let@token@\the\let@use}
+\def\let@use@zero{\let@use=0\relax}
+% token registers and its macros
+\newtoks\final@base@token
+\newtoks\sup@token
+\newtoks\sub@token
+\def\initialize@tnsr@token{%
+    \sup@token{}%
+    \sub@token{\mkern2mu}%
+    \final@base@token{}%
+}
+\def\sub@dem@base@adjust{%
+    \final@base@token\expandafter{\the\expandafter\final@base@token%
+            \expandafter\base@sym\expandafter^\csname\temp@name\endcsname}
+    \global\advance\let@use\@ne%
+}
+\def\sup@base@adjust{%
+    \final@base@token\expandafter{\the\expandafter\final@base@token%
+            \expandafter\base@sym\expandafter_\csname\temp@name\endcsname}
+    \global\advance\let@use\@ne%
+}
+\def\tensor@cdots@adj{\mathchoice%
+{\mkern-1.5mu\adj@cdot{.35}%
+ \mkern-.5mu\adj@cdot{.35}%
+ \mkern-.5mu\adj@cdot{.35}\mkern-.5mu\relax}%
+{\mkern-1.5mu\adj@cdot{.35}%
+ \mkern-.5mu\adj@cdot{.35}%
+ \mkern-.5mu\adj@cdot{.35}\mkern-.5mu\relax}%
+{\mkern-.0mu\adj@cdot{.35}%
+ \mkern-.0mu\adj@cdot{.35}%
+ \mkern-.0mu\adj@cdot{.35}\mkern1mu\relax}%
+{\mkern.2mu\adj@cdot{.35}%
+ \mkern.5mu\adj@cdot{.35}%
+ \mkern.5mu\adj@cdot{.35}\mkern1mu\relax}%
+}
+\def\ast@base@adjust{%
+    \final@base@token\expandafter{\the\final@base@token%
+        \tensor@cdots@adj%
+    }
+    \global\advance\let@use\@ne%
+}
+\def\sup@sub@adjust#1#2{%
+    #1\expandafter{\the\expandafter#1%
+        \csname\temp@name\endcsname%
+    }%
+    \get@difference@width%
+    \csname\muskip@temp@name\endcsname\difference@width%
+    \edef\temp@expanded@macro{\mkern\csname\muskip@temp@name\endcsname\index@marker@\mkern\csname\muskip@temp@name\endcsname}
+    #2\expandafter\expandafter\expandafter{%
+        \expandafter%
+        \the\expandafter#2%
+        \temp@expanded@macro%
+    }
+    \advance\alloc@muskip@loop\@ne%
+}
+\def\dem@adjust{%
+    \sub@token\expandafter\expandafter\expandafter{\the\expandafter\sub@token%
+        \expandafter\,\expandafter;\csname\temp@name\endcsname%
+    }%
+    \sup@token\expandafter{\the\sup@token%
+        \ \ %
+    }%
+}
+\def\ast@adjust{%
+    \sup@token\expandafter{\the\sup@token%
+        \mkern2.2mu\adj@cdot{.3}\mkern1.2mu%
+        \adj@cdot{.3}\mkern1.2mu%
+       \adj@cdot{.3}\mkern2.2mu%
+    }%
+    \sub@token\expandafter{\the\sub@token%
+        \mkern2.2mu\adj@cdot{.3}\mkern1.2mu%
+        \adj@cdot{.3}\mkern1.2mu%
+        \adj@cdot{.3}\mkern2.2mu%
+    }%
+}
+
+% entry of tnsr macros
+\def\mytensor#1#2{%
+    \initialize@tnsr@token%
+    \alloc@muskip@loop=0%
+    \let@use@zero%j
+    \char@code#2\end%
+    \output@tensor@tokens{#1}%
+}
+\def\output@tensor@tokens#1{%
+\newif\ifnot@void\futurelet\void@check\deter@@#1%
+    \ifnot@void
+        ^{\the\sup@token}_{\the\sub@token}\tensor@space\the\final@base@token%
+    \else%
+        \the\final@base@token%
+    \fi%
+}
+\def\deter@@{%
+    \ifx\void@check\ifnot@void%
+        \not@voidfalse
+    \else%
+        \not@voidtrue
+    \fi%
+}
+\def\tensor@space{\mathchoice%
+{\mkern2mu}%
+{\mkern2mu}%
+{\mkern2mu}%
+{\mkern2mu}%
+}
+
+\def\char@code{%
+    \def\exec@noend{\add@chartoken}%
+    \futurelet\@get@char\check@char%
+}
+
+\def\check@char{%
+\ifx\@get@char\end%
+    \expandafter\omit@end%
+\else%
+    \exec@noend%
+    \ifx\@get@char^%
+        \only@true\pre@suptrue%
+    \else%
+        \ifx\@get@char_%
+            \only@true\pre@subtrue%
+        \else
+            \ifx\@get@char*%
+                \only@true\pre@asttrue%
+            \else
+                \ifx\@get@char;
+                    \only@true\pre@demtrue%
+                \fi%
+            \fi%
+        \fi%
+    \fi%
+    \expandafter\continue@check%
+\fi%
+}
+\def\omit@end#1{}
+\def\continue@check#1{\char@code}
+
+\def\ifx@four#1{%
+    \ifx\@get@char_\relax\else%
+    \ifx\@get@char^\relax\else%
+    \ifx\@get@char*\relax\else%
+    \ifx\@get@char;\relax\else%
+    #1%
+    \fi\fi\fi\fi%
+}
+
+\def\add@chartoken{%
+\expandafter\let\csname\temp@name\endcsname\@get@char%
+\ifpre@sub%
+    \ifx@four{%
+        \sup@sub@adjust{\sub@token}{\sup@token}%
+        \sub@dem@base@adjust%
+    }
+\else%
+    \ifpre@sup%
+        \ifx@four{%
+            \sup@sub@adjust{\sup@token}{\sub@token}%
+            \sup@base@adjust%
+        }
+   \else%
+        \ifpre@ast
+            \ast@adjust%
+            \ast@base@adjust%
+        \else
+            \ifpre@dem
+                \ifx@four{%
+                    \dem@adjust%
+                    \sub@dem@base@adjust%
+                }
+            \fi
+        \fi
+    \fi%
+\fi%
+}
+%}}} end tensor
