@@ -50,7 +50,7 @@ declare -A Dirs_list_slink=(["$PWD/vim/colors"]="${HOME}/.vim/colors" \
     ["$PWD/vim/self-plugins"]="${HOME}/.vim/self-plugins" \
     ["$PWD/bash"]="${HOME}/.bash" \
     ["$PWD/tex"]="${HOME}/.tex" \
-    ["$PWD/asyLib"]="${HOME}/asyLib" \
+    ["$PWD/asyLib"]="${HOME}/.asy/asyLib" \
     ["$PWD/vscode/snippets"]="${HOME}/.config/Code/User/snippets")
 
 declare -A Dirs_Files_slink_list=(["$PWD/bin"]="$HOME/bin" \

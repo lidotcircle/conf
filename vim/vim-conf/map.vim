@@ -115,3 +115,28 @@ nnoremap <silent><leader>rl :exec
 "{{{ clear "/ register
 nnoremap <silent><leader>i :call setreg("/", "")<cr>
 "}}}
+
+"{{{ quickfix
+function! NextError() "{{{
+    let l:qflen = len(getqflist())
+    if  l:qflen == 0
+        echom "quickfix list is empty"
+    elseif l:qflen == 1
+        cc 1
+    else
+        cnext
+    endif
+endfunction "}}}
+function! PrevError() "{{{
+    let l:qflen = len(getqflist())
+    if  l:qflen == 0
+        echom "quickfix list is empty"
+    elseif l:qflen == 1
+        cc 1
+    else
+        cprev
+    endif
+endfunction "}}}
+nnoremap <silent><leader>en :call NextError()<cr>
+nnoremap <silent><leader>ep :call PrevError()<cr>
+"}}}

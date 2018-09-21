@@ -29,6 +29,12 @@ autocmd BufReadPost * if &modifiable | set fileformat=unix | endif
 " linespace
 set linespace=5
 
+" indnet
+set cindent
+
+" message
+set cmdheight=2
+
 " }}}
 
 " Display {{{

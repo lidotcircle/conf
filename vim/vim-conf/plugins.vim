@@ -108,6 +108,25 @@ if !exists('g:disable_webapi_vim')
     Bundle 'mattn/webapi-vim'
 endif
 
+" 17. vim-shell
+if !exists('g:disable_vim_shell')
+    Bundle 'xolox/vim-shell'
+endif
+
+" 18. vim-misc
+if !exists('g:disable_vim_misc')
+    Bundle 'xolox/vim-misc'
+endif
+
+" 19. vim-session
+if !exists('g:disable_vim_session')
+    Bundle 'xolox/vim-session'
+endif
+
+" 20. vim-notes
+if !exists('g:disable_vim_notes')
+    Bundle 'xolox/vim-notes'
+endif
 " }}}
 
 " {{{ Plugin End
@@ -122,7 +141,8 @@ call vundle#end()
 " plugins list
 let plugins_list_raw = [
             \"$LOADPATH/self-plugins/markdown-tools",
-            \"$LOADPATH/self-plugins/various-exec"
+            \"$LOADPATH/self-plugins/various-exec",
+            \"$LOADPATH/self-plugins/asy-compile"
             \]
 let plugins_list_abs = map(plugins_list_raw, "expand(v:val)")
 

@@ -118,6 +118,14 @@
         {
             "before": ["j", "k"],
             "after": ["<ecs>"]
+        },
+        {
+            "before": ["u"], // truely cause a lot error to me.
+            "after": [""]
+        },
+        {
+            "before": ["u", "i"],
+            "after": ["<ecs>"]
         }
     ],
 
@@ -229,6 +237,15 @@
                 "%DOC%.tex"
             ]
 
+        },
+        {
+            "name":"makeindex",
+            "command":"makeindex",
+            "args":[
+                "%DOCFILE%.idx"
+            ]
         }
-    ]
+    ],
+    "window.zoomLevel": 1,
+    "git.enableSmartCommit": true
 }

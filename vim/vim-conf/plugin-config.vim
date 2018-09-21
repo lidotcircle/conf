@@ -19,6 +19,7 @@ if filereadable(expand("$HOME/.vim/bundle/nerdtree/plugin/NERD_tree.vim"))
 
     " NERDTree Toggle
     nnoremap <leader>n :NERDTreeToggle<cr>
+    nnoremap <c-n> :NERDTreeToggle<cr>
     nnoremap <F7> :NERDTreeToggle<cr>
 endif
 " gt --- 下一个tab windows(normal mode)
@@ -115,4 +116,8 @@ let g:pymode_rope = 0
 nnoremap <leader>mbe :MBEOpen<cr>
 nnoremap <leader>mbc :MBEClose<cr>
 nnoremap <leader>mbt :MBEToggle<cr>
+"}}}
+
+"{{{ vim-session
+let g:session_autosave="yes"
 "}}}
