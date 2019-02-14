@@ -40,6 +40,7 @@ declare -A File_list=(["$PWD/vimrc"]="${HOME}/.vimrc" \
     ["$PWD/bashrc_main"]="${HOME}/.bashrc_main" \
     ["$PWD/texrc.tex"]="${HOME}/texrc.tex" \
     ["$PWD/tmux.conf"]="${HOME}/.tmux.conf" \
+    ["$PWD/inputrc"]="${HOME}/.inputrc" \
     ["$PWD/vscode/keybindings.json"]="${HOME}/.config/Code/User/keybindings.json" \
     ["$PWD/vscode/settings.json"]="${HOME}/.config/Code/User/settings.json")
 [ $android -eq 1 ] && \

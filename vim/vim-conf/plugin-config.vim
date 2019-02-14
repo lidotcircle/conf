@@ -53,6 +53,9 @@ let g:ycm_global_ycm_extra_conf =
 " turn off the tip in load .ycm_extra_conf.py
 let g:ycm_confirm_extra_conf = 0
 
+" update location-list every time when YCMDiags run
+let g:ycm_always_populate_location_list=1
+
 function! s:ycm_shortcut_c_sopport() " {{{
     " 刷新编译文件
     nnoremap <F5> :YcmForceCompileAndDiagnostics<cr>

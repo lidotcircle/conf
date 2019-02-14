@@ -6,3 +6,6 @@ backup*
 
 # ycm file
 .ropeproject*
+
+# vim session file
+*default.vim

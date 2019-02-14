@@ -1,0 +1,2 @@
+"\C-b": self-insert
+"\C-h": backward-char
