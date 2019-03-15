@@ -5,6 +5,7 @@ source ./bash/functions
 
 # UNFINISHED
 ### HANDING OPTIONS #{
+#__options=$(getopt "-o avtbsn --long all")
 print_usage()
 {
     cat <<EOF
@@ -13,6 +14,7 @@ Usage: ./install.sh [-avtbsh]
     -a | --all          install all utility tools, which can use with
                         the options --no-network, --no-vimp, --no-tmuxp
          --no-network   ignore something need connect to network
+         --no-symlink   install files or dirs instead of symbolic links
     -v | --vim          install everyting about vim
          --no-vimp      ignore vim plugins
     -t | --tmux         install everything about tmux
@@ -37,6 +39,7 @@ declare -i SET_NO_NET=0
 declare -i SET_TEX=0
 declare -i SET_VSCODE=0
 declare -i SET_ASYMPTOTE=0
+declare -i SET_NSYMLINK=0
 
 [ -z "$1" ] && SET_ALL=1
 while [ -n "$1" ]; do
