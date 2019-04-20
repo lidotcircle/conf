@@ -17,6 +17,21 @@ declare -r SSR_PID="/var/run/ssr-redir-go.pid"
 declare -r SSR_REDIR=$(which ssr-redir || echo "/usr/sbin/ssr-redir")
 declare -r SSR_START="$SSR_REDIR -u -c ${SSR_CONF_JSON} -f ${SSR_PID} 1>> ${LOG__} 2>&1"
 
+declare -i NMAP_AVAIL=0
+declare -i NETCAT_AVAIL=0
+declare -i PING_AVAIL=0
+declare NETCAT_CMD="netcat"
+
+[ -n "$(which nmap)" ] && NMAP_AVAIL=1
+(which nc || which netcat) && NETCAT_AVAIL=1
+[ -n "$(which ping)" ] && PING_AVAIL=1
+while(true); do
+if [ $NETCAT_AVAIL -eq 1 ]; then
+    [ -n "$(which netcat)" ] && break
+    NETCAT_CMD="nc" && break
+fi
+done
+
 #{ function: get_fd() <ret_ref> -- aviliable file descriptor
 get_fd()
 {
@@ -36,9 +51,18 @@ get_fd()
 #{ function: test_ssr_server()
 test_ssr_server()
 {
-    ping -w 5 -c 2 $1 || \
+    # just one argument passed
+    if [ $# -eq 1 ]; then
+    [ $PING_AVAIL -eq 1 ] && ping -w 5 -c 2 $1 || \
         (echo -e "### CAN'T access server <$1> ###\n" >> ${LOG__} && return 1)
     return 0
+    fi
+    if [ $# -eq 2 ]; then
+        [ $NETCAT_AVAIL -eq 1 ] && $NETCAT_CMD -zvw2 $1 -p $2 && return 0 || return 1
+        [ $NMAP_AVAIL -eq 1 ] && nmap --host-timeout 2 $1 $2 | grep -e "OPEN" 1>/dev/null 2>&1 && \
+            return 0 || return 1
+    fi
+    echo -e "### unable to test accessibility of server, just return true." && return 0
 }
 #}
 
