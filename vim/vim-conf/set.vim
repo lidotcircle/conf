@@ -83,10 +83,6 @@ if has('gui_running')
     elseif g:iswindows
         set guifont=Bitstream_Vera_Sans_Mono:h11
     endif
-else
-    if !(g:isandroid) && !exists('g:istermux')
-        set columns=120 lines=60
-    endif
 endif
 
 " }}}

@@ -3,6 +3,11 @@
 [ -z $LOAD_BASHRC_MAIN ] || return
 LOAD_BASHRC_MAIN="BASHRC_MAIN_LOADED"
 
+# tmux
+while [ -n "$(which tmux)" ] && [ -z "$TMUX" ]; do
+    exec tmux -u
+done
+
 # 加载配置文件
 ## log file
 ERROR_LOG=$HOME/.bashrc_error_log
