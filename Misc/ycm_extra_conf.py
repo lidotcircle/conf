@@ -4,6 +4,33 @@ import os
 import ycm_core
 import copy
 
+DEBUG = 0
+c_language = 0
+
+if platform.system() == "Windows":
+    ycm_compilation_log_file = os.path.join(os.getenv("userprofile"),
+            "ycm_compilation.log")
+else:
+    ycm_compilation_log_file = os.path.join(os.getenv("HOME"),
+            "ycm_compilation.log")
+
+
+def append_to_ycm_compilation_log_file(args):
+    with open(ycm_compilation_log_file,
+              mode="at") as append_file:
+        for k, v in args.items():
+            append_file.write(
+                    "{0:<25s}:  {1:<s}\n".format(k.__str__(), v.__str__()))
+        append_file.write("\n")
+
+def debug_here():
+    with open(ycm_compilation_log_file,
+            mode="at") as append_file:
+        append_file.write("HERE is reachable.\n")
+
+
+DEBUG and append_to_ycm_compilation_log_file({"Debug ycm_extra_conf.py": "Yes"})
+
 common_clang_flags = [
     '-Wall',
     '-Wextra',
@@ -19,9 +46,12 @@ common_linux_header_folder = list(filter(os.path.exists,
                                           "/usr/local/include",
                                           "/usr/share/include"]))
 
+
 # windows header files handler
-mscv_aux_find_level1 = 2
-mscv_aux_find_level2 = 2
+mscv_aux_find_level1 = 5
+mscv_aux_find_level2 = 5
+windows_exclude_include_path = []
+msvc_paths = []
 
 
 def list_sub_dir(par):
@@ -29,46 +59,65 @@ def list_sub_dir(par):
                        os.listdir(par)))
 
 
+stl_files = {"algorithm", "array", "bitset", "complex", "deque", "exception", "iostream",
+        "istream", "ostream"}  # just short list
+def path_include_stl(path):
+    if not os.path.exists(path):
+        return False
+    path_holder = set(os.listdir(path))
+    return path_holder.issuperset(stl_files)
+
+
 def msvc_level1(par, level):
+    DEBUG and append_to_ycm_compilation_log_file({
+        "msvc list length": len(msvc_paths).__str__(),
+        "function": "msvc_level1",
+        "arg1": par.__str__(),
+        "arg2": level.__str__()})
     if level >= mscv_aux_find_level1:
         return None
-    for subdir in list_sub_dir(par):
-        if subdir == "VC" or subdir == "VC++":
-            return os.path.join(par, subdir)
+    for subdir in list_sub_dir(par):  # priority depth traversal
+        if subdir.upper() == "MSVC":
+            msvc_paths.append(os.path.join(par, subdir))
         else:
-            temp_holder = msvc_level1(os.path.join(par, subdir), level + 1)
-            if not temp_holder:
-                return temp_holder
-    return None
+            msvc_level1(os.path.join(par, subdir), level + 1)
 
 
 def msvc_level2(par, level):
+    DEBUG and append_to_ycm_compilation_log_file({
+        "function": "msvc_level2",
+        "arg1": par.__str__(),
+        "arg2": level.__str__()})
     if level >= mscv_aux_find_level2:
         return None
     for subdir in list_sub_dir(par):
         if subdir == "include":
-            return os.path.join(par, subdir)
+            if path_include_stl(os.path.join(par, subdir)):
+                return os.path.join(par, subdir)
+            else:
+                windows_exclude_include_path.append(os.path.join(par, subdir))
         else:
-            temp_holder = msvc_level1(os.path.join(par, subdir), level + 1)
-            if not temp_holder:
+            temp_holder = msvc_level2(os.path.join(par, subdir), level + 1)
+            if temp_holder:
                 return temp_holder
     return None
 
 
 def msvc_path():
+    DEBUG and append_to_ycm_compilation_log_file({
+        "function": "msvc_path"})
     if platform.system() != 'Windows':
         return None
-    msvs_path = os.getenv("ProgramFiles(x86)") + \
-        "/Microsoft Visual Studio"
+    msvs_path = os.path.join(os.getenv("ProgramFiles(x86)"), 
+            "Microsoft Visual Studio")
     if not os.path.exists(msvs_path):
         return None
-    msvs_vc_path = msvc_level1(msvs_path, 0)
-    if not msvs_vc_path:
-        return None
-    msvs_vc_include = msvc_level2(msvs_vc_path, 0)
-    if not msvs_vc_include:
-        return None
-    return msvs_vc_include
+    msvc_level1(msvs_path, 0)
+    for msvc_dir in msvc_paths:
+        msvs_vc_include = msvc_level2(msvc_dir, 0)
+        if msvs_vc_include:
+            return msvs_vc_include
+    return None
 
 
 windows_header_folder = [msvc_path()]
@@ -98,8 +147,6 @@ for folder in common_linux_header_folder:
                 if os.path.islink(folder + "/c++/" + _final_cpp):
                     linux_cpp_header_folder += [folder + "/c++/" + _final_cpp]
 
-# c language
-c_language = 0
 if c_language:
     flags = default_c_flags
 else:
@@ -114,8 +161,9 @@ else:
         append_include_ = linux_cpp_header_folder
 
 for _include_ in append_include_:
-    flags.append('-I')
-    flags.append(_include_)
+    if _include_:
+        flags.append('-I')
+        flags.append(_include_)
 
 compilation_database_folder = ''
 
@@ -153,29 +201,17 @@ def GetCompilationInfoForFile(filename):
         return database.GetCompilationInfoForFile(filename)
 
 
-ycm_compilation_log_file = os.path.join(os.getenv("HOME"),
-                                        "ycm_compilation.log")
-
-
-def append_to_ycm_compilation_log_file(args):
-    with open(ycm_compilation_log_file,
-              mode="at") as append_file:
-        for k, v in args.items():
-            append_file.write("{0:<25s}:  {1:<s}\n".format(k, v))
-        append_file.write("\n")
-
-
-DEBUG = 0
 if DEBUG:
     append_to_ycm_compilation_log_file(
-        {"current_working_directory": os.getcwd(),
-         "common_clang_flags": common_clang_flags,
-         "common_linux_header_folder": common_linux_header_folder,
-         "default_c_flags": default_c_flags,
-         "default_cpp_flags": default_cpp_flags,
-         "linux_c_header_folder": linux_c_header_folder,
-         "linux_cpp_header_folder": linux_cpp_header_folder,
-         "windows_header_folder": windows_header_folder})
+            {"current_working_directory": os.getcwd(),
+            "msvc_paths": msvc_paths.__str__(),
+            "common_clang_flags": common_clang_flags,
+            "common_linux_header_folder": common_linux_header_folder,
+            "default_c_flags": default_c_flags,
+            "default_cpp_flags": default_cpp_flags,
+            "linux_c_header_folder": linux_c_header_folder,
+            "linux_cpp_header_folder": linux_cpp_header_folder,
+            "windows_header_folder": windows_header_folder})
 
 
 def Settings(**kwargs):
