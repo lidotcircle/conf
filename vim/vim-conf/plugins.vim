@@ -127,6 +127,8 @@ endif
 if !exists('g:disable_vim_notes')
     Bundle 'xolox/vim-notes'
 endif
+
+Bundle 'pboettch/vim-cmake-syntax'
 " }}}
 
 " {{{ Plugin End

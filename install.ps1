@@ -19,6 +19,7 @@ $Install_dict = @{"./vimrc"="$HOME/.vimrc";
 "./Profile.ps1"="$profile";
 "./texrc.tex"="$HOME/texrc.tex";
 "./Misc/acadrc.lsp"="$HOME/acadrc.lsp";
+"./vlisp"="$HOME/vlisp";
 "./Misc/vsvimrc"="$HOME/.vsvimrc";
 "./Misc/ycm_extra_conf.py"="$HOME/.ycm_extra_conf.py";
 "./vim/colors"="$HOME/.vim/colors";

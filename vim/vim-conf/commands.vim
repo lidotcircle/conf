@@ -107,6 +107,10 @@ endfunction "}}}
 autocmd FileType html call commands#html_pre_view()
 " }}}
 
+"{{{ cmake filetype
+autocmd! BufReadPost CMakeLists.txt set filetype=cmake
+"}}}
+
 " Metapost compile shortcut, and preview {{{
 
 "" Linux and Windows metapost viewer function {{{
