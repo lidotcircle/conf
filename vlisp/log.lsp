@@ -1,13 +1,8 @@
 ; logs
-;{{{ !!! load check !!!
-(if LOG_LOAD nil (progn
-(setq LOG_LOAD T)
-(princ "load log.lsp")
-;}}}
 
-(defun current_date ( / )
+(defun current_date ( / ) ;{{{
   (menucmd "M=$(edtime, $(getvar, date),#### YYYY-M-D\",\" DDDD)")
-  )
+  ) ;}}}
 
 (setq windows 0)
 (if (= (getenv "OS") "Windows_NT") ; this must be windows.
@@ -27,15 +22,11 @@
       (close log_fd)(princ)
       )
     )
-  )
+  ) ;}}}
 
 ; error msg
-(defun func_error_msg (func_name msg / line_data)
+(defun func_error_msg (func_name msg / line_data) ;{{{
   (princ (strcat "Functioin: " function_name "\"" msg "\""))
   (vl-exit-with-error msg)
   (princ)
-  )
-
-;{{{ !!! end load check !!!
-))
-;}}}
+  ) ;}}}

@@ -1,11 +1,5 @@
 ; some toggle commands
 
-;{{{ !!! load check !!!
-(if ACAD_CMDS_LOAD nil (progn
-(setq ACAD_CMDS_LOAD T)
-(princ "load acad_cmds.lsp")
-;}}}
-
 (defun mcmds:toggle_orthogonal_mode (/)
  (
   if (< (getvar "ORTHOMODE") 1)
@@ -64,7 +58,21 @@
  (mcmds:toggle_menu_bar)
  )
 
+(defun C:recdim ( / )
+ (drt:current_rectangles (getstring "Input layer name:") (getreal "Input dim offset:"))(princ)
+ )
 
-;{{{ !!! end load check !!!
-))
-;}}}
+(defun C:rectrim ( / )
+ (drt:trim_rectangles (getstring "Input layer name:") (getstring "Input trim layer:"))(princ)
+ )
+
+(defun C:cccs ( / )
+ (drt:circles_cross (getstring "Input layer name circle:")
+                    (getstring "Input layer name of line:") 0.66)(princ)
+ )
+
+(defun C:brl ( / )
+  (drt:brk_line (getpoint "Input first point:")
+                (getpoint "Input second point:")
+                )
+  )

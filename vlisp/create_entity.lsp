@@ -1,17 +1,22 @@
 ; create autocad entity with (entmake <data>)
 
-;{{{ !!! load check !!!
-(if CREATE_ENTITY_LOAD nil (progn
-(setq CREATE_ENTITY_LOAD T)
-(princ "load create_entity.lsp")
-;}}}
-
 ; required
-(load_vlscript "utils.lsp")
-(load_vlscript "log.lsp")
+(load_vlscript 'anna_utils)
+(load_vlscript 'anna_log)
+(load_vlscript 'anna_cur_dev)
+
+(defun ce:rectangle_digonal (rec_name / point_data) ;{{{
+  (if (ce:is_aligned_rectangle rec_name)
+    (progn
+      (setq point_data (utils:polyline_points rec_name))
+      (list (min_pair point_data) (max_pair point_data))
+      )
+    nil
+    )
+  ) ;}}}
 
 ; new line
-(defun new_line (startpoint endpoint layername linetype scale / valid_args line_data)
+(defun new_line (startpoint endpoint layername linetype scale / valid_args line_data) ;{{{
   (progn
     (setq valid_args 1)
     (if (= (type startpoint) 'LIST) () (setq valid_args 0))
@@ -38,9 +43,9 @@
       (func_error_msg "new_line" "Arguments error")
       )
     )
-  )
+  ) ;}}}
 
-(defun ce:test_point_list (test_list / ret list_length index pair_holder)
+(defun ce:test_point_list (test_list / ret list_length index pair_holder) ;{{{
   (setq ret 1)
   (if (not (listp test_list)) (setq ret 0))
   (if (= ret 1) (progn (setq list_length (length test_list))(setq index 0)))
@@ -53,9 +58,9 @@
            )
          )
   (setq ret ret)
-  )
+  ) ;}}}
 
-(defun new_straight_polyline (point-list layername linetype scale /
+(defun new_straight_polyline (point-list layername linetype scale / ;{{{
                                          pl_data valid_args loop_var point_length)
   (setq valid_args 1)
   (if (not (ce:test_point_list point-list)) (setq valid_args 0))
@@ -88,21 +93,17 @@
                        ))))
       (entmake pl_data))
     (setq valid_args nil))
-  )
+  ) ;}}}
 
 ; pass an entity name, check whether it's a polyline and whether composite a closed 
 ; rectangle.
-(defun ce:is_aligned_rectangle (ename / ent_data point_data)
+(defun ce:is_aligned_rectangle (ename / ent_data point_data) ;{{{
   (if (and 
         (setq ent_data (entget ename)) ; entity is present
         (= (cdr (assoc '0 ent_data)) "LWPOLYLINE") ; polyline
         (= (cdr (assoc '70 ent_data)) 1) ; closed
-        (= (length (setq point_data
-                         (mapcar
-                           (function (lambda (x) (cdr x)))
-                           (filter_list ent_data
-                                        (function (lambda (x) (and (listp x) (= (car x) '10)))))
-                           ))) '4) ; the numbers of points of this polyline entity is 4
+        ; the numbers of points of this polyline entity is 4
+        (= (length (setq point_data (utils:polyline_points ename))) '4)
         (or ; the order of points of polyline can be
             ;               1 3   or   1 2
             ;               2 4        3 4
@@ -122,8 +123,4 @@
         )
     t nil
     )
-  )
-
-;{{{ !!! end load check !!!
-))
-;}}}
+  ) ;}}}
