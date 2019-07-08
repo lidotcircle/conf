@@ -54,6 +54,14 @@
   (setq ret ret)
   ) ;}}}
 
+(defun math:points_mult_cons (x c / ret) ;{{{
+  (while (car x)
+         (setq ret (append ret (list (* (car x) c))))
+         (setq x (cdr x))
+         )
+  ret
+  ) ;}}}
+
 (defun math:add_points (x y / ret) ;{{{
   (if (= (length x) (length y))
     (progn
