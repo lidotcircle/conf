@@ -102,6 +102,13 @@
     ) (princ)
   )
 
+; not implemented
 (defun C:entlist ( / ) 
  (princ (entget (car (entsel)))) (princ)
+ )
+
+(defun C:mscale ( / selection__ scale__) 
+ (setq selection__ (ssget))
+ (command "._scale" selection__ "" (getpoint) (setq scale__ (getreal)))
+ (drt:scale_width_of_mtext_in_pickset selection__ scale__)
  )

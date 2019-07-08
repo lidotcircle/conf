@@ -32,9 +32,13 @@
  ) ;}}}
 
 (defun type:isline (x / ) 
-  (type:isentity x "LINE")
+  (type:isentity__ x "LINE")
   )
 
 (defun type:iscircle (x / ) 
-  (type:isentity x "CIRCLE")
+  (type:isentity__ x "CIRCLE")
+  )
+
+(defun type:ismtext (x / ) 
+  (type:isentity__ x "MTEXT")
   )

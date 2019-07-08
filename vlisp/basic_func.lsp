@@ -25,6 +25,29 @@
     )
   )
 
+;{{{ functioin for elist field
+(defun ssubst_elist (field value elist__ / assoc_field) 
+ (assert (listp elist__))
+ (setq assoc_field (assoc field elist__))
+ (assert (and assoc_field (listp assoc_field)))
+ (subst (cons field value) assoc_field elist__)
+ )
+
+(defun is_entry_in_elist (field elist__ / ) 
+ (if (assoc field elist__) T nil)
+ )
+
+(defun is_single_entry_in_elist (field elist__ / elem meeted) 
+  (assert (listp elist__))
+  (setq meeted 0)
+  (while (and (< meeted 2) (setq elem (car elist__))) 
+         (setq elist__ (cdr elist__))
+         (if (= (car elem) field) (setq meeted (1+ meeted)))
+         )
+  (if (= meeted 1) T nil)
+  )
+;}}}
+
 (defun swap (sym1 sym2 / temp)
  (setq temp (vl-symbol-value sym1))
  (set sym1 (vl-symbol-value sym2))

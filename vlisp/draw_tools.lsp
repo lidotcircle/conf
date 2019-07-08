@@ -357,3 +357,17 @@
     (progn (princ "Input error point.")(princ))
     )
   ) ;}}}
+
+(defun drt:scale_width_of_mtext_in_pickset (pset scale_value / 
+                                                 mtext_list mtext_entity entity_elist width_value) 
+  (assert (or (not pset) (= (type pset) 'PICKSET)))
+  (setq mtext_list (filter_list (utils:pickset->list pset) 'type:ismtext))
+  (if (not mtext_list) nil 
+    (foreach mtext_entity mtext_list
+             (setq entity_elist (entget mtext_entity))
+             (setq width_value (* (cdr (assoc 41 entity_elist)) scale_value))
+             (entdel mtext_entity)
+             (entmake (ssubst_elist 41 width_value entity_elist)) (princ)
+             )
+    )
+  )
