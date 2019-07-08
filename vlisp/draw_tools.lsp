@@ -223,3 +223,30 @@
     (progn (princ "Input error point.")(princ))
     )
   ) ;}}}
+
+(defun drt:darrow (p1 p2 / MM x1 x2 x3 x4 x5 x6 x7 theta__ shift__) ;{{{
+  (if (and ( = (length p1) (length p2))
+           (/= (math:vector_abs (math:minus_points p1 p2)) 0))
+    (progn
+      (setq theta__ (angle p1 p2)
+            shift__ p1)
+      (setq MM (math:vector_abs (math:minus_points p1 p2)))
+      (setq x1 (math:points_mult_cons (list 0 (/  1 16) 0) MM)
+            x7 (math:points_mult_cons (list 0 (/ -1 16) 0) MM)
+            x2 (math:points_mult_cons (list (/ 7 8)  (/  1 16)  0) MM)
+            x6 (math:points_mult_cons (list (/ 7 8)  (/ -1 16)  0) MM)
+            x3 (math:points_mult_cons (list (/ 7 10) (/  2 13)  0) MM)
+            x5 (math:points_mult_cons (list (/ 7 10) (/ -2 13)  0) MM)
+            x4 (math:points_mult_cons (list 1        0          0) MM)
+            )
+      (new_straight_polyline
+        (mapcar '(lambda (x) (p_shift shift__ (p_rotate theta__ (append x '(0)))))
+                (list x1 x2 x3 x4 x5 x6 x7)
+                )
+        (getvar "CLAYER")
+        "BYLAYER" 1
+        )
+      )
+    (progn (princ "Input error point.")(princ))
+    )
+  ) ;}}}
