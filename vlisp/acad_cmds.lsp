@@ -76,3 +76,32 @@
                 (getpoint "Input second point:")
                 )
   )
+
+(defun C_aux:epl ( / sel_line ex_length mode__) 
+  (setq sel_line (ssget))
+  (setq mode__ (getstring "expand mode:"))
+  (setq ex_length (getreal "Expanded length or scale:"))
+  (drt:expand_line_set sel_line ex_length mode__)
+  )
+
+(defun C:epl ( / ) 
+  (C_aux:epl)
+  )
+
+(setq __scale__XX 1)
+(defun C:ascale ( / ) 
+  (princ (strcat "Scale:" (vl-princ-to-string __scale__XX)))
+  (command "._scale" (ssget) "" (getpoint "base point:") __scale__XX) (princ)
+  )
+
+(defun C:cascale ( / ) 
+  (setq __scale__XX (getreal "Input scale:"))
+  (defun C:ascale ( / ) 
+   (princ (strcat "Scale:" (vl-princ-to-string __scale__XX)))
+   (command "._scale" (ssget) "" (getpoint "base point:") __scale__XX) (princ)
+    ) (princ)
+  )
+
+(defun C:entlist ( / ) 
+ (princ (entget (car (entsel)))) (princ)
+ )

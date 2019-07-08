@@ -129,6 +129,8 @@ if !exists('g:disable_vim_notes')
 endif
 
 Bundle 'pboettch/vim-cmake-syntax'
+
+Bundle 'kovisoft/paredit'
 " }}}
 
 " {{{ Plugin End
