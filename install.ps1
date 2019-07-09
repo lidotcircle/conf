@@ -60,25 +60,27 @@ function install_fil()
     if(-not $args.count -eq 2){
         Write-Error -Message "Argument Error in install_fil()." -Category "InvalidArgument";
     }
-    if(Test-path $args[1].toString()){
-        move-item $args[1].toString() $BACKUP;
+    set-variable install_fil_src -Option readOnly -value $args[0];
+	set-variable install_fil_dst -Option readOnly -value $args[1];
+    if(Test-path $install_fil_dst.toString()){
+        move-item $install_fil_dst.toString() $BACKUP;
     }
-    if(Test-Path -Path $args[0] -PathType leaf){
+    if(Test-Path -Path $install_fil_src -PathType leaf){
         try{
-            New-Item -ItemType HardLink -Path $args[1] -Value $args[0] >> $null;
+            New-Item -ItemType HardLink -Path $install_fil_dst -Value $install_fil_src >> $null;
         } catch [System.Management.Automation.PSArgumentException] {
             $Error.RemoveAt(0);
-            cmd /c mklink /H $args[1].toString().replace('/', '\') $args[0].toString().replace('/', '\') >> $null;
+            cmd /c mklink /H $install_fil_dst.toString().replace('/', '\') $install_fil_src.toString().replace('/', '\') >> $null;
         }
-    } elseif (Test-Path -Path $args[0] -PathType Container){
+    } elseif (Test-Path -Path $install_fil_src -PathType Container){
         try{
-            New-Item -ItemType Junction -Path $args[1] -Value $args[0] >> $null;
+            New-Item -ItemType Junction -Path $install_fil_dst -Value $install_fil_src >> $null;
         } catch [System.Management.Automation.PSArgumentException] {
-            $Error.RemoveAt(0);
-            cmd /c mklink /J $args[1].toString().replace('/', '\') $args[0].toString().replace('/', '\') >> $null;
+            $Error.removeAt(0);
+            cmd /c mklink /J $install_fil_dst.toString().replace('/', '\') $install_fil_src.toString().replace('/', '\') >> $null;
         }
     }
-#    Copy-Item -Force -Recurse $args[0].toString() $args[1].toString();
+#    Copy-Item -Force -Recurse $install_fil_src.toString() $install_fil_dst.toString();
 }
 #} End function
 
