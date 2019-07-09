@@ -224,6 +224,113 @@
     )
   ) ;}}}
 
+;{{{ line tools
+; at least there is two line entity in pickset
+(defun drt_local:expand_line_aux (ssname__ / sslength__ index__ line_counter)
+  (if (/= ssname__ nil)
+    (progn 
+      (assert (= (type ssname__) 'PICKSET))
+      (setq index__ 0)
+      (setq line_counter 0)
+      (if (> (setq sslength__ (sslength ssname__)) 0)
+        (progn 
+          (while (and (< line_counter 2) (< index__ sslength__))
+                 (if (utils:entity_is (ssname ssname__ index__) "LINE")
+                   (setq line_counter (1+ line_counter))
+                   )
+                 (setq index__ (1+ index__))
+                 ) 
+          (if (> line_counter 1) T nil)
+          )
+        nil
+        ) 
+      )
+    nil)
+  )
+
+(defun drt:expand_line_byLength ( e_line ex_length mod_2 
+                                  / line_elist p1 p2 pe po unit_vector origin_length)
+  (if (and (setq line_elist (entget e_line)) (= (cdr (assoc 0 line_elist)) "LINE")
+           (setq p1 (cdr (assoc 10 line_elist))) (setq p2 (cdr (assoc 11 line_elist)))
+           )
+    (if (xor (if (drt_local:expand_line_aux (ssget "C" p1 p1)) (progn (setq pe p1) (setq po p2)) nil)
+             (if (drt_local:expand_line_aux (ssget "C" p2 p2)) (progn (setq pe p2) (setq po p1)) nil)
+             )
+      (progn 
+        (assert (/= (setq origin_length (math:vector_abs (math:minus_points po pe))) 0))
+        (if (= mod_2 2) (setq ex_length (* (- ex_length 1) origin_length)))
+        (setq unit_vector (math:points_over_cons (math:minus_points po pe) origin_length))
+        (setq po (math:add_points pe (math:points_over_cons unit_vector 
+                                                            (/ 1 (+ origin_length ex_length)))))
+        (setq line_elist (subst (cons 10 pe) (assoc 10 line_elist) line_elist))
+        (setq line_elist (subst (cons 11 po) (assoc 11 line_elist) line_elist))
+        (entmod line_elist)
+        )
+      nil
+      )
+    nil
+    )
+  )
+
+(defun drt:expand_line_byLength_center ( e_line ex_length mod_2 
+                                         / line_elist p1 p2 pc unit_vector origin_length)
+  (if (and (setq line_elist (entget e_line)) (= (cdr (assoc 0 line_elist)) "LINE")
+           (setq p1 (cdr (assoc 10 line_elist))) (setq p2 (cdr (assoc 11 line_elist)))
+           )
+    (progn 
+      (assert (/= (setq origin_length (math:vector_abs (math:minus_points p2 p1))) 0))
+      (if (= mod_2 2) (setq ex_length (* (- ex_length 1) origin_length)))
+      (setq pc (math:points_over_cons (math:add_points p1 p2) 2))
+      (setq unit_vector (math:points_over_cons (math:minus_points p2 p1) origin_length))
+      (setq p1 (math:minus_points pc (math:points_over_cons unit_vector 
+                                                            (/ 2 (+ origin_length ex_length)))))
+      (setq p2 (math:add_points   pc (math:points_over_cons unit_vector 
+                                                            (/ 2 (+ origin_length ex_length)))))
+      (setq line_elist (subst (cons 10 p1) (assoc 10 line_elist) line_elist))
+      (setq line_elist (subst (cons 11 p2) (assoc 11 line_elist) line_elist))
+      (entmod line_elist)
+      )
+    nil
+    )
+  )
+
+;         mode -> \"<mode_specify>\" --  default "el"
+; mode_specify -> e -- line end cross other line
+;                 c -- line center is don't changed
+;                 s -- expand by scaling the line
+;                 l -- expand by adding the length to the line
+(defun drt:expand_line_set (line_set ex_length mode__ 
+                            / line_ent mode_list mod_1 mod_2 mode_spec mod_1_mod mod_2_mod) 
+  (setq mode_list (vl-string->list mode__))
+  (setq mod_1 1 mod_2 1 mod_1_mod nil mod_2_mod nil)
+  (assert (<= (length mode_list) 2))
+  (foreach mode_spec mode_list 
+           (cond 
+             ((= mode_spec 101) (if (not mod_1_mod) (setq mod_1 1 mod_1_mod T) 
+                 (princ "Duplicated location specify." ))) ; e
+             ((= mode_spec 99 ) (if (not mod_1_mod) (setq mod_1 2 mod_1_mod T) 
+                 (princ "Duplicated location specify." ))) ; c
+             ((= mode_spec 115) (if (not mod_2_mod) (setq mod_2 2 mod_2_mod T) 
+                 (princ "Duplicated location specify." ))) ; s
+             ((= mode_spec 108) (if (not mod_2_mod) (setq mod_2 1 mod_2_mod T) 
+                 (princ "Duplicated location specify." ))) ; l
+             (T (princ (strcat "unkown mode specify:" (chr mode_spec))))
+             )
+           )
+  (setq line_set (utils:pickset->list line_set))
+  (foreach line_ent line_set
+           (cond ((= mod_1 1) 
+                  (and (utils:entity_is line_ent "LINE") 
+                       (drt:expand_line_byLength line_ent ex_length mod_2))) 
+                 ((= mod_1 2) 
+                  (and (utils:entity_is line_ent "LINE") 
+                       (drt:expand_line_byLength_center line_ent ex_length mod_2))  
+                  ) 
+                 )
+           )
+  )
+;}}} end line tools
+
 (defun drt:darrow (p1 p2 / MM x1 x2 x3 x4 x5 x6 x7 theta__ shift__) ;{{{
   (if (and ( = (length p1) (length p2))
            (/= (math:vector_abs (math:minus_points p1 p2)) 0))
@@ -256,3 +363,17 @@
  (setq arrowEntity (entlast))
  (command "_HATCH" "s" arrowEntity "")
  ) ;}}}
+
+(defun drt:scale_width_of_mtext_in_pickset (pset scale_value / 
+                                                 mtext_list mtext_entity entity_elist width_value) 
+  (assert (or (not pset) (= (type pset) 'PICKSET)))
+  (setq mtext_list (filter_list (utils:pickset->list pset) 'type:ismtext))
+  (if (not mtext_list) nil 
+    (foreach mtext_entity mtext_list
+             (setq entity_elist (entget mtext_entity))
+             (setq width_value (* (cdr (assoc 41 entity_elist)) scale_value))
+             (entdel mtext_entity)
+             (entmake (ssubst_elist 41 width_value entity_elist)) (princ)
+             )
+    )
+  )

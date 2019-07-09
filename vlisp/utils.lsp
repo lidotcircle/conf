@@ -1,45 +1,51 @@
 ; utils
 
+(defun utils:entity_is (entity typestr / ) ;{{{
+ (and
+   (= (type entity) 'ENAME)
+   (= (cdr (assoc 0 (entget entity))) typestr))
+ ) ;}}}
+
+; f: nil     -> nil
+; f: pickset -> list
 (defun utils:pickset->list (pickset_ / elem len i ret) ;{{{
+  (assert (or (not pickset_) (= (type pickset_) 'PICKSET)))
   (setq i 0)
-  (if (= (type pickset_) 'PICKSET)
+  (if pickset_ 
     (while (setq elem (ssname pickset_ i))
            (setq i (1+ i))
            (setq ret (append ret (list elem)))
-           )
-    )
-  (setq ret ret)
+           ))
+  ret
   ) ;}}}
 
 ; list filter function
 (defun filter_list (list__ function__ / ret elem) ;{{{
-  (if (listp list__) ; the type is 'LIST
-    (foreach elem list__
-             (if (apply function__ (list elem))
-               (setq ret
-                     (append ret (list elem))
-                     )
-               )
+  (assert (listp list__))
+  (foreach elem list__
+           (if (apply function__ (list elem))
+             (setq ret
+                   (append ret (list elem))
+                   )
              )
-    )
-  (setq ret ret)
+           )
+  ret
   ) ;}}}
 
 ; pickset filter function
 (defun filter_ss (ss__ function__ / ret elem ss_index) ;{{{
+  (assert (= (type ss__) 'PICKSET))
   (setq ss_index 0)
   (setq ret (ssadd))
-  (if (= (type ss__) 'PICKSET)
-    (while (setq elem (ssname ss__ ss_index))
-           (setq ss_index (1+ ss_index))
-           (if (apply function__ (list elem))
-             (setq ret
-                   (ssadd elem ret)
-                   )
-             )
+  (while (setq elem (ssname ss__ ss_index))
+         (setq ss_index (1+ ss_index))
+         (if (apply function__ (list elem))
+           (setq ret
+                 (ssadd elem ret)
+                 )
            )
-    )
-  (setq ret ret)
+         )
+  ret
   ) ;}}}
 
 (defun min_pair (pair_list / ret point) ;{{{
@@ -163,10 +169,3 @@
       ) nil
     )
   ) ;}}}
-
-(defun utils:entity_is (entity typestr / ret) ;{{{
- (setq ret T)
- (if (/= (type entity) 'ENAME) (setq ret nil))
- (if (/= (cdr (assoc 0 (entget entity))) typestr) (setq ret nil))
- ret
- ) ;}}}

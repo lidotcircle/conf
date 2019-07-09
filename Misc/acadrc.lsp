@@ -1,6 +1,8 @@
 ;; Autocad autolisp file
 ;; set this script autoload in autocad
 
+(vl-load-com)
+
 ;{{{ load utils
 ; check whether file exist, not a directory
 (defun file_exist (filen / ret)
@@ -48,6 +50,7 @@
 ; script list
 (setq script_list (list
     'anna_math
+    'anna_type
     'anna_basic_func
     'anna_acad_cmds
     'anna_draw_tools

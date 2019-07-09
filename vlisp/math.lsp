@@ -75,6 +75,59 @@
     )
   ) ;}}}
 
+; epsilon range
+(setq epsilon__ 1e-15)
+
+(defun in_range (x x_0 range__ / ) 
+ (if (<= (abs (- x x_0)) range__) T nil)
+ )
+
+(defun in_epsilon (x x_0) 
+ (in_range x x_0 epsilon__)
+ )
+
+(defun with_epsilon (x x_0 / ) 
+ (if (in_epsilon x x_0) x_0 x)
+ )
+
+; trigonometric functions and inverse trigonometric functions
+(if (not tan)
+ (defun tan (x / ) 
+  (/ (sin x) (cos x))
+  )
+ )
+
+(if (not  arctan) 
+ (defun arctan (x / ) 
+  (atan x)
+  )
+ )
+
+(if (not arccos) 
+ (defun arccos (x / ) 
+  (cond 
+   ((in_epsilon x 0) (/ PI 2))
+   ((in_range   x 0 1) 
+    (cond 
+     ((> x 0)  (atan (/ (sqrt (- 1 (* x x))) x))) 
+     (T ( + PI (atan (/ (sqrt (- 1 (* x x))) x)))) 
+     ))
+   (T (progn (princ "arccos(x): x out of range") (exit)))
+   )
+  )
+ )
+
+(if (not arcsin) 
+ (defun arcsin (x / ) 
+  (cond 
+   ((in_epsilon x  1  )    PI )
+   ((in_epsilon x -1  ) (- PI))
+   ((in_range   x  0 1) (atan (/ x (sqrt (- 1 (* x x))))))
+   (T (progn (princ "arcsin(x): x out of range") (exit)))
+   )
+  )
+ )
+
 ; math basic func
 (defun math:line_unit_vector (line / ret) ;{{{
   (setq ret (math:minus_points (car line) (cadr line)))

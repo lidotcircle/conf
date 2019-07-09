@@ -38,15 +38,16 @@ $Plugin_list = @("VundleVim/Vundle.vim", "Lokaltog/vim-powerline");
 $PLU_INS = "$HOME/.vim/bundle";
 #}
 
+$GIT_ENABLE = $true;
 #{ Dependencies check.
 while($true){
     try{
         # supressed output.
         git --version >> $null
     }
-    catch {
-        Write-Output "";
-        exit $EXIT_FAIL;
+    catch [System.Management.Automation.CommandNotFoundException] {
+        Write-Output "git doesn't install, so giving up some process that involved git.";
+        $GIT_ENABLE = $false;
     }
     clear; break;
 }
@@ -63,9 +64,19 @@ function install_fil()
         move-item $args[1].toString() $BACKUP;
     }
     if(Test-Path -Path $args[0] -PathType leaf){
-        New-Item -ItemType HardLink -Path $args[1] -Value $args[0] >> $null;
+        try{
+            New-Item -ItemType HardLink -Path $args[1] -Value $args[0] >> $null;
+        } catch [System.Management.Automation.PSArgumentException] {
+            $Error.RemoveAt(0);
+            cmd /c mklink /H $args[1].toString().replace('/', '\') $args[0].toString().replace('/', '\') >> $null;
+        }
     } elseif (Test-Path -Path $args[0] -PathType Container){
-        New-Item -ItemType Junction -Path $args[1] -Value $args[0] >> $null;
+        try{
+            New-Item -ItemType Junction -Path $args[1] -Value $args[0] >> $null;
+        } catch [System.Management.Automation.PSArgumentException] {
+            $Error.RemoveAt(0);
+            cmd /c mklink /J $args[1].toString().replace('/', '\') $args[0].toString().replace('/', '\') >> $null;
+        }
     }
 #    Copy-Item -Force -Recurse $args[0].toString() $args[1].toString();
 }
@@ -75,6 +86,7 @@ function install_fil()
 #{ function : install_plug()
 function install_plug()
 {
+    if(!$GIT_ENABLE){return $false} # make sure git is installed before running git
     if(-not $args.count -eq 1){
         Write-Error -Message "Argument Error in install_plug()." -Category "InvalidArgument";
     }

@@ -89,3 +89,39 @@
     (getpoint "Input second point:")
     )
   )
+
+(defun C_aux:epl ( / sel_line ex_length mode__) 
+  (setq sel_line (ssget))
+  (setq mode__ (getstring "expand mode:"))
+  (setq ex_length (getreal "Expanded length or scale:"))
+  (drt:expand_line_set sel_line ex_length mode__)
+  )
+
+(defun C:epl ( / ) 
+  (C_aux:epl)
+  )
+
+(setq __scale__XX 1)
+(defun C:ascale ( / ) 
+  (princ (strcat "Scale:" (vl-princ-to-string __scale__XX)))
+  (command "._scale" (ssget) "" (getpoint "base point:") __scale__XX) (princ)
+  )
+
+(defun C:cascale ( / ) 
+  (setq __scale__XX (getreal "Input scale:"))
+  (defun C:ascale ( / ) 
+   (princ (strcat "Scale:" (vl-princ-to-string __scale__XX)))
+   (command "._scale" (ssget) "" (getpoint "base point:") __scale__XX) (princ)
+    ) (princ)
+  )
+
+; not implemented
+(defun C:entlist ( / ) 
+ (princ (entget (car (entsel)))) (princ)
+ )
+
+(defun C:mscale ( / selection__ scale__) 
+ (setq selection__ (ssget))
+ (command "._scale" selection__ "" (getpoint) (setq scale__ (getreal)))
+ (drt:scale_width_of_mtext_in_pickset selection__ scale__)
+ )
