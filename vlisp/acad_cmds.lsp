@@ -76,3 +76,16 @@
                 (getpoint "Input second point:")
                 )
   )
+
+(defun C:dar ( / )
+  (drt:darrow (getpoint "Input first point:")
+              (getpoint "Input second point:")
+              )
+  )
+
+(defun C:hdar ( / )
+  (drt:hatched_darrow
+    (getpoint "Input first point:")
+    (getpoint "Input second point:")
+    )
+  )
