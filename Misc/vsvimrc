@@ -1,5 +1,10 @@
 let mapleader = ','
 
+""" Attention !!!
+""" Set the <ctrl-<key>> handled by VSVIM in 
+""" [visualStudio -> Tools -> Options -> VsVim -> Keyboard]
+
+" Basic VIM mapping {{{
 nnoremap <leader>q :q<cr>
 nnoremap <leader>w :w<cr>
 
@@ -17,9 +22,14 @@ inoremap <c-f> <right>
 inoremap <c-b> <left>
 inoremap <c-n> <down>
 inoremap <c-p> <up>
+"}}} end BasicVimMapping
 
-" For toggle some window
-"" Toggle designer
+" Visual Studio Build "{{{
+map <leader>bb :vsc Build.BuildSolution<cr>
+map <leader>bc :vsc Build.Compile<cr>
+"}}} end VSBuild
+
+"  Visual Studio View {{{
 map <leader>d :vsc View.ToggleDesigner<cr>
 "" Error check
 map <leader>el :vsc View.ErrorList<cr>
@@ -27,3 +37,27 @@ map <leader>en :vsc View.NextError<cr>
 map <leader>ep :vsc View.PreviousError<cr>
 "" solution explorer
 map <leader>s  :vsc View.SolutionExplorer<cr>
+map <leader>p  :vsc View.PropertiesWindow<cr>
+map <leader>zi :vsc View.ZoomIn <cr>
+map <leader>zo :vsc View.ZoomOut<cr>
+"}}} end VSView
+
+"Visual Studio Debuger {{{
+map <leader>db :vsc Debug.ToggleBreakpoint<cr>
+map <leader>ds :vsc Debug.Start<cr>
+map <leader>dn :vsc Debug.StepOver<cr>
+map <leader>di :vsc Debug.StepInto<cr>
+map <leader>do :vsc Debug.StepOut<cr>
+map <leader>dh :vsc Debug.StopDebugging<cr>
+" }}} end VSDebuger
+
+" Visual Studio Editor {{{
+map <leader>cdf :vsc Edit.GoToDefinition<cr>
+map <leader>cdc :vsc Edit.GoToDeclaration<cr>
+map <leader>ct  :vcs View.NavigateBackWard<cr>
+map <leader>cf  :vcs View.NavigateForWard<cr>
+" vim default behavior {{{
+map <c-]> :vcs Edit.GoToDefinition<cr>
+map <c-t> :vcs View.NavigateBackWard<cr>
+" }}}
+"}}} end VSEditor
