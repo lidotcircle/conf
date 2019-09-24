@@ -124,7 +124,11 @@ function! NextError() "{{{
     elseif l:qflen == 1
         cc 1
     else
-        cnext
+        try
+            cnext
+        catch /.*/
+            cc 1
+        endtry
     endif
 endfunction "}}}
 function! PrevError() "{{{
@@ -134,9 +138,45 @@ function! PrevError() "{{{
     elseif l:qflen == 1
         cc 1
     else
-        cprev
+        try
+            cprev
+        catch /.*/
+            exec "cc " . string(l:qflen)
+        endtry
     endif
 endfunction "}}}
 nnoremap <silent><leader>en :call NextError()<cr>
 nnoremap <silent><leader>ep :call PrevError()<cr>
+
+function! CNextError() "{{{
+    let l:cqflen = len(getloclist(0))
+    if  l:cqflen == 0
+        echom "current window quickfix list is empty"
+    elseif l:cqflen == 1
+        ll 1
+    else
+        try
+            lnext
+        catch /.*/
+            ll 1
+        endtry
+    endif
+endfunction "}}}
+function! CPrevError() "{{{
+    let l:cqflen = len(getloclist(0))
+    if  l:cqflen == 0
+        echom "current window quickfix list is empty"
+    elseif l:cqflen == 1
+        ll 1
+    else
+        try
+            lprev
+        catch /.*/
+            exec "ll " . string(l:cqflen)
+        endtry
+    endif
+endfunction "}}}
+nnoremap <silent><leader>sn :call CNextError()<cr>
+nnoremap <silent><leader>sp :call CPrevError()<cr>
+
 "}}}

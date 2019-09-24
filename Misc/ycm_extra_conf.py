@@ -9,10 +9,10 @@ c_language = 0
 
 if platform.system() == "Windows":
     ycm_compilation_log_file = os.path.join(os.getenv("userprofile"),
-            "ycm_compilation.log")
+                                            "ycm_compilation.log")
 else:
     ycm_compilation_log_file = os.path.join(os.getenv("HOME"),
-            "ycm_compilation.log")
+                                            "ycm_compilation.log")
 
 
 def append_to_ycm_compilation_log_file(args):
@@ -20,16 +20,18 @@ def append_to_ycm_compilation_log_file(args):
               mode="at") as append_file:
         for k, v in args.items():
             append_file.write(
-                    "{0:<25s}:  {1:<s}\n".format(k.__str__(), v.__str__()))
-        append_file.write("\n")
+                "{0:<25s}:  {1:<s}\n".format(k.__str__(), v.__str__()))
+            append_file.write("\n")
+
 
 def debug_here():
     with open(ycm_compilation_log_file,
-            mode="at") as append_file:
+              mode="at") as append_file:
         append_file.write("HERE is reachable.\n")
 
 
-DEBUG and append_to_ycm_compilation_log_file({"Debug ycm_extra_conf.py": "Yes"})
+DEBUG and append_to_ycm_compilation_log_file(
+    {"Debug ycm_extra_conf.py": "Yes"})
 
 common_clang_flags = [
     '-Wall',
@@ -59,8 +61,10 @@ def list_sub_dir(par):
                        os.listdir(par)))
 
 
-stl_files = {"algorithm", "array", "bitset", "complex", "deque", "exception", "iostream",
-        "istream", "ostream"}  # just short list
+stl_files = {"algorithm", "array", "bitset", "complex", "deque", "exception",
+             "iostream", "istream", "ostream"}  # just short list
+
+
 def path_include_stl(path):
     if not os.path.exists(path):
         return False
@@ -108,8 +112,8 @@ def msvc_path():
         "function": "msvc_path"})
     if platform.system() != 'Windows':
         return None
-    msvs_path = os.path.join(os.getenv("ProgramFiles(x86)"), 
-            "Microsoft Visual Studio")
+    msvs_path = os.path.join(os.getenv("ProgramFiles(x86)"),
+                             "Microsoft Visual Studio")
     if not os.path.exists(msvs_path):
         return None
     msvc_level1(msvs_path, 0)
@@ -203,15 +207,15 @@ def GetCompilationInfoForFile(filename):
 
 if DEBUG:
     append_to_ycm_compilation_log_file(
-            {"current_working_directory": os.getcwd(),
-            "msvc_paths": msvc_paths.__str__(),
-            "common_clang_flags": common_clang_flags,
-            "common_linux_header_folder": common_linux_header_folder,
-            "default_c_flags": default_c_flags,
-            "default_cpp_flags": default_cpp_flags,
-            "linux_c_header_folder": linux_c_header_folder,
-            "linux_cpp_header_folder": linux_cpp_header_folder,
-            "windows_header_folder": windows_header_folder})
+        {"current_working_directory": os.getcwd(),
+         "msvc_paths": msvc_paths.__str__(),
+         "common_clang_flags": common_clang_flags,
+         "common_linux_header_folder": common_linux_header_folder,
+         "default_c_flags": default_c_flags,
+         "default_cpp_flags": default_cpp_flags,
+         "linux_c_header_folder": linux_c_header_folder,
+         "linux_cpp_header_folder": linux_cpp_header_folder,
+         "windows_header_folder": windows_header_folder})
 
 
 def Settings(**kwargs):

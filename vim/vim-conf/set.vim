@@ -110,3 +110,16 @@ set autowrite
 set noswapfile
 
 " }}}
+
+"{{{ TAGS
+let s:extraTags = [
+            \      $HOME . 'cpython.tag',
+            \      $HOME . '/llvmlibcxx.tag']
+"            \      $HOME . '/c++stl.tag',
+let s:currentTags = &tags
+let s:extraTagsString = ""
+for s:exT in s:extraTags
+    let s:extraTagsString .= "," . s:exT
+endfor
+exec "set tags=" . s:currentTags . s:extraTagsString
+"}}}
