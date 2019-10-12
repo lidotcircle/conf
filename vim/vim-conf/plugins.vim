@@ -131,6 +131,12 @@ endif
 Bundle 'pboettch/vim-cmake-syntax'
 
 Bundle 'kovisoft/paredit'
+
+Bundle 'junegunn/vim-easy-align'
+
+Bundle 'rhysd/vim-grammarous'
+
+Bundle 'haya14busa/vim-gtrans'
 " }}}
 
 " {{{ Plugin End
