@@ -180,3 +180,14 @@ nnoremap <silent><leader>sn :call CNextError()<cr>
 nnoremap <silent><leader>sp :call CPrevError()<cr>
 
 "}}}
+
+" termdebug "{{{
+nnoremap <silent><F5>    :Run<cr>
+nnoremap <silent><F9>    :Break<cr>
+nnoremap <silent><C-F9>  :Delete<cr>
+nnoremap <silent><F10>   :Step<cr>
+nnoremap <silent><F11>   :Over<cr>
+nnoremap <silent><C-F11> :Finish<cr>
+nnoremap <silent><C-F5>  :Continue<cr>
+nnoremap <silent><S-F5>  :Stop<cr>
+"}}}

@@ -125,3 +125,8 @@ nnoremap <leader>mbt :MBEToggle<cr>
 "{{{ vim-session
 let g:session_autosave="yes"
 "}}}
+
+"{{{ easy-vim-align
+vmap <Enter> <Plug>(EasyAlign)
+nmap <leader> <Plug>(EasyAlign)
+"}}}

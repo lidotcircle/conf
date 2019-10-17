@@ -16,6 +16,21 @@
 #include <linux/limits.h>
 #endif // _WIN32 || _WIN64
 
+const char * __ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+std::string random_string(size_t s = 8) //{
+{
+    std::string ret = "";
+    std::srand(std::time(nullptr));
+    for(size_t i = 1; i<=s; i++)
+    {
+        char x = (std::rand() % ('z' - 'a' + 'Z' - 'A' + 2)) + 'A';
+        if(x > 'Z'){x += ('a' - 'Z' - 1);}
+        ret.push_back(x);
+    }
+    return ret;
+} //}
+
 class logger 
 {
 private:

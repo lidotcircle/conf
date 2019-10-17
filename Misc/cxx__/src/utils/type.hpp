@@ -1,3 +1,6 @@
+#ifndef ANNA_TYPE_HPP
+#define ANNA_TYPE_HPP
+
 #include<type_traits>
 
 #define HAS_MEMBER(name) \
@@ -53,3 +56,5 @@ class __is_callable<T, void> {
 };
 template<typename T, typename ARG = void>
 class is_callable: public std::integral_constant<bool, __is_callable<T, ARG>::value> {};
+
+#endif // ANNA_TYPE_HPP
