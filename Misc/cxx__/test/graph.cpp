@@ -12,7 +12,7 @@
 
 void testA()
 {
-    DenseGraph<double, size_t> A(8, false);
+    DenseGraph<double, size_t> A(88, true);
     A.NewVertex(100.2);
     std::srand(time(nullptr));
     for(auto bi = A.VertexBegin(); bi != A.VertexEnd(); bi++){
@@ -36,14 +36,12 @@ void testA()
     }
     using vertex_id = decltype(A)::vertex_id;
     std::vector<vertex_id> sss;
-    /*
-    A.DFS(1, &sss, [](decltype(A)::Vertex& vx, void* ss){
+    A.BFS(1, &sss, [](decltype(A)::Vertex& vx, void* ss){
                 std::cout << vx.GetId() << std::endl;
                 std::vector<vertex_id>* p_v = reinterpret_cast<std::vector<vertex_id>*>(ss);
                 if(p_v == nullptr) return;
                 p_v->push_back(vx.GetId());
             });
-            */
     return;
 }
 

@@ -141,6 +141,8 @@ iter__out_this__:
                 edge_pair_iterator(): m_is_end(true){}
                 edge_pair_iterator& operator++() //{
                 {
+                    if(m_current_valid != m_target->m_valid_counter)
+                        throw *new std::runtime_error("Access iterator after data is modified, which is invalid.");
                     if(m_current_column != m_target->m_vertex_counter){
                         m_current_column++;
                         this->calculate_next();
@@ -273,14 +275,14 @@ iter__out_this__:
                             new_data.push_back(std::make_pair(false, weight_type(0)));
                         continue;
                     }
-                    for(size_t j = 1; i<=m_vertex_counter+1; i++){
+                    for(size_t j = 1; j<=m_vertex_counter+1; j++){
                         if(j == m_vertex_counter + 1) new_data.push_back(std::make_pair(false, weight_type(0)));
                         new_data.push_back(get_m_data(i, j));
                     }
                 }
             } else {
                 for(size_t i = 1; i<=m_vertex_counter+1; i++){
-                    for(size_t j = i; i<=m_vertex_counter; i++){
+                    for(size_t j = i; j<=m_vertex_counter; j++){ // so stupid
                         new_data.push_back(get_m_data(i, j));
                     }
                     new_data.push_back(std::make_pair(false, weight_type(0)));
@@ -503,16 +505,18 @@ class DenseGraph: public BaseGraph<VD, EW> //{
             std::queue<vertex_id> traverse_queue;
             size_t x = this->reverseMap(begin_vertex);
             if(x != 0) traverse_queue.push(begin_vertex); else return false;
+            m_vertex[x - 1].Visited() = true;
             while(!traverse_queue.empty()){
                 size_t loc = this->reverseMap(traverse_queue.front());
                 traverse_queue.pop();
                 Vertex& vx = m_vertex[loc - 1];
                 this->update_vertex_msg(vx.GetId());
-                vx.Visited() = true;
                 func(vx, obj);
                 for(auto bi = vx.AdjecentsBegin(); bi != vx.AdjecentsEnd(); bi++){
-                    if((*bi)->Visited() == false)
+                    if((*bi)->Visited() == false){
                         traverse_queue.push((*bi)->GetId());
+                        (*bi)->Visited() = true;
+                    }
                 }
             }
             return true;
@@ -522,21 +526,28 @@ class DenseGraph: public BaseGraph<VD, EW> //{
             std::stack<vertex_id> traverse_stack;
             size_t x = this->reverseMap(begin_vertex);
             if(x != 0) traverse_stack.push(begin_vertex); else return false;
+            m_vertex[x - 1].Visited() = true;
             while(!traverse_stack.empty()){
                 size_t loc = this->reverseMap(traverse_stack.top());
                 traverse_stack.pop();
                 Vertex& vx = m_vertex[loc - 1];
                 this->update_vertex_msg(vx.GetId());
-                vx.Visited() = true;
                 func(vx, obj);
                 for(auto bi = vx.AdjecentsBegin(); bi != vx.AdjecentsEnd(); bi++){
-                    if((*bi)->Visited() == false)
+                    if((*bi)->Visited() == false){
                         traverse_stack.push((*bi)->GetId());
+                        (*bi)->Visited() = true;
+                    }
                 }
             }
             return true;
         } //}
 }; //}
+
+// mimimum spaning tree
+// short path from one peer to another peer
+// short path from any peer to others
+// ADT: TREE, PATH
 
 template class DenseGraphMatrix<size_t>;
 template class DenseGraph<double, size_t>;
