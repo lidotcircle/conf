@@ -61,3 +61,12 @@ map <c-]> :vcs Edit.GoToDefinition<cr>
 map <c-t> :vcs View.NavigateBackWard<cr>
 " }}}
 "}}} end VSEditor
+
+" Alignment tool {{{
+map <leader>aa :vsc Edit.AlignByEquals<cr>
+map <leader>ap :vsc Edit.AlignBySpace<cr>
+map <leader>at :vsc Edit.AlignByString<cr>
+map <leader>as :vsc Edit.AlignByAssignment<cr>
+map <leader>aq :vsc Edit.AlignByQuote<cr>
+map <leader>ak :vsc Edit.AlignByKey<cr>
+"}}}
