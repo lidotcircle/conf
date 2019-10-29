@@ -3,6 +3,8 @@
 #include<iostream>
 #include<iomanip>
 
+#include<memory>
+
 #include<cstdlib>
 
 #include<unistd.h>
@@ -42,11 +44,18 @@ void testA()
                 if(p_v == nullptr) return;
                 p_v->push_back(vx.GetId());
             });
+    GTree<vertex_id, decltype(A)::Vertex*>* xxx = A.DFS_GTree(1);
+    delete xxx;
     return;
 }
 
+int hello(int);
+
 int main()
 {
-    testA();
+    typedef decltype(hello(0)) yes;
+    yes a = 0;
+    std::cout << a;
+//    testA();
     return 0;
 }

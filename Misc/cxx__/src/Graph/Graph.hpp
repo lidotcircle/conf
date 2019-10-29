@@ -14,6 +14,7 @@
 
 #include "../utils/type.hpp"
 #include "../utils/logger.h"
+#include "../Tree/GTree.hpp"
 
 template<typename VD, typename EW>
 class BaseGraph  //{
@@ -541,6 +542,63 @@ class DenseGraph: public BaseGraph<VD, EW> //{
                 }
             }
             return true;
+        } //}
+
+        GTree<vertex_id, Vertex*>* DFS_GTree(const vertex_id& begin_vertex) //{ keep same logic between DFS and BFS
+        {
+            GTree<vertex_id, Vertex*>* ret_tree;
+            std::stack<std::pair<vertex_id, GTree<vertex_id, Vertex*>*>> traverse_stack;
+            size_t x = this->reverseMap(begin_vertex);
+            if(x != 0) traverse_stack.push(std::make_pair(begin_vertex, nullptr)); else return nullptr;
+            m_vertex[x - 1].Visited() = true;
+            while(!traverse_stack.empty()){
+                std::pair<vertex_id, GTree<vertex_id, Vertex*>*> _pair = traverse_stack.top();
+                size_t loc = this->reverseMap(_pair.first);
+                Vertex& vx = m_vertex[loc - 1];
+                GTree<vertex_id, Vertex*>* current_tree = new GTree<vertex_id, Vertex*>(_pair.first, &vx);
+                if(_pair.second == nullptr) {
+                    ret_tree = current_tree;
+                } else {
+                    _pair.second->new_child(current_tree);
+                }
+                traverse_stack.pop();
+                this->update_vertex_msg(vx.GetId());
+                for(auto bi = vx.AdjecentsBegin(); bi != vx.AdjecentsEnd(); bi++){
+                    if((*bi)->Visited() == false){
+                        traverse_stack.push(std::make_pair((*bi)->GetId(), current_tree));
+                        (*bi)->Visited() = true;
+                    }
+                }
+            }
+            return ret_tree;
+        } //}
+        GTree<vertex_id, Vertex*>* BFS_GTree(const vertex_id& begin_vertex) //{ keep same logic between DFS and BFS
+        {
+            GTree<vertex_id, Vertex*>* ret_tree;
+            std::queue<std::pair<vertex_id, GTree<vertex_id, Vertex*>*>> traverse_queue;
+            size_t x = this->reverseMap(begin_vertex);
+            if(x != 0) traverse_queue.push(std::make_pair(begin_vertex, nullptr)); else return nullptr;
+            m_vertex[x - 1].Visited() = true;
+            while(!traverse_queue.empty()){
+                std::pair<vertex_id, GTree<vertex_id, Vertex*>*> _pair = traverse_queue.front();
+                size_t loc = this->reverseMap(_pair.first);
+                Vertex& vx = m_vertex[loc - 1];
+                GTree<vertex_id, Vertex*>* current_tree = new GTree<vertex_id, Vertex*>(_pair.first, &vx);
+                if(_pair.second == nullptr) {
+                    ret_tree = current_tree;
+                } else {
+                    _pair.second->new_child(current_tree);
+                }
+                traverse_queue.pop();
+                this->update_vertex_msg(vx.GetId());
+                for(auto bi = vx.AdjecentsBegin(); bi != vx.AdjecentsEnd(); bi++){
+                    if((*bi)->Visited() == false){
+                        traverse_queue.push(std::make_pair((*bi)->GetId(), current_tree));
+                        (*bi)->Visited() = true;
+                    }
+                }
+            }
+            return ret_tree;
         } //}
 }; //}
 
