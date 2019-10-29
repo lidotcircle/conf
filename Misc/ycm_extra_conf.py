@@ -228,7 +228,7 @@ def Settings(**kwargs):
         return []
     file_extension: str = os.path.splitext(kwargs["filename"])[1]
     flags = GetFlags(file_extension in
-                     [".cpp", ".hpp", ".cx", ".cxx", ".hx", ".hxx", "cc"])
+                     [".cpp", ".hpp", ".cx", ".cxx", ".hx", ".hxx", ".cc"])
     kwargs["flags"] = flags
     append_to_ycm_compilation_log_file(kwargs)
     if not database:
