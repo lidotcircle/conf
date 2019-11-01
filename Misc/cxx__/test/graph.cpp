@@ -14,12 +14,12 @@
 
 void testA()
 {
-    DenseGraph<double, size_t> A(88, true);
+    DenseGraph<double, size_t> A(15, false);
     A.NewVertex(100.2);
     std::srand(time(nullptr));
-    for(auto bi = A.VertexBegin(); bi != A.VertexEnd(); bi++){
+    for(auto bi = A.VertexBegin(); bi != A.VertexEnd(); bi++) {
         for(auto xi = A.VertexBegin(); xi != A.VertexEnd(); xi++){
-            if(std::rand() % 2 == 0)
+            if(std::rand() % 10 == 0)
                 A.SetWeight(bi->GetId(), xi->GetId(), 1);
         }
     }
@@ -38,24 +38,20 @@ void testA()
     }
     using vertex_id = decltype(A)::vertex_id;
     std::vector<vertex_id> sss;
-    A.BFS(1, &sss, [](decltype(A)::Vertex& vx, void* ss){
+    A.DFS(1, &sss, [](decltype(A)::Vertex& vx, void* ss){
                 std::cout << vx.GetId() << std::endl;
                 std::vector<vertex_id>* p_v = reinterpret_cast<std::vector<vertex_id>*>(ss);
                 if(p_v == nullptr) return;
                 p_v->push_back(vx.GetId());
             });
-    GTree<vertex_id, decltype(A)::Vertex*>* xxx = A.DFS_GTree(1);
+    auto xxx = A.BFS_GTree(1);
+    std::cout << *xxx << std::endl;
     delete xxx;
     return;
 }
 
-int hello(int);
-
 int main()
 {
-    typedef decltype(hello(0)) yes;
-    yes a = 0;
-    std::cout << a;
-//    testA();
+    testA();
     return 0;
 }

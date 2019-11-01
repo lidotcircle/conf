@@ -5,6 +5,9 @@
 #include<stack>
 #include<queue>
 
+#include<iostream>
+#include<iomanip>
+
 template<typename K, typename V>
 class GTree //{
 {
@@ -34,47 +37,33 @@ class GTree //{
 
         value_type& GetValue() {return this->m_val;}
         const value_type& GetValue() const {return this->m_val;}
-        value_type& GetChildren() {return this->m_children;}
-        const value_type& GetChildren() const {return this->m_children;}
+        key_type& GetKey() {return this->m_key;}
+        const key_type& GetKey() const {return this->m_key;}
+        forest_type& GetChildren() {return this->m_children;}
+        const forest_type& GetChildren() const {return this->m_children;}
 
         ~GTree() {
             for(auto x = m_children.begin(); x != m_children.end(); x++)
                 delete *x;
         }
-
-        bool dfs_search(const key_type& _k, GTree** _out) {
-            std::stack<GTree*> traversal_stack;
-            traversal_stack.push(this);
-            while(!traversal_stack.empty()) {
-                GTree* _pp = traversal_stack.top(); traversal_stack.pop();
-                if(_pp->m_key == _k){*_out = _pp; return true;}
-                for(auto x = _pp->m_children.begin(); x!=_pp->m_children.end(); x++)
-                    traversal_stack.push(*x);
-            }
-            return false;
-        }
-        bool bfs_search(const key_type& _k, GTree** _out) {
-            std::queue<GTree*> traversal_queue;
-            traversal_queue.push(this);
-            while(!traversal_queue.empty()) {
-                GTree* _pp = traversal_queue.front(); traversal_queue.pop();
-                if(_pp->m_key == _k){*_out = _pp; return true;}
-                for(auto x = _pp->m_children.begin(); x!=_pp->m_children.end(); x++)
-                    traversal_queue.push(*x);
-            }
-            return false;
-        }
-
-        void bfs_traverse(void (*func)(GTree*, void*), void* obj = nullptr) {
-            std::queue<GTree*> traversal_queue;
-            traversal_queue.push(this);
-            while(!traversal_queue.empty()) {
-                GTree* _pp = traversal_queue.front(); traversal_queue.pop();
-                func(_pp, obj);
-                for(auto x = _pp->m_children.begin(); x!=_pp->m_children.end(); x++)
-                    traversal_queue.push(*x);
-            }
-        }
 }; //}
+
+template<typename K, typename V>
+void operator_out_aux(std::ostream& os, const GTree<K, V>& t, int level) //{
+{
+    for(int i = level; i > 0; --i)
+        os << "|" << std::string(3, ' ');
+    os << "> " << t.GetKey() << std::endl;
+    for(auto bi = t.GetChildren().begin(); bi != t.GetChildren().end(); ++bi)
+        operator_out_aux(os, *(*bi), level + 1);
+    return;
+} //}
+
+template<typename K, typename V>
+std::ostream& operator<<(std::ostream& os, const GTree<K, V>& t) //{
+{
+    operator_out_aux<K, V>(os, t, 0);
+    return os;
+} //}
 
 #endif //GTREE_HPP
