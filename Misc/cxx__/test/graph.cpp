@@ -14,12 +14,19 @@
 
 void testA()
 {
-    DenseGraph<double, size_t> A(15, false);
+    DenseGraph<double, size_t> A(10, true);
     A.NewVertex(100.2);
+    A.NewVertex(100.2);
+    A.NewVertex(100.2);
+    A.NewVertex(100.2);
+    A.NewVertex(100.2);
+    A.NewVertex(100.2);
+    A.DeleteVertex(3);
+    A.DeleteVertex(2);
     std::srand(time(nullptr));
     for(auto bi = A.VertexBegin(); bi != A.VertexEnd(); bi++) {
         for(auto xi = A.VertexBegin(); xi != A.VertexEnd(); xi++){
-            if(std::rand() % 10 == 0)
+            if(std::rand() % 4 == 0)
                 A.SetWeight(bi->GetId(), xi->GetId(), 1);
         }
     }
@@ -44,8 +51,11 @@ void testA()
                 if(p_v == nullptr) return;
                 p_v->push_back(vx.GetId());
             });
-    auto xxx = A.BFS_GTree(1);
+    auto xxx = A.DFS_GTree(1);
+    auto& yyy = GTreeToBGTree(*xxx);
+    std::cout << yyy << std::endl;
     std::cout << *xxx << std::endl;
+    std::cout << "Graph is connected ? " << std::boolalpha << A.IsConnected() << std::endl;
     delete xxx;
     return;
 }
