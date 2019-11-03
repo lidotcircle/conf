@@ -6,6 +6,8 @@
 #include <tuple>
 #include <iterator>
 #include <limits>
+#include <algorithm>
+#include <iostream>
 
 #include <cstdlib>
 #include <cassert>
@@ -215,7 +217,10 @@ class FibonacciHeap_IMP //{
         KeyValueType ExtractMin() //{
         {
 #ifdef FIBONACCIHEAP_DEBUG
-            JointHolder.push_back(x_new);
+            for(auto bi = JointHolder.begin(); bi != JointHolder.end(); ++bi){
+                if(*bi == this->m_min_pointer)
+                    JointHolder.erase(bi);
+            }
 #endif // FIBONACCIHEAP_DEBUG
             KeyValueType ret = std::move(m_min_pointer->m_kv);
             __elem* children = this->m_min_pointer->m_child;
@@ -251,7 +256,10 @@ class FibonacciHeap_IMP //{
             delete deleted_;
 #ifdef FIBONACCIHEAP_DEBUG
             int num = check_fibonacci_heap(this->m_min_pointer);
-            assert(num == this->m_size);
+            if((int)this->m_size != num) {
+                element_fault_check();
+                throw *new std::runtime_error("DON't match element with size, memory leaked.");
+            }
 #endif // FIBONACCIHEAP_DEBUG
             return ret;
         } //}
@@ -303,12 +311,14 @@ class FibonacciHeap_IMP //{
 
         /// <summary> debug function </summary>
         static std::vector<__elem*> JointHolder;
+        static std::vector<__elem*> CheckedHolder;
         static int current_checked;
         static ItemSize check_fibonacci_heap_helper(__elem* cl, int num)
         {
             int result = 0;
             for(;cl->m_checked_num != num; cl = cl->m_next) {
                 ++result;
+                CheckedHolder.push_back(cl);
                 assert(cl->m_checked_num < num);
                 cl->m_checked_num = num;
                 if(cl->m_child != nullptr) result += check_fibonacci_heap_helper(cl->m_child, num);
@@ -318,7 +328,33 @@ class FibonacciHeap_IMP //{
         static ItemSize check_fibonacci_heap(__elem* circular_list_elem)
         {
             ++current_checked;
+            CheckedHolder.resize(0);
             return check_fibonacci_heap_helper(circular_list_elem, current_checked);
+        }
+        static void element_fault_check()
+        {
+            assert(JointHolder.size() >= CheckedHolder.size());
+            std::sort(JointHolder.begin(), JointHolder.end());
+            std::sort(CheckedHolder.begin(), CheckedHolder.end());
+            std::cout << "Number of allocated element is: " << JointHolder.size() << std::endl;
+            std::cout << "Number of accessed  element is: " << CheckedHolder.size() << std::endl;
+            std::cout << "Number of lossed element is   : " << JointHolder.size() - CheckedHolder.size() << std::endl;
+            std::cout << "------------------------------- LOSS" << std::endl;
+            auto ck = CheckedHolder.begin();
+            for(auto hd = JointHolder.begin(); hd != JointHolder.end(); ++hd) {
+                if(ck == CheckedHolder.end()){
+                    while(hd != JointHolder.end()){
+                        std::cout << "LOSS - Address: 0x" << std::hex << *hd << ", Data: " << (*ck)->m_kv 
+                            << std::endl;
+                        ++hd;
+                    }
+                    break;
+                };
+                if(*ck != *hd){ // loss
+                    std::cout << "LOSS - Address: 0x" << std::hex << *hd << ", data: " << (*ck)->m_kv << std::endl;
+                }
+                ++ck;
+            }
         }
 }; //}
 
@@ -326,6 +362,8 @@ template<typename KV>
 int FibonacciHeap_IMP<KV>::current_checked = 1;
 template<typename KV>
 std::vector<typename FibonacciHeap_IMP<KV>::__elem*> FibonacciHeap_IMP<KV>::JointHolder;
+template<typename KV>
+std::vector<typename FibonacciHeap_IMP<KV>::__elem*> FibonacciHeap_IMP<KV>::CheckedHolder;
 
 template<typename KV>
 std::ostream& operator<<(std::ostream& os, FibonacciHeap_IMP<KV>& bh) //{
