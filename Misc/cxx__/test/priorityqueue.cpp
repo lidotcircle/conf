@@ -8,6 +8,9 @@
 #include<cstdlib>
 
 #include <unistd.h>
+
+#define FIBONACCIHEAP_DEBUG 1
+
 #include "../src/utils/type.hpp"
 #include "../src/utils/logger.h"
 #include "../src/Graph/Graph.hpp"
@@ -23,7 +26,7 @@ void testA()
     BinaryHeap<double> A;
     auto a = range(20.0, 30.0);
     A.Add(a.begin(), a.end());
-    auto b = range(10.0, 38.0);
+    auto b = range(10.0, 18.0);
     A.Add(b.begin(), b.end());
     std::cout << A << std::endl;
 }
@@ -33,7 +36,7 @@ void testB()
     FibonacciHeap<double> A;
     auto a = range(20.0, 30.0);
     A.Add(a.begin(), a.end());
-    auto b = range(10.0, 38.0);
+    auto b = range(10.0, 18.0);
     A.Add(b.begin(), b.end());
     std::cout << A << std::endl;
 }
