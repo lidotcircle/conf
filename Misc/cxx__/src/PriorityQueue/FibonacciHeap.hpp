@@ -187,6 +187,18 @@ class FibonacciHeap_IMP //{
          FibonacciHeap_IMP(): m_min_pointer(nullptr), m_size(0){}
         ~FibonacciHeap_IMP(){if(this->m_min_pointer != nullptr) delete this->m_min_pointer;}
 
+        inline void check_point() //{
+        {
+#ifdef FIBONACCIHEAP_DEBUG
+            int num = check_fibonacci_heap(this->m_min_pointer);
+            if((int)this->m_size != num) {
+                element_fault_check();
+                throw *new std::runtime_error("DON't match element with size, memory leaked.");
+            }
+#endif // FIBONACCIHEAP_DEBUG
+            return;
+        } //}
+
         /// <summary> new element. Amortized Time: O(1) </summary>
         void Add(const KeyValueType& kv) //{
         {
@@ -204,6 +216,7 @@ class FibonacciHeap_IMP //{
             } else apppend_to_top_list(x_new);
             if(this->kv_less(kv, m_min_pointer->m_kv))
                 m_min_pointer = x_new;
+            check_point();
             return;
         } //}
         template<typename Iterator_t>
@@ -218,21 +231,23 @@ class FibonacciHeap_IMP //{
         {
 #ifdef FIBONACCIHEAP_DEBUG
             for(auto bi = JointHolder.begin(); bi != JointHolder.end(); ++bi){
-                if(*bi == this->m_min_pointer)
+                if(*bi == this->m_min_pointer){
                     JointHolder.erase(bi);
+                    break;
+                }
             }
 #endif // FIBONACCIHEAP_DEBUG
             KeyValueType ret = std::move(m_min_pointer->m_kv);
             __elem* children = this->m_min_pointer->m_child;
             __elem* prev_p   = this->m_min_pointer->m_prev;
             __elem* next_p   = this->m_min_pointer->m_next;
+            bool top_list_is_empty = m_min_pointer == m_min_pointer->m_next;
             prev_p->m_next   = nullptr;
             next_p->m_prev   = nullptr;
             __elem* deleted_ = this->m_min_pointer;
             m_min_pointer->m_next  = nullptr;
             m_min_pointer->m_prev  = nullptr;
             m_min_pointer->m_child = nullptr;
-            bool top_list_is_empty = prev_p->m_prev == nullptr;
             bool children_is_empty = children == nullptr;
             if(top_list_is_empty && children_is_empty) { // true, true
                 assert(this->m_size == 1);
@@ -241,9 +256,14 @@ class FibonacciHeap_IMP //{
                 delete deleted_;
                 return ret;
             } else this->m_min_pointer = prev_p;
+            if(!children_is_empty){
+                children->m_parent = nullptr;
+                for(auto x = children->m_next; x != children; x = x->m_next)
+                    x->m_parent = nullptr;
+            }
             if(top_list_is_empty) { // true, false
                 children->m_prev->m_next = nullptr;
-                children->m_next->m_prev = nullptr;
+                children->m_prev         = nullptr;
                 next_p = children;
             }
             if(!children_is_empty && !top_list_is_empty) { // false, false
@@ -253,14 +273,8 @@ class FibonacciHeap_IMP //{
             }  // false, true is trival
             consolidate_list(next_p);
             --this->m_size;
+            check_point();
             delete deleted_;
-#ifdef FIBONACCIHEAP_DEBUG
-            int num = check_fibonacci_heap(this->m_min_pointer);
-            if((int)this->m_size != num) {
-                element_fault_check();
-                throw *new std::runtime_error("DON't match element with size, memory leaked.");
-            }
-#endif // FIBONACCIHEAP_DEBUG
             return ret;
         } //}
         /// <summary> decrease key </summary>
@@ -289,11 +303,11 @@ class FibonacciHeap_IMP //{
                 fh.m_size    = 0;
                 return;
             }
-            __elem* possible_2 = fh.m_min_pointer;
+            __elem* possible_2            = fh.m_min_pointer;
             m_min_pointer->m_next->m_prev = possible_2->m_prev;
-            possible_2->m_prev->m_next = m_min_pointer->m_next;
-            m_min_pointer->m_next = possible_2;
-            possible_2->m_prev = m_min_pointer;
+            possible_2->m_prev->m_next    = m_min_pointer->m_next;
+            m_min_pointer->m_next         = possible_2;
+            possible_2->m_prev            = m_min_pointer;
             if(kv_less(possible_2->m_kv, m_min_pointer->m_kv))
                 m_min_pointer = possible_2;
             this->m_size += fh.m_size;
@@ -310,6 +324,7 @@ class FibonacciHeap_IMP //{
         inline bool empty() {return this->m_size == 0;}
 
         /// <summary> debug function </summary>
+#ifdef FIBONACCIHEAP_DEBUG //{
         static std::vector<__elem*> JointHolder;
         static std::vector<__elem*> CheckedHolder;
         static int current_checked;
@@ -344,33 +359,40 @@ class FibonacciHeap_IMP //{
             for(auto hd = JointHolder.begin(); hd != JointHolder.end(); ++hd) {
                 if(ck == CheckedHolder.end()){
                     while(hd != JointHolder.end()){
-                        std::cout << "LOSS - Address: 0x" << std::hex << *hd << ", Data: " << (*ck)->m_kv 
+                        std::cout << "LOSS - Address: 0x" << std::hex << *hd << ", Data: " << (*hd)->m_kv << ", Degree: " << (*hd)->m_degree
                             << std::endl;
                         ++hd;
                     }
                     break;
                 };
                 if(*ck != *hd){ // loss
-                    std::cout << "LOSS - Address: 0x" << std::hex << *hd << ", data: " << (*ck)->m_kv << std::endl;
+                    std::cout << "LOSS - Address: 0x" << std::hex << *hd << ", Data: " << (*hd)->m_kv << ", Degree: " << (*hd)->m_degree
+                        << std::endl;
+                    continue;
                 }
+                std::cout << "HAS  - Address: 0x" << std::hex << *hd << ", Data: " << (*ck)->m_kv << ", Degree: " << (*hd)->m_degree
+                    << std::endl;
                 ++ck;
             }
         }
+#endif // FIBONACCI_DEBUG //}
 }; //}
 
+#ifdef FIBONACCIHEAP_DEBUG
 template<typename KV>
 int FibonacciHeap_IMP<KV>::current_checked = 1;
 template<typename KV>
 std::vector<typename FibonacciHeap_IMP<KV>::__elem*> FibonacciHeap_IMP<KV>::JointHolder;
 template<typename KV>
 std::vector<typename FibonacciHeap_IMP<KV>::__elem*> FibonacciHeap_IMP<KV>::CheckedHolder;
+#endif // FIBONACCIHEAP_DEBUG
 
 template<typename KV>
 std::ostream& operator<<(std::ostream& os, FibonacciHeap_IMP<KV>& bh) //{
 {
     os << "[";
     while(!bh.empty())
-        os << bh.ExtractMin() << "  " << std::endl;
+        os << bh.ExtractMin() << "  ";
     os << "]";
     return os;
 } //}
