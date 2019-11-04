@@ -13,7 +13,6 @@
 
 #include "../src/utils/type.hpp"
 #include "../src/utils/logger.h"
-#include "../src/Graph/Graph.hpp"
 #include "../src/Matrix/matrix.hpp"
 #include "../src/PriorityQueue/BinaryHeap.hpp"
 #include "../src/PriorityQueue/FibonacciHeap.hpp"
@@ -21,6 +20,7 @@
 
 using namespace ANNA;
 
+/*
 void testA()
 {
     BinaryHeap<double> A, B;
@@ -30,18 +30,22 @@ void testA()
     B.Add(b.begin(), b.end());
     std::cout << A << std::endl;
 }
+*/
 
 void testB()
 {
     FibonacciHeap<double> A, B;
     auto a = range(20.0, 30.0);
     A.Add(a.begin(), a.end());
-    auto xx = FibonacciHeap<double>::JointHolder[0];
-    std::cout << xx->m_kv << std::endl;
     auto b = range(10.0, 30.0);
     B.Add(b.begin(), b.end());
+    auto f = A.Add(300.0);
+    auto n = A.Add(400.0);
     A.UnionWith(B);
-    A.DeleteKey(xx);
+    A.DecreaseKey(f, 7);
+    (void)n;
+    A.DeleteKey(n);
+    A.DeleteKey(f);
     std::cout << A << std::endl;
 }
 

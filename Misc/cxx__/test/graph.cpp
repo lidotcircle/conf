@@ -12,7 +12,7 @@
 #include "../src/utils/logger.h"
 #include "../src/Graph/Graph.hpp"
 
-void testA()
+void testA() //{
 {
     DenseGraph<double, size_t> A(10, true);
     A.NewVertex(100.2);
@@ -58,10 +58,42 @@ void testA()
     std::cout << "Graph is connected ? " << std::boolalpha << A.IsConnected() << std::endl;
     delete xxx;
     return;
-}
+} //}
+
+void testB() //{
+{
+    DenseGraph<double, size_t> A(400, true);
+    std::srand(time(nullptr));
+    for(auto bi = A.VertexBegin(); bi != A.VertexEnd(); bi++) {
+        for(auto xi = A.VertexBegin(); xi != A.VertexEnd(); xi++){
+            if(std::rand() % 8 == 0)
+                A.SetWeight(bi->GetId(), xi->GetId(), std::rand() % 2000);
+        }
+    }
+    using vertex_id = decltype(A)::vertex_id;
+    std::vector<vertex_id> sss;
+    A.DFS(1, &sss, [](decltype(A)::Vertex& vx, void* ss){
+                std::cout << vx.GetId() << std::endl;
+                std::vector<vertex_id>* p_v = reinterpret_cast<std::vector<vertex_id>*>(ss);
+                if(p_v == nullptr) return;
+                p_v->push_back(vx.GetId());
+            });
+    auto xxx = A.DFS_GTree(1);
+    auto& yyy = GTreeToBGTree(*xxx);
+    std::cout << yyy << std::endl;
+    std::cout << "Graph is connected ? " << std::boolalpha << A.IsConnected() << std::endl;
+
+    size_t ee;
+    auto zzz = A.MST_Kruskal(ee);
+    for(auto bi = zzz.begin(); bi != zzz.end(); ++bi)
+        std::cout << "f: " << bi->first << ", s: " << bi->second << std::endl;
+    std::cout << "total weight is: " << ee << std::endl;
+    delete xxx;
+    return;
+} //}
 
 int main()
 {
-    testA();
+    testB();
     return 0;
 }

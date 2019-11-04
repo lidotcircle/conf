@@ -18,9 +18,9 @@ namespace FibonacciHeap_IMP_HELP {
 template<typename KV>
 KV min_elem_only()
 {
-    return KV(0);
+    return KV(std::numeric_limits<KV>::min());
 }
-template<> double min_elem_only(){return -std::numeric_limits<double>::infinity();}
+//template<> double min_elem_only(){return -std::numeric_limits<double>::infinity();}
 }
 
 /// <summary> Amortized Function: h(FibonacciHeap_IMP dd) = dd.min.length + blacked.length * 2
@@ -30,11 +30,15 @@ template<> double min_elem_only(){return -std::numeric_limits<double>::infinity(
 ///           function UnionWith()  : O(1),      worst case: O(1)
 ///           function Delete()     : O(1),      worst case: O(n)
 /// </summary>
-template<typename KV>
+template<typename KV, typename VT>
 class FibonacciHeap_IMP //{
 {
+
+    static_assert(std::is_pointer<KV>::value, "T should be pointer type");
+    static_assert(std::is_class<std::remove_pointer_t<KV>>::value, "T should be pointer to a non-atom object");
     public:
         typedef KV                               KeyValueType;
+        typedef VT                               NewValueType;
         typedef std::vector<KV>                  ContainerType;
         typedef size_t                           ItemSize;
         typedef typename ContainerType::iterator ReturnIter;
@@ -70,14 +74,12 @@ class FibonacciHeap_IMP //{
         __elem*  m_min_pointer;
         ItemSize m_size;
         /// <summary> compare of key value </summary>
-        virtual bool kv_less(const KeyValueType& a, const KeyValueType& b) //{
-        {
-            return a < b;
-        } //}
-        virtual bool kv_equal(const KeyValueType& a, const KeyValueType& b) //{
-        {
-            return a == b;
-        } //}
+        virtual bool         kv_less(const KeyValueType& a, const KeyValueType& b) = 0;
+        virtual bool         kv_equal(const KeyValueType& a, const KeyValueType& b) = 0;
+        virtual __elem*      GetPointer(const KeyValueType&)    = 0;
+        virtual void         SetPointer(KeyValueType&, __elem*) = 0;
+        virtual void         SetNewValue(KeyValueType&, const NewValueType&) = 0;
+
         void apppend_to_child_list(__elem* child, __elem* pointer) //{
         {
             assert(pointer != nullptr);
@@ -173,10 +175,9 @@ class FibonacciHeap_IMP //{
             decrease_check(pp);
             return;
         } //}
-        template<typename Iterator_t>
+        template<typename Iterator_t, std::enable_if_t<std::is_convertible<typename std::iterator_traits<Iterator_t>::value_type, KeyValueType>::value, int> = 0>
         void __Add(Iterator_t _begin, Iterator_t _end, std::input_iterator_tag) //{
         {
-            static_assert(std::is_convertible<decltype(*_begin), KeyValueType>::value, "Not compatible type.");
             for(; _begin != _end; ++_begin){
                 this->Add(*_begin);
             }
@@ -185,7 +186,10 @@ class FibonacciHeap_IMP //{
 
     public:
          FibonacciHeap_IMP(): m_min_pointer(nullptr), m_size(0){}
-        ~FibonacciHeap_IMP(){if(this->m_min_pointer != nullptr) delete this->m_min_pointer;}
+        ~FibonacciHeap_IMP(){
+            if(this->m_min_pointer != nullptr) delete this->m_min_pointer;}
+
+        virtual NewValueType GetValueType(KeyValueType) = 0;
 
         inline void check_point() //{
         {
@@ -200,10 +204,11 @@ class FibonacciHeap_IMP //{
         } //}
 
         /// <summary> new element. Amortized Time: O(1) </summary>
-        void Add(const KeyValueType& kv) //{
+        void Add(KeyValueType kv) //{
         {
             ++this->m_size;
             __elem* x_new = new __elem(kv);
+            this->SetPointer(kv, x_new);
 #ifdef FIBONACCIHEAP_DEBUG
             JointHolder.push_back(x_new);
 #endif // FIBONACCIHEAP_DEBUG
@@ -219,7 +224,7 @@ class FibonacciHeap_IMP //{
             check_point();
             return;
         } //}
-        template<typename Iterator_t>
+        template<typename Iterator_t, std::enable_if_t<std::is_convertible<typename std::iterator_traits<Iterator_t>::value_type, KeyValueType>::value, int> = 0>
         void Add(Iterator_t _begin, Iterator_t _end) //{
         {
             this->__Add(_begin, _end, typename std::iterator_traits<Iterator_t>::iterator_category());
@@ -238,6 +243,7 @@ class FibonacciHeap_IMP //{
             }
 #endif // FIBONACCIHEAP_DEBUG
             KeyValueType ret = std::move(m_min_pointer->m_kv);
+            this->SetPointer(ret, nullptr); // clear reference in object
             __elem* children = this->m_min_pointer->m_child;
             __elem* prev_p   = this->m_min_pointer->m_prev;
             __elem* next_p   = this->m_min_pointer->m_next;
@@ -278,20 +284,22 @@ class FibonacciHeap_IMP //{
             return ret;
         } //}
         /// <summary> decrease key </summary>
-        void DecreaseKey(__elem* elem, const KeyValueType& new_v) //{
+        void __DecreaseKey(__elem* elem, const NewValueType& new_v) //{
         {
-            if(elem->m_parent == nullptr || !kv_less(new_v, elem->m_parent->m_kv)) {
-                elem->m_kv = new_v;
-                if(elem->m_parent == nullptr && kv_less(elem->m_kv, m_min_pointer->m_kv))
-                    m_min_pointer = elem;
+            SetNewValue(elem->m_kv, new_v);
+            if(elem->m_parent == nullptr || !kv_less(elem->m_kv, elem->m_parent->m_kv))
                 return;
-            }
-            elem->m_kv = new_v;
             __elem* parent = elem->m_parent;
             move_to_top(elem);
             decrease_check(parent);
             return;
         } //}
+        void DecreaseKey(KeyValueType kv, const NewValueType& nv) //{
+        {
+            __elem* pp = this->GetPointer(kv);
+            this->__DecreaseKey(pp, nv);
+        } //}
+
         void UnionWith(FibonacciHeap_IMP& fh) //{
         {
             if(&fh == this) return;
@@ -316,12 +324,18 @@ class FibonacciHeap_IMP //{
         } //}
         void DeleteKey(__elem* elem) //{
         {
-            KeyValueType min_elem = FibonacciHeap_IMP_HELP::min_elem_only<KeyValueType>();
-            DecreaseKey(elem, min_elem);
+            NewValueType min_elem = FibonacciHeap_IMP_HELP::min_elem_only<NewValueType>();
+            __DecreaseKey(elem, min_elem);
             this->ExtractMin();
             return;
         } //}
-        inline bool empty() {return this->m_size == 0;}
+        void DeleteKey(KeyValueType kv) //{
+        {
+            __elem* elem = this->GetPointer(kv);
+            this->DeleteKey(elem);
+            return;
+        } //}
+        inline bool empty() const {return this->m_size == 0;}
 
         /// <summary> debug function </summary>
 #ifdef FIBONACCIHEAP_DEBUG //{
@@ -379,45 +393,110 @@ class FibonacciHeap_IMP //{
 }; //}
 
 #ifdef FIBONACCIHEAP_DEBUG
-template<typename KV>
-int FibonacciHeap_IMP<KV>::current_checked = 1;
-template<typename KV>
-std::vector<typename FibonacciHeap_IMP<KV>::__elem*> FibonacciHeap_IMP<KV>::JointHolder;
-template<typename KV>
-std::vector<typename FibonacciHeap_IMP<KV>::__elem*> FibonacciHeap_IMP<KV>::CheckedHolder;
+template<typename KV, typename VT>
+int FibonacciHeap_IMP<KV, VT>::current_checked = 1;
+template<typename KV, typename VT>
+std::vector<typename FibonacciHeap_IMP<KV, VT>::__elem*> FibonacciHeap_IMP<KV, VT>::JointHolder;
+template<typename KV, typename VT>
+std::vector<typename FibonacciHeap_IMP<KV, VT>::__elem*> FibonacciHeap_IMP<KV, VT>::CheckedHolder;
 #endif // FIBONACCIHEAP_DEBUG
 
-template<typename KV>
-std::ostream& operator<<(std::ostream& os, FibonacciHeap_IMP<KV>& bh) //{
+template<typename KV, typename VT>
+std::ostream& operator<<(std::ostream& os, FibonacciHeap_IMP<KV, VT>& bh) //{
 {
     os << "[";
     while(!bh.empty())
-        os << bh.ExtractMin() << "  ";
+        os << bh.GetValueType(bh.ExtractMin()) << "  ";
     os << "]";
     return os;
 } //}
 
 template<typename K, typename V>
-class FibonacciHeapKV: public FibonacciHeap_IMP<std::pair<K, V>> //{
+class FibonacciHeapKV: public FibonacciHeap_IMP<std::tuple<K, V, void*>*, K> //{
 {
-    using KeyValueType = typename FibonacciHeap_IMP<std::pair<K, V>>::KeyValueType;
-    using ItemSize     = typename FibonacciHeap_IMP<std::pair<K, V>>::ItemSize;
+    public:
+        using KeyValueType = typename FibonacciHeap_IMP<std::tuple<K, V, void*>*, K>::KeyValueType;
+        using NewValueType = typename FibonacciHeap_IMP<std::tuple<K, V, void*>*, K>::NewValueType;
+        using ItemSize     = typename FibonacciHeap_IMP<std::tuple<K, V, void*>*, K>::ItemSize;
+        using __elem       = typename FibonacciHeap_IMP<std::tuple<K, V, void*>*, K>::__elem;
+
     protected:
     bool kv_less(const KeyValueType& a, const KeyValueType& b) //{
     {
-        return a.first < b.first;
+        return std::get<0>(*a) < std::get<0>(*b);
     } //}
     bool kv_equal(const KeyValueType& a, const KeyValueType& b) //{
     {
-        return a.first == b.first;
+        return std::get<0>(*a) == std::get<0>(*b);
     } //}
+    __elem*      GetPointer(const KeyValueType& e){return (__elem*)std::get<2>(*e);}
+    void         SetPointer(KeyValueType& e, __elem* p){std::get<2>(*e) = p;}
+    void         SetNewValue(KeyValueType& e, const NewValueType& v){std::get<0>(*e) = v;}
+
+    std::vector<KeyValueType> m_extra_container;
+    using FibonacciHeap_IMP<KeyValueType, NewValueType>::Add;
+
+    public:
+    NewValueType GetValueType(KeyValueType e) {return std::get<0>(*e);}
+
+    KeyValueType Add(const K& k, const V& v) //{
+    {
+        KeyValueType new_x = new std::tuple<K, V, void*>(k, v, nullptr);
+        m_extra_container.push_back(new_x);
+        this->Add(new_x);
+        return new_x;
+    } //}
+
+    ~FibonacciHeapKV(){for(auto bi : this->m_extra_container) delete bi;}
 }; //}
-template<typename KV>
-class FibonacciHeap: public FibonacciHeap_IMP<KV>{};
 
-template class FibonacciHeap<double>;
+template<typename K>
+class FibonacciHeap: public FibonacciHeap_IMP<std::pair<K, void*>*, K> //{
+{
+    public:
+        using KeyValueType = typename FibonacciHeap_IMP<std::pair<K, void*>*, K>::KeyValueType;
+        using NewValueType = typename FibonacciHeap_IMP<std::pair<K, void*>*, K>::NewValueType;
+        using ItemSize     = typename FibonacciHeap_IMP<std::pair<K, void*>*, K>::ItemSize;
+        using __elem       = typename FibonacciHeap_IMP<std::pair<K, void*>*, K>::__elem;
+
+    protected:
+    bool kv_less(const KeyValueType& a, const KeyValueType& b) //{
+    {
+        return a->first < b->first;
+    } //}
+    bool kv_equal(const KeyValueType& a, const KeyValueType& b) //{
+    {
+        return a->first == b->first;
+    } //}
+    __elem*      GetPointer(const KeyValueType& e){return (__elem*)e->second;}
+    void         SetPointer(KeyValueType& e, __elem* p){e->second = p;}
+    void         SetNewValue(KeyValueType& e, const NewValueType& v){e->first = v;}
+
+    std::vector<KeyValueType> m_extra_container;
+    using FibonacciHeap_IMP<KeyValueType, NewValueType>::Add;
+
+    public:
+    NewValueType GetValueType(KeyValueType e) {return e->first;}
+
+    KeyValueType Add(const K& kv)//{
+    {
+        KeyValueType new_x = new std::pair<K, void*>(kv, nullptr);
+        m_extra_container.push_back(new_x);
+        this->Add(new_x);
+        return new_x;
+    } //}
+    template<typename Iterator_t, std::enable_if_t<std::is_convertible<typename std::iterator_traits<Iterator_t>::value_type, K>::value, int> = 0>
+    void Add(Iterator_t _begin, Iterator_t _end) //{
+    {
+        for(; _begin != _end; ++_begin){
+            this->Add(*_begin);
+        }
+        return;
+    } //}
+
+    ~FibonacciHeap(){for(auto bi : this->m_extra_container) delete bi;}
+}; //}
+
 template class FibonacciHeapKV<double, int>;
-
-template class FibonacciHeap_IMP<double>;
 
 #endif // FIBONACCIHEAP_HPP_

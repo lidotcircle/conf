@@ -58,14 +58,8 @@ class BinaryHeap_IMP //{
             }
         } //}
         /// <summary> compare of key value </summary>
-        virtual bool kv_less(const KeyValueType& a, const KeyValueType& b) //{
-        {
-            return a < b;
-        } //}
-        virtual bool kv_equal(const KeyValueType& a, const KeyValueType& b) //{
-        {
-            return a == b;
-        } //}
+        virtual bool kv_less(const KeyValueType& a, const KeyValueType& b) = 0;
+        virtual bool kv_equal(const KeyValueType& a, const KeyValueType& b) = 0;
         /// <summary> Add new elem </summary>
         template<typename Iterator_t>
         void __Add(Iterator_t _begin, Iterator_t _end, std::input_iterator_tag) //{

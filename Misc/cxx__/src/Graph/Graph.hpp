@@ -15,6 +15,9 @@
 #include "../utils/type.hpp"
 #include "../utils/logger.h"
 #include "../Tree/GTree.hpp"
+#include "../PriorityQueue/FibonacciHeap.hpp"
+#include "../PriorityQueue/BinaryHeap.hpp"
+#include "../Set/DisjointSet.hpp"
 
 template<typename VD, typename EW>
 class BaseGraph  //{
@@ -32,6 +35,7 @@ class BaseGraph  //{
                 std::vector<Vertex*> m_adjecents;
                 vertex_id            m_id;
                 bool                 m_is_visited;
+                void*                m_external_data;
 
             public:
                 typedef decltype(m_adjecents.begin()) IterType;
@@ -41,6 +45,7 @@ class BaseGraph  //{
                 vertex_id     GetId() const  {return this->m_id;}
                 void          SetId(const vertex_id& id) {this->m_id = id;}
                 std::vector<Vertex*>& GetAdj(){return this->m_adjecents;}
+                void*&        GetExternalData(){return this->m_external_data;}
 
                 Vertex(const value_type& data, const vertex_id& id): m_msg(data), m_id(id){}
                 Vertex(value_type&& data, const vertex_id& id): m_msg(std::move(data)), m_id(id){}
@@ -54,11 +59,15 @@ class BaseGraph  //{
         {
             private:
                 Vertex *m_vertex_f, *m_vertex_s;
+                void*   m_external_data;
             public:
                 Edge(): m_vertex_f(nullptr), m_vertex_s(nullptr){}
                 Edge(Vertex* a, Vertex* b): m_vertex_f(a), m_vertex_s(b){}
                 Vertex& StartV(){return *m_vertex_f;}
                 Vertex& EndV  (){return *m_vertex_s;}
+                const Vertex& StartV() const{return *m_vertex_f;}
+                const Vertex& EndV  () const{return *m_vertex_s;}
+                void*&  GetExternalData(){return this->m_external_data;}
         }; //}
 
     public:
@@ -396,7 +405,7 @@ class DenseGraph: public BaseGraph<VD, EW> //{
                 typedef Edge                    value_type;
                 typedef value_type&             reference;
                 typedef value_type*             pointer;
-                typedef std::input_iterator_tag iterator_catogory;
+                typedef std::input_iterator_tag iterator_category;
 
                 using edge_iter_inn = typename DenseGraph::EdgeHolder::edgeIter;
 
@@ -639,6 +648,80 @@ class DenseGraph: public BaseGraph<VD, EW> //{
         if(num_of_connected_node == m_vertex.size()) return true;
         return false;
     } //}
+
+        class BinaryHeapEdgeVV: public BinaryHeap_IMP<Edge> //{
+        {
+            public:
+                using KeyValueType = typename BinaryHeap_IMP<Edge>::KeyValueType;
+                using ContainerType = typename BinaryHeap_IMP<Edge>::ContainerType;
+                using ItemSize = typename BinaryHeap_IMP<Edge>::ItemSize;
+                using ReturnIter = typename BinaryHeap_IMP<Edge>::ReturnIter;
+            protected:
+                DenseGraph* m_graph;
+                bool kv_less(const KeyValueType& a, const KeyValueType& b) //{
+                {
+                     edge_weight aw; bool ab = m_graph->GetWeight(a.StartV().GetId(), a.EndV().GetId(), aw);
+                     edge_weight bw; bool bb = m_graph->GetWeight(b.StartV().GetId(), b.EndV().GetId(), bw);
+                     if(!(ab && bb)) throw *new std::runtime_error("Graph fault error.");
+                     return aw < bw;
+                } //}
+                bool kv_equal(const KeyValueType& a, const KeyValueType& b) //{
+                {
+                     edge_weight aw; bool ab = m_graph->GetWeight(a.StartV().GetId(), a.EndV().GetId(), aw);
+                     edge_weight bw; bool bb = m_graph->GetWeight(b.StartV().GetId(), b.EndV().GetId(), bw);
+                     if(!(ab && bb)) throw *new std::runtime_error("Graph fault error.");
+                     return aw == bw;
+                } //}
+            public:
+                BinaryHeapEdgeVV(DenseGraph* dg): BinaryHeap_IMP<Edge>(), m_graph(dg){}
+        }; //}
+        class DisjointSetKruskal__: public DisjointSetForest_IMP<Vertex*> //{
+        {
+        public:
+            using ElemType = typename DisjointSetForest_IMP<Vertex*>::ElemType;
+            using ItemSize = typename DisjointSetForest_IMP<Vertex*>::ItemSize;
+            using elem__   = typename DisjointSetForest_IMP<Vertex*>::__elem;
+        protected:
+             elem__* GetPointer(const ElemType& e){ return (elem__*)e->GetExternalData();}
+             void    SetPointer(ElemType& e, elem__* p){e->GetExternalData() = p;}
+        }; //}
+        class FibonacciHeapVertexVV: public FibonacciHeap_IMP<Vertex*> //{
+        {
+            public:
+            protected:
+        }; //}
+
+        std::vector<std::pair<vertex_id, vertex_id>> MST_Prim()
+        {
+            vertex_id root = this->m_vertex[0].GetId();
+            root = 0;
+            std::vector<std::pair<vertex_id, vertex_id>> edge_keep;
+            return edge_keep;
+        }
+        std::vector<std::pair<vertex_id, vertex_id>> MST_Kruskal(edge_weight& weight_out) //{
+        {
+            DisjointSetKruskal__ DSK;
+            BinaryHeapEdgeVV     PriorityQueueX(this);
+            edge_weight          total_weight(0);
+            std::vector<std::pair<vertex_id, vertex_id>> edge_keep;
+            for(auto bi = this->VertexBegin(); bi != this->VertexEnd(); ++bi)
+                DSK.MakeSet(&(*bi));
+            PriorityQueueX.Add(this->EdgeBegin(), this->EdgeEnd());
+            while(!PriorityQueueX.empty()) {
+                Edge min = PriorityQueueX.ExtractMin();
+                if(DSK.FindSet(&min.StartV()) == DSK.FindSet(&min.EndV()))
+                    continue;
+                edge_keep.push_back(std::make_pair(min.StartV().GetId(), min.EndV().GetId()));
+                DSK.UnionWith(&min.StartV(), &min.EndV());
+                edge_weight tmp_weight(0);
+                this->GetWeight(min.StartV().GetId(), min.EndV().GetId(), tmp_weight);
+                total_weight += tmp_weight;
+            }
+            if(edge_keep.size() != this->m_vertex.size() - 1) throw *new std::runtime_error("try to get MST of unconnnected graph");
+            weight_out = total_weight;
+            return edge_keep;
+        } //}
+        std::vector<std::pair<vertex_id, vertex_id>> MST_Kruskal() {edge_weight e; return MST_Kruskal(e);}
 }; //}
 
 // mimimum spaning tree

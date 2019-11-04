@@ -25,7 +25,18 @@ void testA()
     DisjointSetForestXXX ds;
     ds.MakeSet(&a);
     ds.MakeSet(&b);
+    for(int i = 1; i<=500; ++i)
+    {
+        xxx* new_bb = new xxx();
+        new_bb->m_val = i;
+        ds.MakeSet(new_bb);
+        if(i % 2 == 0)
+            ds.UnionWith(&a, new_bb);
+        else 
+            ds.UnionWith(&b, new_bb);
+    }
     ds.UnionWith(&a, &b);
+    std::cout << std::boolalpha << ds.empty() << std::endl;
     for(auto xx = ds.begin(&a); xx != ds.end(&a); ++xx)
         std::cout << (*xx)->m_val << std::endl;
 }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <random>
 #include <limits>
+#include <iostream>
 
 #include <cstdlib>
 #include <cassert>
@@ -29,6 +30,7 @@ class DisjointSetForest_IMP //{
         ItemSize             m_elem_counter;
         long int             m_guid;
         std::vector<__elem*> m_allocated;
+        long int m_vtable;
 
         struct __elem //{
         {
@@ -126,9 +128,7 @@ class DisjointSetForest_IMP //{
 
 
     public:
-        void MakeSet(ElemType& e){this->__MakeSet(e); return;}
         void MakeSet(ElemType  e){this->__MakeSet(e); return;}
-        void UnionWith(ElemType& e1, ElemType& e2){this->__UnionWith(this->GetPointer(e1), this->GetPointer(e2));}
         void UnionWith(ElemType  e1, ElemType  e2){this->__UnionWith(this->GetPointer(e1), this->GetPointer(e2));}
         long int FindSet(const ElemType& e){return (long int)__FindSet(this->GetPointer(e));}
 
@@ -144,7 +144,7 @@ class DisjointSetForest_IMP //{
             this->m_elem_counter = 0;
         } //}
 
-        virtual ~DisjointSetForest_IMP(){this->FreeElems();}
+        virtual ~DisjointSetForest_IMP(){}
         bool empty(){return this->m_elem_counter == 0;}
 }; //}
 
@@ -156,7 +156,7 @@ class DisjointSetForestXXX: public DisjointSetForest_IMP<xxx*>
         elem* GetPointer(const ElemType& e){return (elem*)e->m_ref;}
         void  SetPointer(ElemType& e, elem* p){e->m_ref = p;}
     public:
-        ~DisjointSetForestXXX(){}
+        ~DisjointSetForestXXX(){this->FreeElems();}
 };
 
 #endif // DISJOINTSET_HPP_
