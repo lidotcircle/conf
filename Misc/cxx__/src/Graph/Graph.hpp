@@ -35,9 +35,12 @@ class BaseGraph  //{
                 std::vector<Vertex*> m_adjecents;
                 vertex_id            m_id;
                 bool                 m_is_visited;
-                void*                m_external_data;
+                void*       m_external_data;
 
             public:
+                edge_weight m_prim_weight;
+                vertex_id   m_prim_connected;
+
                 typedef decltype(m_adjecents.begin()) IterType;
                 auto AdjecentsBegin() {return m_adjecents.begin();}
                 auto AdjecentsEnd  () {return m_adjecents.end  ();}
@@ -396,7 +399,9 @@ class DenseGraph: public BaseGraph<VD, EW> //{
         std::vector<Vertex>      m_vertex;
         vertex_id                m_max_id;
         const bool          m_is_directed;
+#ifdef GRAPH_LOGGER_
         logger                   m_logger;
+#endif // GRAPH_LOGGER__
 
         class edge_iterator //{
         {
@@ -511,9 +516,14 @@ class DenseGraph: public BaseGraph<VD, EW> //{
             m_edge(num_vex, _directed), 
             m_vertex(num_vex), 
             m_max_id(num_vex), 
-            m_is_directed(_directed), 
-            m_logger("DenseGraph-" + random_string()){
+            m_is_directed(_directed)
+#ifdef GRAPH_LOGGER_
+            , m_logger("DenseGraph-" + random_string())
+#endif // GRAPH_LOGGER__
+            {
+#ifdef GRAPH_LOGGER_
                 m_logger.begin_log(); m_logger.ostream() << "Create an instance of DenseGraph" << std::endl;
+#endif // GRAPH_LOGGER__
                 for(vertex_id i = 1; i<=m_max_id; i++){
                     m_vertex[i - 1].SetId(i);
                 }
@@ -521,27 +531,37 @@ class DenseGraph: public BaseGraph<VD, EW> //{
 
 #define LOGGER(str) m_logger.begin_log(); m_logger.ostream() << str << std::endl;
         bool Directed(){
+#ifdef GRAPH_LOGGER_
             LOGGER("Directed() called.");
+#endif // GRAPH_LOGGER__
             return this->m_is_directed; 
         }
         bool GetWeight(const vertex_id& v1, const vertex_id& v2, edge_weight& _out){
+#ifdef GRAPH_LOGGER_
             m_logger.begin_log(); m_logger.ostream() << "GetWeight(" << v1 << ", " << v2 << ", _out)" << std::endl; 
+#endif // GRAPH_LOGGER__
             return m_edge.GetWeight(v1, v2, _out);
         }
         void NewVertex(const value_type& _d){
+#ifdef GRAPH_LOGGER_
             m_logger.begin_log(); m_logger.ostream() << "NewVertex(" << _d << ")" << std::endl; 
+#endif // GRAPH_LOGGER__
             m_vertex.push_back(Vertex(_d, ++m_max_id));
             m_edge.NewVertex(m_max_id);
         }
         bool DeleteVertex(const vertex_id& _v){
+#ifdef GRAPH_LOGGER_
             m_logger.begin_log(); m_logger.ostream() << "DeleteVertex(" << _v << ")" << std::endl; 
+#endif // GRAPH_LOGGER__
             size_t _p = this->reverseMap(_v);
             if(_p == 0) return false;
             m_vertex.erase(m_vertex.begin() + _p - 1);
             return m_edge.DeleteVertex(_v);
         }
         bool SetWeight(const vertex_id& a, const vertex_id& b, const edge_weight& w = 0){
+#ifdef GRAPH_LOGGER_
             m_logger.begin_log(); m_logger.ostream() << "SetWeight(" << a << ", " << b << ", " << w << ")" << std::endl; 
+#endif // GRAPH_LOGGER__
             return m_edge.SetWeight(a, b, w);
         }
         size_t reverseMap(const vertex_id& id){return m_edge.reverse_map(id);}
@@ -563,6 +583,7 @@ class DenseGraph: public BaseGraph<VD, EW> //{
             size_t loc = reverseMap(id);
             if(loc == 0) return false;
             Vertex& dest_vex = m_vertex[loc - 1];
+            dest_vex.GetAdj().resize(0);
             for(auto bi = m_edge.AdjBegin(id); bi != m_edge.AdjEnd(id); bi++){
                 dest_vex.GetAdj().push_back(&m_vertex[*bi - 1]);
             }
@@ -598,9 +619,11 @@ class DenseGraph: public BaseGraph<VD, EW> //{
         } //}
         bool DFS(const vertex_id& begin_vertex, void* obj, void (*func)(Vertex& c_p, void* _somethingHanppend)) //{
         {
+            for(auto bi : this->m_vertex) {
+                this->update_vertex_msg(bi.GetId());
+                bi.Visited() = false;
+            }
             std::stack<std::pair<Vertex*, typename Vertex::IterType>> traverse_stack;
-            for(auto bi = this->VertexBegin(); bi != this->VertexEnd(); ++bi)
-                bi->Visited() = false;
             size_t x = this->reverseMap(begin_vertex);
             if(x == 0) return false;
             Vertex* first = &m_vertex[x - 1];
@@ -624,8 +647,10 @@ class DenseGraph: public BaseGraph<VD, EW> //{
 
         GTree<vertex_id, Vertex*>* DFS_GTree(const vertex_id& begin_vertex) //{
         {
-            for(auto bi = this->VertexBegin(); bi != this->VertexEnd(); ++bi)
-                bi->Visited() = false;
+            for(auto bi : this->m_vertex){
+                this->update_vertex_msg(bi.GetId());
+                bi.Visited() = false;
+            }
             return this->DFS_GTree_helper(begin_vertex);
         } //}
         GTree<vertex_id, Vertex*>* BFS_GTree(const vertex_id& begin_vertex) //{
@@ -685,19 +710,73 @@ class DenseGraph: public BaseGraph<VD, EW> //{
              elem__* GetPointer(const ElemType& e){ return (elem__*)e->GetExternalData();}
              void    SetPointer(ElemType& e, elem__* p){e->GetExternalData() = p;}
         }; //}
-        class FibonacciHeapVertexVV: public FibonacciHeap_IMP<Vertex*> //{
+        class FibonacciHeapVertexVV: public FibonacciHeap_IMP<Vertex*, edge_weight> //{
         {
             public:
+                using KeyValueType  = typename FibonacciHeap_IMP<Vertex*, edge_weight>::KeyValueType;
+                using NewValueType  = typename FibonacciHeap_IMP<Vertex*, edge_weight>::NewValueType;
+                using ContainerType = typename FibonacciHeap_IMP<Vertex*, edge_weight>::ContainerType;
+                using ItemSize      = typename FibonacciHeap_IMP<Vertex*, edge_weight>::ItemSize;
+                using ReturnIter    = typename FibonacciHeap_IMP<Vertex*, edge_weight>::ReturnIter;
+                using __elem        = typename FibonacciHeap_IMP<Vertex*, edge_weight>::__elem;
             protected:
+                bool    kv_less(const KeyValueType& a, const KeyValueType& b)
+                {
+//                    std::cout << a->m_prim_weight << " < " << b->m_prim_weight << " = " << std::boolalpha << (a->m_prim_weight < b->m_prim_weight) << std::endl;
+                    return a->m_prim_weight < b->m_prim_weight;
+                }
+                bool    kv_equal(const KeyValueType& a, const KeyValueType& b){return a->m_prim_weight == b->m_prim_weight;}
+                __elem* GetPointer(const KeyValueType& e){__elem* ret = (__elem*)e->GetExternalData(); assert(ret != nullptr); return ret;}
+                void    SetPointer(KeyValueType& e, __elem* p){e->GetExternalData() = p;}
+                void    SetNewValue(KeyValueType& e, const NewValueType& v){e->m_prim_weight = v;}
+            public:
+                NewValueType GetValueType(KeyValueType e){return e->m_prim_weight;}
         }; //}
 
-        std::vector<std::pair<vertex_id, vertex_id>> MST_Prim()
+        std::vector<std::pair<vertex_id, vertex_id>> MST_Prim(edge_weight& out) //{
         {
+            out = edge_weight(0);
+            FibonacciHeapVertexVV fbh;
             vertex_id root = this->m_vertex[0].GetId();
-            root = 0;
+            Vertex* root_v; this->GetVertex(root, &root_v);
+            for(auto bi = this->m_vertex.begin(); bi != this->m_vertex.end(); ++bi){
+                this->update_vertex_msg(bi->GetId());
+                bi->m_prim_weight    = FibonacciHeap_IMP_HELP::max_elem_only<edge_weight>();
+                bi->m_prim_connected = -1;
+            }
+            root_v->m_prim_connected = 0; // root
+            root_v->m_prim_weight    = 0;
+            for(auto bi = this->m_vertex.begin(); bi != this->m_vertex.end(); ++bi){
+                fbh.Add(&(*bi));
+            }
+            for(auto bi = this->m_vertex.begin(); bi != this->m_vertex.end(); ++bi)
+                assert(bi->GetExternalData() != nullptr);
             std::vector<std::pair<vertex_id, vertex_id>> edge_keep;
+            while(!fbh.empty()) {
+                Vertex* vv = fbh.ExtractMin();
+                if(vv->m_prim_connected == (vertex_id)-1) throw *new std::runtime_error("try to get MST of unconnnected graph");
+                if(vv->m_prim_connected != 0) {
+                    edge_keep.push_back(std::make_pair(vv->m_prim_connected, vv->GetId()));
+                    edge_weight tmp_w;
+                    this->GetWeight(vv->m_prim_connected, vv->GetId(), tmp_w);
+                    out += tmp_w;
+                }
+                for(auto bi = vv->AdjecentsBegin(); bi != vv->AdjecentsEnd(); ++bi){
+                    edge_weight etmp;
+                    this->GetWeight(vv->GetId(), (*bi)->GetId(), etmp);
+//                   std::cout << "Edge: " << vv->GetId() << " - " << (*bi)->GetId() << ", Weight: " << etmp << std::endl;
+                    if((*bi)->GetExternalData() == nullptr) continue;
+//                    std::cout << "2Edge: " << vv->GetId() << " - " << (*bi)->GetId() << ", Weight: " << etmp << std::endl;
+                    edge_weight vtmp = fbh.GetValueType(*bi);
+                    if(etmp < vtmp) {
+                        fbh.DecreaseKey(*bi, etmp);
+                        (*bi)->m_prim_connected = vv->GetId();
+                    }
+                }
+            }
             return edge_keep;
-        }
+        } //}
+        std::vector<std::pair<vertex_id, vertex_id>> MST_Prim(){edge_weight e; return MST_Prim(e);}
         std::vector<std::pair<vertex_id, vertex_id>> MST_Kruskal(edge_weight& weight_out) //{
         {
             DisjointSetKruskal__ DSK;

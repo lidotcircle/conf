@@ -4,6 +4,7 @@
 #include<iomanip>
 
 #include<memory>
+#include<random>
 
 #include<cstdlib>
 
@@ -49,8 +50,20 @@ void testB()
     std::cout << A << std::endl;
 }
 
+void testC()
+{
+    FibonacciHeap<int> A;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dis(99, 100);
+    for(int i = 1; i<=50; i++){
+        A.Add(dis(gen));
+    }
+    std::cout << A << std::endl;
+}
+
 int main()
 {
-    testB();
+    testC();
     return 0;
 }

@@ -21,7 +21,14 @@ KV min_elem_only()
 {
     return KV(std::numeric_limits<KV>::min());
 }
-//template<> double min_elem_only(){return -std::numeric_limits<double>::infinity();}
+template<> double min_elem_only(){return -std::numeric_limits<double>::infinity();}
+
+template<typename KV>
+KV max_elem_only()
+{
+    return KV(std::numeric_limits<KV>::max());
+}
+template<> double max_elem_only(){return std::numeric_limits<double>::infinity();}
 }
 
 /// <summary> Amortized Function: h(FibonacciHeap_IMP dd) = dd.min.length + blacked.length * 2
@@ -184,10 +191,13 @@ class FibonacciHeap_IMP //{
             if(elem->m_next == elem) // last child
                 elem->m_parent->m_child = nullptr;
             else {
-                elem->m_next->m_prev = elem->m_prev;
-                elem->m_prev->m_next = elem->m_next;
+                elem->m_next->m_prev    = elem->m_prev;
+                elem->m_prev->m_next    = elem->m_next;
+                elem->m_parent->m_child = elem->m_next;
             }
             apppend_to_top_list(elem);
+            if(kv_less(elem->m_kv, m_min_pointer->m_kv))
+                this->m_min_pointer = elem;
         } //}
         void decrease_check(__elem* parent) //{
         {
@@ -350,7 +360,16 @@ class FibonacciHeap_IMP //{
         void DecreaseKey(KeyValueType kv, const NewValueType& nv) //{
         {
             __elem* pp = this->GetPointer(kv);
+#ifdef FIBONACCIHEAP_DEBUG
+            NewValueType xx = this->GetValueType(kv);
+            NewValueType c_min = this->GetValueType(m_min_pointer->m_kv);
+            std::cout << "DecreaseKey() is called, current min:" << c_min << ", Old value: " << xx << ", New value: " << nv << std::endl;
+#endif // FIBONACCIHEAP_DEBUG
             this->__DecreaseKey(pp, nv);
+#ifdef FIBONACCIHEAP_DEBUG
+            c_min = this->GetValueType(m_min_pointer->m_kv);
+            std::cout << "After DecreaseKey(), Minimum: " << c_min << std::endl;
+#endif // FIBONACCIHEAP_DEBUG
         } //}
 
         void UnionWith(FibonacciHeap_IMP& fh) //{
@@ -434,18 +453,18 @@ class FibonacciHeap_IMP //{
             for(auto hd = JointHolder.begin(); hd != JointHolder.end(); ++hd) {
                 if(ck == CheckedHolder.end()){
                     while(hd != JointHolder.end()){
-                        std::cout << "LOSS - Address: 0x" << std::hex << *hd << ", Data: " << (*hd)->m_kv << ", Degree: " << (*hd)->m_degree
+                        std::cout << "LOSS - Address: " << std::hex << *hd << ", Data: " << (*hd)->m_kv << ", Degree: " << (*hd)->m_degree
                             << std::endl;
                         ++hd;
                     }
                     break;
                 };
                 if(*ck != *hd){ // loss
-                    std::cout << "LOSS - Address: 0x" << std::hex << *hd << ", Data: " << (*hd)->m_kv << ", Degree: " << (*hd)->m_degree
+                    std::cout << "LOSS - Address: " << std::hex << *hd << ", Data: " << (*hd)->m_kv << ", Degree: " << (*hd)->m_degree
                         << std::endl;
                     continue;
                 }
-                std::cout << "HAS  - Address: 0x" << std::hex << *hd << ", Data: " << (*ck)->m_kv << ", Degree: " << (*hd)->m_degree
+                std::cout << "HAS  - Address: " << std::hex << *hd << ", Data: " << (*ck)->m_kv << ", Degree: " << (*hd)->m_degree
                     << std::endl;
                 ++ck;
             }
