@@ -9,7 +9,7 @@
 
 #include <unistd.h>
 
-#define FIBONACCIHEAP_DEBUG 1
+//#define FIBONACCIHEAP_DEBUG 1
 
 #include "../src/utils/type.hpp"
 #include "../src/utils/logger.h"
@@ -44,8 +44,8 @@ void testB()
     A.UnionWith(B);
     A.DecreaseKey(f, 7);
     (void)n;
+    (void)f;
     A.DeleteKey(n);
-    A.DeleteKey(f);
     std::cout << A << std::endl;
 }
 

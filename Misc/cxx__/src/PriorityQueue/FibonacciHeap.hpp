@@ -8,6 +8,7 @@
 #include <limits>
 #include <algorithm>
 #include <iostream>
+#include <stack>
 
 #include <cstdlib>
 #include <cassert>
@@ -97,8 +98,12 @@ class FibonacciHeap_IMP //{
 
         void __merge_list(__elem* degree_list[], __elem* xxp) //{
         {
+            assert(xxp->m_parent == nullptr);
             assert(degree_list[xxp->m_degree] != nullptr);
             assert(degree_list[xxp->m_degree]->m_degree == xxp->m_degree);
+#ifdef FIBONACCIHEAP_DEBUG
+            assert(is_bidirection_linked_list(xxp, "__merge_list()"));
+#endif // FIBONACCIHEAP_DEBUG
             __elem* holder = degree_list[xxp->m_degree];
             __elem *lesser, *bigger;
             if(this->kv_less(xxp->m_kv, holder->m_kv)){
@@ -118,6 +123,9 @@ class FibonacciHeap_IMP //{
                 bigger->m_prev   = bigger;
                 bigger->m_next   = bigger;
             } else apppend_to_child_list(lesser->m_child, bigger);
+#ifdef FIBONACCIHEAP_DEBUG
+            assert(is_bidirection_linked_list(lesser, "__merge_list()2"));
+#endif // FIBONACCIHEAP_DEBUG
             degree_list[lesser->m_degree] = nullptr; // FUCK
             ++lesser->m_degree;
             if(degree_list[lesser->m_degree] == nullptr)
@@ -129,26 +137,44 @@ class FibonacciHeap_IMP //{
         void consolidate_list(__elem* list) //{
         {
             assert(list != nullptr);
+#ifdef FIBONACCIHEAP_DEBUG
+            assert(is_bidirection_linked_list(list, "consolidate_list()"));
+#endif // FIBONACCIHEAP_DEBUG
             ItemSize degree_list_size = std::log(this->m_size) / std::log((1 + std::sqrt(5)) / 2);
             __elem** degree_list      = (__elem**)std::malloc(sizeof(__elem*) * degree_list_size);
             std::memset(degree_list, '\0', sizeof(__elem*) * degree_list_size);
+            for(;list->m_prev != nullptr; list = list->m_prev);
             __elem* xyz__ = list;
-            __elem* min__ = list;
             while(xyz__ != nullptr) {
                 list = list->m_next;
-                if(list != nullptr && this->kv_less(list->m_kv, min__->m_kv))
-                    min__ = list;
                 if(degree_list[xyz__->m_degree] != nullptr) // merge
-                    __merge_list(degree_list, xyz__);
+                    // the minimum precedence of kv_less in __merge_list() not only relate with order in <list>, 
+                    // that also be influenced by degree. Such higher degree may have higher precedence when they merge.
+                    // so the minimum element should be chose in degree_list...
+                    __merge_list(degree_list, xyz__); 
                 else degree_list[xyz__->m_degree] = xyz__;
                 xyz__ = list;
             }
-            this->m_min_pointer = min__;
-            __elem *last = min__;
-            for(;last->m_next  != nullptr; last  = last->m_next);
+            __elem* min__ = nullptr;
+            __elem* loop__ = nullptr;
+            __elem *start = nullptr, *last = nullptr;
+            for(size_t i=0;i<degree_list_size && min__ == nullptr;++i)
+                if(degree_list[i] != nullptr)
+                    min__ = degree_list[i];
             for(;min__->m_prev != nullptr; min__ = min__->m_prev);
-            last->m_next  = min__;
-            min__->m_prev = last;
+            loop__ = min__;
+            start = min__;
+            for(;loop__->m_next != nullptr; loop__ = loop__->m_next)
+                if(kv_less(loop__->m_next->m_kv, min__->m_kv))
+                    min__ = loop__->m_next;
+            this->m_min_pointer = min__;
+            last = loop__;
+            assert(m_min_pointer->m_parent == nullptr);
+#ifdef FIBONACCIHEAP_DEBUG
+            assert(is_bidirection_linked_list(last, "consolidate_list()2"));
+#endif // FIBONACCIHEAP_DEBUG
+            last->m_next  = start;
+            start->m_prev = last;
             std::free(degree_list);
             return;
         } //}
@@ -186,8 +212,26 @@ class FibonacciHeap_IMP //{
 
     public:
          FibonacciHeap_IMP(): m_min_pointer(nullptr), m_size(0){}
-        ~FibonacciHeap_IMP(){
-            if(this->m_min_pointer != nullptr) delete this->m_min_pointer;}
+        ~FibonacciHeap_IMP(){if(this->m_min_pointer != nullptr) delete this->m_min_pointer;}
+        FibonacciHeap_IMP(const FibonacciHeap_IMP&) = delete;
+        FibonacciHeap_IMP& operator=(const FibonacciHeap_IMP&) = delete;
+        FibonacciHeap_IMP(FibonacciHeap_IMP&& fh): FibonacciHeap_IMP(){*this = std::move(fh);}
+        FibonacciHeap_IMP& operator=(FibonacciHeap_IMP&& fh) //{
+        {
+            if(this == &fh) return *this;
+            if(this->m_min_pointer != nullptr) delete this->m_min_pointer;
+            this->m_size        = fh.m_size;
+            this->m_min_pointer = fh.m_min_pointer;
+            fh.m_size           = 0;
+            fh.m_min_pointer    = nullptr;
+#ifdef FIBONACCIHEAP_DEBUG
+            this->JointHolder     = std::move(fh.JointHolder);
+            this->CheckedHolder   = std::move(fh.CheckedHolder);
+            this->current_checked = fh.current_checked;
+            fh.current_checked    = 0;
+#endif // FIBONACCIHEAP_DEBUG
+            return *this;
+        } //}
 
         virtual NewValueType GetValueType(KeyValueType) = 0;
 
@@ -241,6 +285,7 @@ class FibonacciHeap_IMP //{
                     break;
                 }
             }
+            assert(is_bidirection_circular_linked_list(this->m_min_pointer));
 #endif // FIBONACCIHEAP_DEBUG
             KeyValueType ret = std::move(m_min_pointer->m_kv);
             this->SetPointer(ret, nullptr); // clear reference in object
@@ -278,6 +323,9 @@ class FibonacciHeap_IMP //{
                 children->m_prev         = prev_p;
             }  // false, true is trival
             consolidate_list(next_p);
+#ifdef FIBONACCIHEAP_DEBUG
+            assert(is_bidirection_circular_linked_list(this->m_min_pointer));
+#endif // FIBONACCIHEAP_DEBUG
             --this->m_size;
             check_point();
             delete deleted_;
@@ -287,8 +335,13 @@ class FibonacciHeap_IMP //{
         void __DecreaseKey(__elem* elem, const NewValueType& new_v) //{
         {
             SetNewValue(elem->m_kv, new_v);
-            if(elem->m_parent == nullptr || !kv_less(elem->m_kv, elem->m_parent->m_kv))
+            if(elem->m_parent == nullptr || !kv_less(elem->m_kv, elem->m_parent->m_kv)){
+                if(elem->m_parent == nullptr){
+                    if(kv_less(elem->m_kv, m_min_pointer->m_kv))
+                        m_min_pointer = elem;
+                }
                 return;
+            }
             __elem* parent = elem->m_parent;
             move_to_top(elem);
             decrease_check(parent);
@@ -318,8 +371,16 @@ class FibonacciHeap_IMP //{
             possible_2->m_prev            = m_min_pointer;
             if(kv_less(possible_2->m_kv, m_min_pointer->m_kv))
                 m_min_pointer = possible_2;
-            this->m_size += fh.m_size;
-            fh.m_size     = 0;
+            this->m_size     += fh.m_size;
+            fh.m_size         = 0;
+            fh.m_min_pointer  = nullptr;
+#ifdef FIBONACCIHEAP_DEBUG
+            for(auto bi : fh.JointHolder)
+                this->JointHolder.push_back(bi);
+            fh.CheckedHolder.resize(0);
+            fh.JointHolder.resize(0);
+            this->current_checked += fh.current_checked;
+#endif // FIBONACCIHEAP_DEBUG
             return;
         } //}
         void DeleteKey(__elem* elem) //{
@@ -389,7 +450,57 @@ class FibonacciHeap_IMP //{
                 ++ck;
             }
         }
-#endif // FIBONACCI_DEBUG //}
+        static bool is_bidirection_circular_linked_list(__elem* begin, std::string where = "NOWHERE") //{
+        {
+            assert(begin != nullptr);
+            std::stack<__elem*> p_holder;
+            __elem* loop = begin;
+            for(;loop->m_next != begin; loop = loop->m_next) p_holder.push(loop);
+            p_holder.push(loop);
+            for(loop = begin->m_prev;;loop = loop->m_prev) {
+                if(loop != p_holder.top()) {
+                    throw *new std::runtime_error("break here");
+                    return false;
+                }
+                p_holder.pop();
+                if(p_holder.empty()) break;
+            }
+            if(loop != begin) return false;
+            return true;
+        } //}
+        static bool is_bidirection_linked_list(__elem* begin, std::string where = "NOWHERE") //{
+        {
+            std::cout << std::endl;
+            std::cout << where << ": " << std::endl;
+            assert(begin != nullptr);
+            std::stack<__elem*> p_holder;
+            __elem* loop = begin;
+            for(;loop->m_next != nullptr; loop = loop->m_next) {
+                std::cout << "XXX s -> l: " << std::hex << loop << " -> " << loop->m_next << std::endl;
+                if(loop->m_next == begin) throw *new std::runtime_error("maybe circular linked list.");
+            } 
+            begin = loop; // end
+            for(;loop->m_prev != nullptr; loop = loop->m_prev){
+                if(loop->m_prev == begin) throw *new std::runtime_error("maybe circular linked list.");
+                p_holder.push(loop);
+                std::cout << "l -> s: " << std::hex << loop << " -> " << loop->m_prev << std::endl;
+            }
+            std::cout << "l -> s: " << std::hex << loop << " -> " << loop->m_prev << std::endl;
+            p_holder.push(loop); // loop is start point
+            begin = loop;
+            for(;loop->m_next != nullptr;loop = loop->m_next) {
+                if(loop != p_holder.top()) {
+                    throw *new std::runtime_error("break here");
+                    return false;
+                }
+                p_holder.pop();
+                std::cout << "s -> l: " << std::hex << loop << " -> " << loop->m_next << std::endl;
+                if(p_holder.empty()) break;
+            }
+            std::cout << "s -> l: " << std::hex << loop << " -> " << loop->m_next << std::endl;
+            return true;
+        } //}
+#endif // FIBONACCIHEAP_DEBUG //}
 }; //}
 
 #ifdef FIBONACCIHEAP_DEBUG
@@ -406,7 +517,8 @@ std::ostream& operator<<(std::ostream& os, FibonacciHeap_IMP<KV, VT>& bh) //{
 {
     os << "[";
     while(!bh.empty())
-        os << bh.GetValueType(bh.ExtractMin()) << "  ";
+        os << bh.GetValueType(bh.ExtractMin()) << " ";
+    os << '\b';
     os << "]";
     return os;
 } //}
@@ -437,6 +549,16 @@ class FibonacciHeapKV: public FibonacciHeap_IMP<std::tuple<K, V, void*>*, K> //{
     using FibonacciHeap_IMP<KeyValueType, NewValueType>::Add;
 
     public:
+    FibonacciHeapKV(): FibonacciHeap_IMP<KeyValueType, NewValueType>(), m_extra_container(){}
+    FibonacciHeapKV(FibonacciHeapKV&& fh): FibonacciHeapKV(){*this = std::move(fh);}
+    FibonacciHeapKV& operator=(FibonacciHeapKV&& fh) //{
+    {
+        if(this == &fh) return *this;
+        FibonacciHeap_IMP<KeyValueType, NewValueType>::operator=(std::move(fh));
+        this->m_extra_container = std::move(fh.m_extra_container);
+            return *this;
+    } //}
+
     NewValueType GetValueType(KeyValueType e) {return std::get<0>(*e);}
 
     KeyValueType Add(const K& k, const V& v) //{
@@ -445,6 +567,27 @@ class FibonacciHeapKV: public FibonacciHeap_IMP<std::tuple<K, V, void*>*, K> //{
         m_extra_container.push_back(new_x);
         this->Add(new_x);
         return new_x;
+    } //}
+
+    template<typename IteratorK_t, typename IteratorV_t, 
+        std::enable_if_t<std::is_convertible<typename std::iterator_traits<IteratorK_t>::value_type, KeyValueType>::value, int> = 0,
+        std::enable_if_t<std::is_convertible<typename std::iterator_traits<IteratorV_t>::value_type, NewValueType>::value, int> = 0>
+    void Add(IteratorK_t _begin, IteratorK_t _end, IteratorV_t _Vbegin, IteratorV_t _Vend) //{
+    {
+        for(; _begin != _end && _Vbegin != _Vend; ++_begin){
+            this->Add(*_begin, *_Vbegin);
+        }
+        return;
+    } //}
+
+    void UnionWith(FibonacciHeapKV& fh) //{
+    {
+        FibonacciHeap_IMP<KeyValueType, NewValueType>::UnionWith(fh);
+        this->m_extra_container.insert(m_extra_container.end(), 
+                std::make_move_iterator(fh.m_extra_container.begin()), 
+                std::make_move_iterator(fh.m_extra_container.end()));
+        fh.m_extra_container.resize(0);
+        return;
     } //}
 
     ~FibonacciHeapKV(){for(auto bi : this->m_extra_container) delete bi;}
@@ -478,6 +621,16 @@ class FibonacciHeap: public FibonacciHeap_IMP<std::pair<K, void*>*, K> //{
     public:
     NewValueType GetValueType(KeyValueType e) {return e->first;}
 
+    FibonacciHeap(): FibonacciHeap_IMP<KeyValueType, NewValueType>(), m_extra_container(){}
+    FibonacciHeap(FibonacciHeap&& fh): FibonacciHeap(){*this = std::move(fh);}
+    FibonacciHeap& operator=(FibonacciHeap&& fh) //{
+    {
+        if(this == &fh) return *this;
+        FibonacciHeap_IMP<KeyValueType, NewValueType>::operator=(*this, std::move(fh));
+        this->m_extra_container = std::move(fh.m_extra_container);
+        return *this;
+    } //}
+
     KeyValueType Add(const K& kv)//{
     {
         KeyValueType new_x = new std::pair<K, void*>(kv, nullptr);
@@ -491,6 +644,16 @@ class FibonacciHeap: public FibonacciHeap_IMP<std::pair<K, void*>*, K> //{
         for(; _begin != _end; ++_begin){
             this->Add(*_begin);
         }
+        return;
+    } //}
+
+    void UnionWith(FibonacciHeap& fh) //{
+    {
+        FibonacciHeap_IMP<KeyValueType, NewValueType>::UnionWith(fh);
+        this->m_extra_container.insert(m_extra_container.end(), 
+                std::make_move_iterator(fh.m_extra_container.begin()), 
+                std::make_move_iterator(fh.m_extra_container.end()));
+        fh.m_extra_container.resize(0);
         return;
     } //}
 
