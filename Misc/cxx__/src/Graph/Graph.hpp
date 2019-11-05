@@ -35,7 +35,7 @@ class BaseGraph  //{
                 std::vector<Vertex*> m_adjecents;
                 vertex_id            m_id;
                 bool                 m_is_visited;
-                void*       m_external_data;
+                void*                m_external_data;
 
             public:
                 edge_weight m_prim_weight;
@@ -733,6 +733,74 @@ class DenseGraph: public BaseGraph<VD, EW> //{
                 NewValueType GetValueType(KeyValueType e){return e->m_prim_weight;}
         }; //}
 
+        bool __SingleSourceShortestPath(const vertex_id& begin_v) //{
+        {
+            auto max = FibonacciHeap_IMP_HELP::max_elem_only<edge_weight>();
+            FibonacciHeapVertexVV fbh;
+            Vertex* begin_vertex; if(!this->GetVertex(begin_v, &begin_vertex)) return false;
+            for(auto bi = this->m_vertex.begin(); bi != this->m_vertex.end(); ++bi){
+                this->update_vertex_msg(bi->GetId());
+                bi->m_prim_weight    = max;
+                bi->m_prim_connected = -1;
+                fbh.Add(&(*bi));
+            }
+            fbh.DecreaseKey(begin_vertex, 0);
+            begin_vertex->m_prim_connected = begin_v;
+            while(!fbh.empty()) {
+                Vertex* vv = fbh.ExtractMin();
+                if(vv->m_prim_connected == (vertex_id)-1) return true;
+                for(auto bi = vv->AdjecentsBegin(); bi != vv->AdjecentsEnd(); ++bi){
+                    edge_weight etmp;
+                    if(!this->GetWeight(vv->GetId(), (*bi)->GetId(), etmp)) continue;
+                    if((*bi)->GetExternalData() == nullptr) continue;
+                    edge_weight vtmp = fbh.GetValueType(*bi);
+                    if((*bi)->m_prim_weight + etmp < vtmp) {
+                        fbh.DecreaseKey((*bi), (*bi)->m_prim_weight = etmp + (*bi)->m_prim_weight);
+                        (*bi)->m_prim_connected = vv->GetId();
+                    }
+                }
+            }
+            return true;
+        } //}
+        bool __SingleSourceShortestPath_Bellman_Ford(const vertex_id& begin_v) //{
+        {
+            Vertex* begin_vertex; if(!this->GetVertex(begin_v, &begin_vertex)) return false;
+            auto max = FibonacciHeap_IMP_HELP::max_elem_only<edge_weight>();
+            for(auto bi = this->m_vertex.begin(); bi != this->m_vertex.end(); ++bi) {
+                bi->m_prim_weight    = max;
+                bi->m_prim_connected = 0;
+            }
+            begin_vertex->m_prim_weight = 0;
+            begin_vertex->m_prim_connected = begin_v;
+            for(size_t i = 1; i<this->m_vertex.size(); ++i) {
+                for(auto bi = this->EdgeBegin(); bi != this->EdgeEnd(); ++bi) {
+                    edge_weight www;
+                    if(!this->GetWeight((*bi).StartV().GetId(), (*bi).EndV().GetId(), www)) continue;
+                    edge_weight xxx = www + (*bi).StartV().m_prim_weight;
+                    if( xxx < (*bi).EndV().m_prim_weight) {
+                        (*bi).EndV().m_prim_weight    = xxx;
+                        (*bi).EndV().m_prim_connected = (*bi).StartV().GetId();
+                    }
+                }
+            }
+            return true;
+        } //}
+        std::pair<std::vector<vertex_id>, edge_weight> ShortPathFromTo(const vertex_id& src, const vertex_id& dst) //{
+        {
+            std::vector<vertex_id> ret;
+            edge_weight max__ = FibonacciHeap_IMP_HELP::max_elem_only<edge_weight>();
+//            if(!__SingleSourceShortestPath(src))return std::make_pair(ret, max__);
+            if(!__SingleSourceShortestPath_Bellman_Ford(src))return std::make_pair(ret, max__);
+            Vertex* vvv;
+            if(!this->GetVertex(dst, &vvv)) return std::make_pair(ret, max__);
+            if(vvv->m_prim_weight == max__) return std::make_pair(ret, max__);
+            max__ = vvv->m_prim_weight;
+            for(; vvv->m_prim_connected != src; this->GetVertex(vvv->m_prim_connected, &vvv))
+                ret.push_back(vvv->GetId());
+            ret.push_back(src);
+            return std::make_pair(ret, max__);
+        } //}
+
         std::vector<std::pair<vertex_id, vertex_id>> MST_Prim(edge_weight& out) //{
         {
             out = edge_weight(0);
@@ -743,14 +811,10 @@ class DenseGraph: public BaseGraph<VD, EW> //{
                 this->update_vertex_msg(bi->GetId());
                 bi->m_prim_weight    = FibonacciHeap_IMP_HELP::max_elem_only<edge_weight>();
                 bi->m_prim_connected = -1;
-            }
-            root_v->m_prim_connected = 0; // root
-            root_v->m_prim_weight    = 0;
-            for(auto bi = this->m_vertex.begin(); bi != this->m_vertex.end(); ++bi){
                 fbh.Add(&(*bi));
             }
-            for(auto bi = this->m_vertex.begin(); bi != this->m_vertex.end(); ++bi)
-                assert(bi->GetExternalData() != nullptr);
+            root_v->m_prim_connected = 0;
+            fbh.DecreaseKey(root_v, 0);
             std::vector<std::pair<vertex_id, vertex_id>> edge_keep;
             while(!fbh.empty()) {
                 Vertex* vv = fbh.ExtractMin();
@@ -764,9 +828,7 @@ class DenseGraph: public BaseGraph<VD, EW> //{
                 for(auto bi = vv->AdjecentsBegin(); bi != vv->AdjecentsEnd(); ++bi){
                     edge_weight etmp;
                     this->GetWeight(vv->GetId(), (*bi)->GetId(), etmp);
-//                   std::cout << "Edge: " << vv->GetId() << " - " << (*bi)->GetId() << ", Weight: " << etmp << std::endl;
                     if((*bi)->GetExternalData() == nullptr) continue;
-//                    std::cout << "2Edge: " << vv->GetId() << " - " << (*bi)->GetId() << ", Weight: " << etmp << std::endl;
                     edge_weight vtmp = fbh.GetValueType(*bi);
                     if(etmp < vtmp) {
                         fbh.DecreaseKey(*bi, etmp);
