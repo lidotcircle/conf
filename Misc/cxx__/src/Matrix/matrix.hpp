@@ -4,12 +4,21 @@
 #include <cstdlib>
 #include <cassert>
 #include <cmath>
+#include <limits>
 
 #include <stdexcept>
 #include <tuple>
 #include <vector>
 #include <iostream>
 #include <iomanip>
+
+namespace MATRIX_HELPER
+{
+    template<typename T, typename std::enable_if<std::numeric_limits<T>::min() >= 0, int>::type = 0>
+    inline T abs(T a){return a;}
+    template<typename T, typename std::enable_if<std::numeric_limits<T>::min() <  0, int>::type = 0>
+    inline T abs(T a){return std::abs(a);}
+}
 
 template<typename V>
 class GenericVector //{
@@ -51,7 +60,7 @@ class GenericVector //{
         {
             ValueType ret = 0;
             for(ItemSize i = 1; i<=this->GetSize(); ++i){
-                ret += std::pow(std::abs((*this)[i]), 2);
+                ret += std::pow(MATRIX_HELPER::abs((*this)[i]), 2);
             }
             return std::sqrt(ret);
         } //}
@@ -429,7 +438,7 @@ determinant_return:
             if(dst > this->RowSize()) throw *new std::out_of_range("Matrix Operation out of range");
             for(ItemSize i = 1; i<=this->ColumnSize(); ++i) {
                 this->get(dst, i) += this->get(src, i) * val;
-                if(std::abs(this->get(dst, i)) < ALMOST_ZERO) this->get(dst, i) = 0;
+                if(MATRIX_HELPER::abs(this->get(dst, i)) < ALMOST_ZERO) this->get(dst, i) = 0;
             }
             return;
         } //}
@@ -474,7 +483,7 @@ determinant_return:
             if(dst > this->ColumnSize()) throw *new std::out_of_range("Matrix Operation out of range");
             for(ItemSize i = 1; i<=this->RowSize(); ++i) {
                 this->get(i, dst) += this->get(i, src) * val;
-                if(std::abs(this->get(i, dst)) < ALMOST_ZERO) this->get(i, dst) = 0;
+                if(MATRIX_HELPER::abs(this->get(i, dst)) < ALMOST_ZERO) this->get(i, dst) = 0;
             }
             return;
         } //}
@@ -669,6 +678,15 @@ class SquareMatrix: public GenericSquareMatrix<V> //{
         SquareMatrix(): m_row_col(0), m_data(){}
         SquareMatrix(const ItemSize& size): m_row_col(size), m_data(m_row_col * m_row_col){}
         SquareMatrix(const SquareMatrix<ValueType>& _oth): SquareMatrix(){*this = _oth;}
+        SquareMatrix(DataContainer&& _oth, ItemSize row_col = 0): m_row_col(row_col), m_data(std::forward<DataContainer>(_oth)) //{
+        {
+            ItemSize real_s = m_data.size();
+            if(this->m_row_col * this->m_row_col == real_s)
+                return;
+            real_s = std::sqrt(real_s);
+            if(real_s * real_s != m_data.size()) throw *new std::logic_error("invalidate data to initialize matrix");
+            this->m_row_col = real_s;
+        } //}
         SquareMatrix(SquareMatrix<ValueType>&& _oth): SquareMatrix(){*this = std::move(_oth);}
         ~SquareMatrix(){};
 

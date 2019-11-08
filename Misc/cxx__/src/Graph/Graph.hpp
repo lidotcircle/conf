@@ -18,6 +18,7 @@
 #include "../PriorityQueue/FibonacciHeap.hpp"
 #include "../PriorityQueue/BinaryHeap.hpp"
 #include "../Set/DisjointSet.hpp"
+#include "../Matrix/matrix.hpp"
 
 template<typename VD, typename EW>
 class BaseGraph  //{
@@ -391,8 +392,8 @@ class DenseGraph: public BaseGraph<VD, EW> //{
         using vertex_id   = typename BaseGraph<VD, EW>::vertex_id;
         using Vertex      = typename BaseGraph<VD, EW>::Vertex;
         using Edge        = typename BaseGraph<VD, EW>::Edge;
-
         typedef DenseGraphMatrix<edge_weight> EdgeHolder ;
+        constexpr static bool NEGATIVE_WEIGHT = (std::numeric_limits<edge_weight>::min() < edge_weight(0));
 
     private:
         EdgeHolder                 m_edge;
@@ -733,7 +734,7 @@ class DenseGraph: public BaseGraph<VD, EW> //{
                 NewValueType GetValueType(KeyValueType e){return e->m_prim_weight;}
         }; //}
 
-        bool __SingleSourceShortestPath(const vertex_id& begin_v) //{
+        bool __SingleSourceShortestPath_Dijkstra(const vertex_id& begin_v) //{
         {
             auto max = FibonacciHeap_IMP_HELP::max_elem_only<edge_weight>();
             FibonacciHeapVertexVV fbh;
@@ -762,7 +763,7 @@ class DenseGraph: public BaseGraph<VD, EW> //{
             }
             return true;
         } //}
-        bool __SingleSourceShortestPath_Bellman_Ford(const vertex_id& begin_v) //{
+        bool __SingleSourceShortestPath_Bellman_Ford(const vertex_id& begin_v) //{ assuming no negative cycle
         {
             Vertex* begin_vertex; if(!this->GetVertex(begin_v, &begin_vertex)) return false;
             auto max = FibonacciHeap_IMP_HELP::max_elem_only<edge_weight>();
@@ -776,6 +777,7 @@ class DenseGraph: public BaseGraph<VD, EW> //{
                 for(auto bi = this->EdgeBegin(); bi != this->EdgeEnd(); ++bi) {
                     edge_weight www;
                     if(!this->GetWeight((*bi).StartV().GetId(), (*bi).EndV().GetId(), www)) continue;
+                    if((*bi).StartV().m_prim_weight == max) continue; // avoid arithmetic overflow
                     edge_weight xxx = www + (*bi).StartV().m_prim_weight;
                     if( xxx < (*bi).EndV().m_prim_weight) {
                         (*bi).EndV().m_prim_weight    = xxx;
@@ -789,16 +791,71 @@ class DenseGraph: public BaseGraph<VD, EW> //{
         {
             std::vector<vertex_id> ret;
             edge_weight max__ = FibonacciHeap_IMP_HELP::max_elem_only<edge_weight>();
-//            if(!__SingleSourceShortestPath(src))return std::make_pair(ret, max__);
-            if(!__SingleSourceShortestPath_Bellman_Ford(src))return std::make_pair(ret, max__);
+            if(NEGATIVE_WEIGHT){
+                if(!__SingleSourceShortestPath_Bellman_Ford(src))return std::make_pair(ret, max__);
+            }
+            else {
+                if(!__SingleSourceShortestPath_Dijkstra(src))return std::make_pair(ret, max__);
+            }
             Vertex* vvv;
             if(!this->GetVertex(dst, &vvv)) return std::make_pair(ret, max__);
             if(vvv->m_prim_weight == max__) return std::make_pair(ret, max__);
             max__ = vvv->m_prim_weight;
             for(; vvv->m_prim_connected != src; this->GetVertex(vvv->m_prim_connected, &vvv))
                 ret.push_back(vvv->GetId());
+            if(ret.size() == 0) ret.push_back(dst);
             ret.push_back(src);
             return std::make_pair(ret, max__);
+        } //}
+//        void AllPairShortPath_Floyd_Warshall();
+        std::pair<SquareMatrix<vertex_id>, SquareMatrix<edge_weight>> AllPairShortPath_Dijkstra_Bellman_Ford() //{ TODO NEGATIVE WEIGHT RESULT MAPPING
+        {
+            std::vector<edge_weight>  map_weight;
+            std::vector<vertex_id>    path_map__;
+            std::vector<edge_weight>  weight_map__;
+            if(NEGATIVE_WEIGHT) { // remaping weight
+                this->NewVertex(value_type());
+                Vertex& last = m_vertex[m_vertex.size() - 1];
+                for(auto bi = m_vertex.begin(); bi != m_vertex.end(); ++bi) {
+                    if(last.GetId() != bi->GetId())
+                        this->SetWeight(last.GetId(), bi->GetId(), edge_weight(0));
+                }
+                this->__SingleSourceShortestPath_Bellman_Ford(last.GetId());
+                this->DeleteVertex(last.GetId());
+                for(auto bi = m_vertex.begin(); bi != m_vertex.end(); ++bi)
+                    map_weight.push_back(bi->m_prim_weight);
+                for(auto bi = this->EdgeBegin(); bi != this->EdgeEnd(); ++bi) {
+                    Vertex& a = (*bi).StartV();
+                    Vertex& b = (*bi).EndV();
+                    edge_weight w_tmp;
+                    this->GetWeight(a.GetId(), b.GetId(), w_tmp);
+                    size_t ap = this->reverseMap(a.GetId());
+                    size_t bp = this->reverseMap(b.GetId());
+                    w_tmp = w_tmp + map_weight[ap] - map_weight[bp];
+                    this->SetWeight(a.GetId(), b.GetId(), w_tmp);
+                }
+            }
+            for(auto vi = m_vertex.begin(); vi != m_vertex.end(); ++vi) {
+                this->__SingleSourceShortestPath_Dijkstra(vi->GetId());
+                for(auto bi = m_vertex.begin(); bi != m_vertex.end(); ++bi) {
+                    path_map__.push_back(bi->m_prim_connected);
+                    if(!NEGATIVE_WEIGHT) weight_map__.push_back(bi->m_prim_weight);
+                }
+            }
+            SquareMatrix<edge_weight> path_map = std::move(path_map__);
+            if(!NEGATIVE_WEIGHT) return std::make_pair(path_map, weight_map__);
+            SquareMatrix<edge_weight> weight_map(path_map.ColumnSize());
+            for(auto bi = this->EdgeBegin(); bi != this->EdgeEnd(); ++bi) {
+                Vertex& a = (*bi).StartV();
+                Vertex& b = (*bi).EndV();
+                edge_weight w_tmp;
+                this->GetWeight(a.GetId(), b.GetId(), w_tmp);
+                size_t ap = this->reverseMap(a.GetId());
+                size_t bp = this->reverseMap(b.GetId());
+                w_tmp = w_tmp - map_weight[ap] + map_weight[bp];
+                this->SetWeight(a.GetId(), b.GetId(), w_tmp);
+            }
+            return std::make_pair(path_map, weight_map__); // TODO, From here
         } //}
 
         std::vector<std::pair<vertex_id, vertex_id>> MST_Prim(edge_weight& out) //{

@@ -109,27 +109,43 @@ void testE() //{
                 A.SetWeight(bi->GetId(), xi->GetId(), std::rand() % 2000);
         }
     }
-    bool as = A.__SingleSourceShortestPath(1);
+    bool as = A.__SingleSourceShortestPath_Dijkstra(1);
     std::cout << "find short path: " << (as ? "success" : "failed") << std::endl;
     return;
 } //}
 
 void testF() //{
 {
-    DenseGraph<double, size_t> A(50, false);
+    DenseGraph<double, size_t> A(1000, false);
     std::srand(time(nullptr));
     for(auto bi = A.VertexBegin(); bi != A.VertexEnd(); bi++) {
         for(auto xi = A.VertexBegin(); xi != A.VertexEnd(); xi++){
-            if(std::rand() % 20 == 0)
+            if(std::rand() % 4 == 0)
                 A.SetWeight(bi->GetId(), xi->GetId(), std::rand() % 2000);
         }
     }
-    auto as = A.ShortPathFromTo(1, 20);
+    auto as = A.ShortPathFromTo(1, 8);
     std::cout << "find short path: " << (as.first.size() ? "success" : "failed") << std::endl;
     if(as.first.size() == 0) return;
     auto ci = std::ostream_iterator<size_t>(std::cout, ", ");
     std::copy(as.first.begin(), as.first.end(), ci);
     std::cout << std::endl << "Total weight: " << as.second << ", Vertex: " << as.first.size() << std::endl;
+    return;
+} //}
+
+void testG() //{
+{
+    DenseGraph<double, size_t> A(10, false);
+    std::srand(time(nullptr));
+    for(auto bi = A.VertexBegin(); bi != A.VertexEnd(); bi++) {
+        for(auto xi = A.VertexBegin(); xi != A.VertexEnd(); xi++){
+            if(std::rand() % 2 == 0)
+                A.SetWeight(bi->GetId(), xi->GetId(), std::rand() % 2000);
+        }
+    }
+    auto as = A.AllPairShortPath_Dijkstra_Bellman_Ford();
+    std::cout << as.first << std::endl;
+    std::cout << as.second << std::endl;
     return;
 } //}
 
@@ -183,6 +199,6 @@ void testC() //{
 
 int main()
 {
-    testF();
+    testG();
     return 0;
 }
