@@ -88,7 +88,7 @@ class RBTree_IMP //{
                 } else B->m_parent = nullptr;
                 C->m_is_red = false;
                 B->m_right_child = this; this->m_parent = B;
-                this->m_left_child = E; if(E != nullptr) E->m_parent = this;
+                this->m_left_child = D; if(D != nullptr) D->m_parent = this;
                 return B;
             } //}
         bool match_LR() //{

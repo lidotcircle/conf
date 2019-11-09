@@ -61,6 +61,6 @@ void testB()
 
 int main()
 {
-    testB();
+    testA();
     return 0;
 }
