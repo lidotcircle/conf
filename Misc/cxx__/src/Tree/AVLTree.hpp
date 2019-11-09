@@ -39,7 +39,7 @@ class AVLTree_IMP //{
         static size_t avltree_height(avltree_node* t){if(t == nullptr) return 0; return t->m_height;}
         static void fix_height(avltree_node* t)
         {
-            t->m_height = avltree_height(t->m_left_child) > avltree_height(t->m_right_child) ? 
+            t->m_height = (avltree_height(t->m_left_child) > avltree_height(t->m_right_child)) ? 
                 avltree_height(t->m_left_child) + 1 : 
                 avltree_height(t->m_right_child) + 1;
         }
@@ -81,7 +81,7 @@ class AVLTree_IMP //{
                 if(rh >= lh) return false; if(lh - rh == 1) return false;
                 size_t llh = avltree_height(this->m_left_child->m_left_child);
                 size_t lrh = avltree_height(this->m_left_child->m_right_child);
-                if(lrh >= llh) return true;
+                if(lrh <= llh) return true;
                 return false;
             } //}
         avltree_node* rotate_hlhl() //{
@@ -99,7 +99,7 @@ class AVLTree_IMP //{
             B->m_right_child = this; this->m_parent = B;
             this->m_left_child = E; if(E != nullptr) E->m_parent = this;
             this->m_height = avltree_height(E) + 1;
-            B->m_height = this->m_height + 1;
+            B->m_height = avltree_height(this) + 1;
             return B;
         } //}
             bool match_HLHR() //{
@@ -109,7 +109,7 @@ class AVLTree_IMP //{
                 if(rh >= lh) return false; if(lh - rh == 1) return false;
                 size_t llh = avltree_height(this->m_left_child->m_left_child);
                 size_t lrh = avltree_height(this->m_left_child->m_right_child);
-                if(lrh >= llh) return false;
+                if(lrh <= llh) return false;
                 return true;
             } //}
         avltree_node* rotate_hlhr() //{
@@ -131,12 +131,12 @@ class AVLTree_IMP //{
             B->m_right_child = F;    if(F != nullptr) F->m_parent    = B;
             this->m_left_child = G;  if(G != nullptr) G->m_parent    = this;
             // inner node A(this) B E
-            this->m_height = this->m_left_child->m_height > this->m_right_child->m_height ? 
-                                this->m_left_child->m_height + 1 : this->m_right_child->m_height + 1;
-            B->m_height = B->m_left_child->m_height > B->m_right_child->m_height ? 
-                                B->m_left_child->m_height + 1 : B->m_right_child->m_height + 1;
-            E->m_height = E->m_left_child->m_height > E->m_right_child->m_height ? 
-                                E->m_left_child->m_height + 1 : E->m_right_child->m_height + 1;
+            this->m_height = avltree_height(this->m_right_child) > avltree_height(this->m_left_child) ?
+                                avltree_height(this->m_right_child) + 1 : avltree_height(this->m_left_child) + 1;
+            B->m_height    = avltree_height(B->m_right_child) > avltree_height(B->m_left_child) ?
+                                avltree_height(B->m_right_child) + 1 : avltree_height(B->m_left_child) + 1;
+            E->m_height    = avltree_height(E->m_right_child) > avltree_height(E->m_left_child) ?
+                                avltree_height(E->m_right_child) + 1 : avltree_height(E->m_left_child) + 1;
             return E;
         } //}
             bool match_HRHR() //{
@@ -164,7 +164,7 @@ class AVLTree_IMP //{
             B->m_left_child = this; this->m_parent = B;
             this->m_right_child = E;if(E != nullptr) E->m_parent = this;
             this->m_height = avltree_height(E) + 1;
-            B->m_height = this->m_height + 1;
+            B->m_height    = avltree_height(this) + 1;
             return B;
         } //}
             bool match_HRHL() //{
@@ -196,12 +196,12 @@ class AVLTree_IMP //{
             B->m_left_child     = F;    if(F != nullptr) F->m_parent = B;
             this->m_right_child = G;    if(G != nullptr) G->m_parent = this;
             // inner node A(this) B E
-            this->m_height = this->m_right_child->m_height > this->m_left_child->m_height ? 
-                                this->m_right_child->m_height + 1 : this->m_left_child->m_height + 1;
-            B->m_height = B->m_right_child->m_height > B->m_left_child->m_height ? 
-                                B->m_right_child->m_height + 1 : B->m_left_child->m_height + 1;
-            E->m_height = E->m_right_child->m_height > E->m_left_child->m_height ? 
-                                E->m_right_child->m_height + 1 : E->m_left_child->m_height + 1;
+            this->m_height = avltree_height(this->m_right_child) > avltree_height(this->m_left_child) ?
+                                avltree_height(this->m_right_child) + 1 : avltree_height(this->m_left_child) + 1;
+            B->m_height    = avltree_height(B->m_right_child) > avltree_height(B->m_left_child) ?
+                                avltree_height(B->m_right_child) + 1 : avltree_height(B->m_left_child) + 1;
+            E->m_height    = avltree_height(E->m_right_child) > avltree_height(E->m_left_child) ?
+                                avltree_height(E->m_right_child) + 1 : avltree_height(E->m_left_child) + 1;
             return E;
         } //}
 
