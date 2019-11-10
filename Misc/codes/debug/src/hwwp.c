@@ -230,3 +230,5 @@ bool disable_watchpoint(int bpno) //{
     hwmode[bpno] = 0; hw_callback[bpno] = NULL;
     return remove;
 } //}
+
+void trival_call_back(long o, long n){printf("old value: 0x%lx, new value: 0x%lx\n", o, n);}

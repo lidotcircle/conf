@@ -24,8 +24,11 @@ void testA()
     for(int i = 1; i<=800; ++i) {
         int ss = dis(gen);
         ::fprintf(OpenFile, "%d\n", ss);
-        ::fflush_unlocked(OpenFile);
         TT.Insert(ss, ss);
+    }
+    if(::fclose(OpenFile) == -1) {
+        ::fprintf(stderr, "close file failed");
+        ::exit(1);
     }
     std::ostream_iterator<double> ooo(std::cout, ", ");
     std::copy(TT.begin(), TT.end(), ooo);
