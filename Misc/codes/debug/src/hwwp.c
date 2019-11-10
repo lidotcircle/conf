@@ -78,18 +78,18 @@ static void sigtrap_dispatch(int sig) //{
     int  child_status = 0;
     long dr7_backup = 0;
     if(!(child = fork())) {
-		if (ptrace(PTRACE_ATTACH, parent, NULL, NULL)) goto __error_exit;
+        if (ptrace(PTRACE_ATTACH, parent, NULL, NULL)) goto __error_exit;
 
-		while (!WIFSTOPPED(parent_status))
-			waitpid(parent, &parent_status, 0);
+        while (!WIFSTOPPED(parent_status))
+            waitpid(parent, &parent_status, 0);
 
         int errno_backup = errno;
         errno = 0;
-		long int dr7_ori = ptrace(PTRACE_PEEKUSER, parent, offsetof(struct user, u_debugreg[7]), (void*)0);
+        long int dr7_ori = ptrace(PTRACE_PEEKUSER, parent, offsetof(struct user, u_debugreg[7]), (void*)0);
         if(errno != 0) goto __error_exit;
         errno = errno_backup;
 
-		if (ptrace(PTRACE_POKEUSER, parent, offsetof(struct user, u_debugreg[7]), 0)) goto __error_exit;
+        if (ptrace(PTRACE_POKEUSER, parent, offsetof(struct user, u_debugreg[7]), 0)) goto __error_exit;
         if (ptrace(PTRACE_POKEDATA, parent, &dr7_backup, dr7_ori)) goto __error_exit;
         if (ptrace(PTRACE_DETACH, parent, (void*)0, (void*)0)) goto __error_exit;
         syscall(SYS_tkill, tid, SIGCONT);
@@ -129,10 +129,10 @@ static void sigtrap_dispatch(int sig) //{
 
 __success_return:
     if(!(child = fork())) {
-		if (ptrace(PTRACE_ATTACH, parent, NULL, NULL)) goto __error_exit;
-		while (!WIFSTOPPED(parent_status))
-			waitpid(parent, &parent_status, 0);
-		if (ptrace(PTRACE_POKEUSER, parent, offsetof(struct user, u_debugreg[7]), dr7_backup)) goto __error_exit;
+        if (ptrace(PTRACE_ATTACH, parent, NULL, NULL)) goto __error_exit;
+        while (!WIFSTOPPED(parent_status))
+            waitpid(parent, &parent_status, 0);
+        if (ptrace(PTRACE_POKEUSER, parent, offsetof(struct user, u_debugreg[7]), dr7_backup)) goto __error_exit;
         if (ptrace(PTRACE_DETACH, parent, (void*)0, (void*)0)) goto __error_exit;
         _exit(0);
     }
@@ -160,9 +160,9 @@ bool install_watchpoint(void *addr, int bpno, watchpoint_call func, char* mode, 
         case 'r': assert(mode[1] == 'w'); watch_mode = 0x3; break;
     }
 
-	pid_t child        = 0;
-	pid_t parent       = getpid();
-	int   child_status = 0;
+    pid_t child        = 0;
+    pid_t parent       = getpid();
+    int   child_status = 0;
 
     struct   sigaction act;
     sigset_t sigmask;
@@ -172,19 +172,19 @@ bool install_watchpoint(void *addr, int bpno, watchpoint_call func, char* mode, 
     act.sa_handler = NULL;
     sigaction(SIGTRAP, &act, NULL);
 
-	if (!(child = fork()))
-	{
-		int parent_status = 0;
-		if (ptrace(PTRACE_ATTACH, parent, NULL, NULL)) goto __error_exit;
+    if (!(child = fork()))
+    {
+        int parent_status = 0;
+        if (ptrace(PTRACE_ATTACH, parent, NULL, NULL)) goto __error_exit;
 
-		while (!WIFSTOPPED(parent_status))
-			waitpid(parent, &parent_status, 0);
+        while (!WIFSTOPPED(parent_status))
+            waitpid(parent, &parent_status, 0);
 
         if (ptrace(PTRACE_POKEUSER, parent, offsetof(struct user, u_debugreg[bpno]), addr)) goto __error_exit;
 
         int errno_backup = errno;
         errno = 0;
-		long int dr7_ori = ptrace(PTRACE_PEEKUSER, parent, offsetof(struct user, u_debugreg[7]), (void*)0);
+        long int dr7_ori = ptrace(PTRACE_PEEKUSER, parent, offsetof(struct user, u_debugreg[7]), (void*)0);
 //        printf("origin 0x%lx\n", dr7_ori);
         if(errno != 0) goto __error_exit;
         errno   = errno_backup;
@@ -194,7 +194,7 @@ bool install_watchpoint(void *addr, int bpno, watchpoint_call func, char* mode, 
         SET_MODE_DR7(dr7_ori, bpno, watch_mode);
 
  //       printf("mmm 0x%lx\n", dr7_ori);
-		if (ptrace(PTRACE_POKEUSER, parent, offsetof(struct user, u_debugreg[7]), dr7_ori)) goto __error_exit;
+        if (ptrace(PTRACE_POKEUSER, parent, offsetof(struct user, u_debugreg[7]), dr7_ori)) goto __error_exit;
 
         if (ptrace(PTRACE_POKEDATA, parent, &hwset[bpno], 0x1))          goto __error_exit;
         if (ptrace(PTRACE_POKEDATA, parent, &hwaddr[bpno], addr))        goto __error_exit;
@@ -203,22 +203,22 @@ bool install_watchpoint(void *addr, int bpno, watchpoint_call func, char* mode, 
         if (ptrace(PTRACE_POKEDATA, parent, &hwlen[bpno], len))          goto __error_exit;
         if (ptrace(PTRACE_POKEDATA, parent, &hwmode[bpno], watch_mode))  goto __error_exit;
 
-		if (ptrace(PTRACE_DETACH, parent, NULL, NULL)) goto __error_exit;
-		_exit(0);
+        if (ptrace(PTRACE_DETACH, parent, NULL, NULL)) goto __error_exit;
+        _exit(0);
 
 __error_exit:
         fprintf(stderr, "%s\n", strerror(errno));
         _exit(1);
-	}
+    }
 
-	waitpid(child, &child_status, 0);
+    waitpid(child, &child_status, 0);
 
     act.sa_handler = sigtrap_dispatch;
     sigaction(SIGTRAP, &act, NULL);
 
-	if (WIFEXITED(child_status) && !WEXITSTATUS(child_status))
-		return true;
-	return false;
+    if (WIFEXITED(child_status) && !WEXITSTATUS(child_status))
+        return true;
+    return false;
 } //}
 
 bool disable_watchpoint(int bpno) //{
