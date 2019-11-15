@@ -26,18 +26,22 @@ size_t dbg_insert_success = 0;
 size_t dbg_delete_fail    = 0;
 size_t dbg_delete_try     = 0;
 size_t dbg_delete_success = 0;
+size_t dbg_free_call      = 0;
+size_t dbg_new_node_call  = 0;
 
 inline void print_statistic() //{
 {
-    std::cout << "Search try:     " << dbg_search_try << std::endl;
+    std::cout << "Search try:     " << dbg_search_try     << std::endl;
     std::cout << "Search success: " << dbg_search_success << std::endl;
-    std::cout << "Search fail:    " << dbg_search_fail << std::endl;
-    std::cout << "Insert try:     " << dbg_insert_try << std::endl;
+    std::cout << "Search fail:    " << dbg_search_fail    << std::endl;
+    std::cout << "Insert try:     " << dbg_insert_try     << std::endl;
     std::cout << "Insert success: " << dbg_insert_success << std::endl;
-    std::cout << "Insert fail:    " << dbg_insert_fail << std::endl;
-    std::cout << "Delete try:     " << dbg_delete_try << std::endl;
+    std::cout << "Insert fail:    " << dbg_insert_fail    << std::endl;
+    std::cout << "Delete try:     " << dbg_delete_try     << std::endl;
     std::cout << "Delete success: " << dbg_delete_success << std::endl;
-    std::cout << "Delete fail:    " << dbg_delete_fail << std::endl;
+    std::cout << "Delete fail:    " << dbg_delete_fail    << std::endl;
+    std::cout << "new node call:  " << dbg_new_node_call  << std::endl;
+    std::cout << "FreeMM call:    " << dbg_free_call      << std::endl;
 } //}
 #endif // __BTREE_DEBUG
 
@@ -65,7 +69,9 @@ class BTreeNode_IMP //{
         virtual id_type     null_parent() const = 0;
         virtual void        setup_node() = 0; // building information about id, write node to disk, balabala
         virtual void        free_node() = 0; // release this node
-        virtual btn_pointer new_node() const = 0;
+        virtual btn_pointer v_new_node() const = 0;
+        virtual bool        need_write_back(id_type) = 0;
+        virtual void        write_back() = 0;
 
         const val_type& GetValue(const kv_type& a) const         {return const_cast<btn_pointer>(this)->GetValue(const_cast<kv_type&>(a));}
         const key_type& GetKey(const kv_type& a) const           {return const_cast<btn_pointer>(this)->GetKey  (const_cast<kv_type&>(a));}
@@ -75,6 +81,8 @@ class BTreeNode_IMP //{
         bool kv_equal(const key_type& a, const kv_type& b) const {return this->k_equal (a, this->GetKey(b));}
         bool kv_less (const kv_type& a, const kv_type& b) const  {return this->k_less  (this->GetKey(a), this->GetKey(b));}
         bool kv_equal(const kv_type& a, const kv_type& b) const  {return this->k_equal (this->GetKey(a), this->GetKey(b));}
+
+        btn_pointer new_node(){++dbg_new_node_call; return this->v_new_node();}
 
     protected:
         class btree_iterator //{
@@ -450,6 +458,22 @@ insert_first:
 
     public:
         BTreeNode_IMP(): m_children(), m_keyvals(), m_num_of_children(0), m_is_leaf(true), m_parent(), m_this_id(){}
+        ~BTreeNode_IMP(){}
+        void recursive_free_node() //{
+        {
+#ifdef __BTREE_DEBUG
+            ++dbg_free_call;
+#endif // __BTREE_DEBUG
+            if(!this->IsLeaf()) {
+                for(size_type i = 0; i<=this->m_num_of_children - 1; ++i) {
+                    if(this->need_write_back(this->m_children[i])) {
+                        btn_pointer subnode = this->GetNode(this->m_children[i]);
+                        subnode->recursive_free_node();
+                    }
+                }
+            }
+            this->write_back();
+        } //}
 
         void    SetupNode(){this->setup_node();}
         id_type Parent(){return this->m_parent;}
@@ -473,6 +497,11 @@ insert_first:
             std::pair<btn_pointer, size_type> result = this->__search(key);
             if(result.first == nullptr) return false;
             bool s_or_f = this->__delete_aux(result, root);
+            if((*root)->m_num_of_children < 2) {
+                assert((*root)->IsLeaf() && (*root)->m_num_of_children == 1);
+                (*root)->free_node() && (*root)->m_num_of_children == 1;
+                delete (*root);
+            }
 #ifdef __BTREE_DEBUG
             if(s_or_f == true) ++dbg_delete_success;
             else               ++dbg_delete_fail;
@@ -549,6 +578,7 @@ class BTree_IMP //{
 
     public:
         BTree_IMP(): m_size(0), m_root(nullptr){}
+        ~BTree_IMP(){if(this->m_root != nullptr) this->m_root->recursive_free_node();}
 
         val_type* Search(const key_type& key) //{
         {
@@ -604,12 +634,12 @@ template<typename K, typename V, size_t Vt>
 class BTreeNode: public BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt> //{
 {
     public:
-        using key_type  = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::key_type;
-        using val_type  = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::val_type;
-        using id_type   = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::id_type;
-        using kv_type   = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::kv_type;
-        using size_type = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::size_type;
-        using btn_pointer   = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::btn_pointer;
+        using key_type    = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::key_type;
+        using val_type    = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::val_type;
+        using id_type     = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::id_type;
+        using kv_type     = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::kv_type;
+        using size_type   = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::size_type;
+        using btn_pointer = typename BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>::btn_pointer;
 
     protected:
         virtual val_type&   GetValue(kv_type& kv) const { return kv.second;}
@@ -620,8 +650,10 @@ class BTreeNode: public BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt> //{
         virtual bool        parent_null(id_type n_id) const {return n_id == nullptr;}
         virtual id_type     null_parent() const {return nullptr;}
         virtual void        setup_node() {this->m_this_id = this;}
-        virtual btn_pointer new_node() const {return new BTreeNode();}
+        virtual btn_pointer v_new_node() const {return new BTreeNode();}
         virtual void        free_node() {::memset(static_cast<void*>(this), '\0', sizeof(*this));}
+        virtual bool        need_write_back(id_type){return true;}
+        virtual void        write_back(){delete this;}
     public:
         BTreeNode(): BTreeNode_IMP<K, V, void*, std::pair<K, V>, Vt>() {}
 }; //}
