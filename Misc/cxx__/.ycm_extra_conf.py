@@ -137,7 +137,7 @@ default_c_flags = common_clang_flags + [
 default_cpp_flags = common_clang_flags + [
     '-x',
     'c++',
-    '-std=gnu++11'
+    '-std=gnu++14'
 ]
 
 linux_c_header_folder = copy.copy(common_linux_header_folder)

@@ -12,10 +12,6 @@
 #include <cassert>
 #include <cstring>
 
-#ifndef __BTREE_DEBUG
-#define __BTREE_DEBUG 1
-#endif // __BTREE_DEBUG
-
 #ifdef __BTREE_DEBUG
 size_t dbg_search_fail    = 0;
 size_t dbg_search_success = 0;
@@ -82,7 +78,12 @@ class BTreeNode_IMP //{
         bool kv_less (const kv_type& a, const kv_type& b) const  {return this->k_less  (this->GetKey(a), this->GetKey(b));}
         bool kv_equal(const kv_type& a, const kv_type& b) const  {return this->k_equal (this->GetKey(a), this->GetKey(b));}
 
-        btn_pointer new_node(){++dbg_new_node_call; return this->v_new_node();}
+        btn_pointer new_node(){
+#ifdef __BTREE_DEBUG
+            ++dbg_new_node_call; 
+#endif // __BTREE_DEBUG
+            return this->v_new_node();
+        }
 
     protected:
         class btree_iterator //{
