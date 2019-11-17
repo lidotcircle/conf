@@ -56,16 +56,21 @@ let g:ycm_server_python_interpreter = '/usr/bin/python3'
 
 " update location-list every time when YCMDiags run
 let g:ycm_always_populate_location_list=1
+let g:ycm_key_invoke_completion = '<C-Space>'
 
 function! s:ycm_shortcut_c_sopport() " {{{
-    " 刷新编译文件
-    nnoremap <F5> :YcmForceCompileAndDiagnostics<cr>
-    " 查看当前光标下的错误信息
-    nnoremap <leader>yd :YcmShowDetailedDiagnostics<cr>
-    " 跳转到声明处 subcommand -- GoToDeclaration
-    nnoremap <leader>yr :YcmCompleter GoToDeclaration<cr>
-    " 跳转到定义出 subcommand -- GoToDefinition
-    nnoremap <leader>yf :YcmCompleter GoToDefinition<cr>
+    nnoremap <F5>        :YcmForceCompileAndDiagnostics<cr>
+    nnoremap <leader>yd  :YcmShowDetailedDiagnostics<cr>
+    nnoremap <leader>gdc :YcmCompleter GoToDeclaration<cr>
+    nnoremap <leader>gdf :YcmCompleter GoToDefinition<cr>
+    nnoremap <leader>gip :YcmCompleter GoToImplementation<cr>
+    nnoremap <leader>gic :YcmCompleter GoToInclude<cr>
+    nnoremap <leader>go  :YcmCompleter GoTo<cr>
+    nnoremap <leader>gt  :YcmCompleter GetType<cr>
+    nnoremap <leader>gr  :YcmCompleter GoToReferences<cr>
+    nnoremap <leader>ff  :YcmCompleter Format<cr>
+    nnoremap <leader>yf  :YcmCompleter FixIt<cr>
+    nnoremap <leader>ry  :YcmCompleter RestartServer<cr>
 endfunction " }}}
 " 只在 c,cpp时开启
 autocmd Filetype c,cpp call s:ycm_shortcut_c_sopport()

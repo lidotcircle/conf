@@ -114,7 +114,8 @@ set noswapfile
 "{{{ TAGS
 let s:extraTags = [
             \      $HOME . '/cpython.tag',
-            \      $HOME . '/llvmlibcxx.tag']
+            \      $HOME . '/llvmlibcxx.tag',
+            \      $HOME . '/linux.tag']
 "            \      $HOME . '/c++stl.tag',
 let s:currentTags = &tags
 let s:extraTagsString = ""
