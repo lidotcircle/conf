@@ -9,10 +9,10 @@ declare -r SUB_FILE=$(uci get ssr_json.@ssrsub[0].subfile)
 if [ -d ${SUB_FILE%/*} ]; then
     mkdir -p ${SUB_FILE%/*}
 fi
-[ -f ${SUB_FILE} ] && truncate --size 0k ${SUB_FILE} || touch ${SUB_FILE}
+[ -f ${SUB_FILE} ] && echo "" > ${SUB_FILE} || touch ${SUB_FILE}
 
 declare -r SUB_FILE_DST="$SUB_FILE-dst"
-[ -f ${SUB_FILE_DST} ] && truncate --size 0k ${SUB_FILE_DST} || touch ${SUB_FILE_DST}
+[ -f ${SUB_FILE_DST} ] && echo "" > ${SUB_FILE_DST} || touch ${SUB_FILE_DST}
 
 declare -r TMP_FILE=$(mktemp)
 
