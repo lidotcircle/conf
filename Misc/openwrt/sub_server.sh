@@ -88,6 +88,7 @@ done
  #{ function: clean_exit(exit_status)
 clean_exit()
 {
+    __logger__ "function clean_exit() is called."
     [ -f "${TMP_FILE}"  ]    && rm -f ${TMP_FILE}
     [ -f "${TMP_FILEB}" ]    && rm -f ${TMP_FILEB}
     [ -f "${SUB_FILE}"  ]    && rm -f ${SUB_FILE}
@@ -100,6 +101,7 @@ clean_exit()
 #{ function: get_fd() <ret_ref> -- aviliable file descriptor
 get_fd()
 {
+    __logger__ "function get_fd() is called."
     [ $# -eq 1 ] || return 1
     local -n __found=$1
     __found=-1
@@ -116,6 +118,7 @@ get_fd()
 #{ function: test_ssr_server()
 test_ssr_server()
 {
+    __logger__ "function test_ssr_server() is called."
     # just one argument passed
     if [ $# -eq 1 ]; then
         [ $PING_AVAIL -eq 1 ] && ping -w 5 -c 2 $1 || \
@@ -145,6 +148,7 @@ declare -r TMP_FILEB=$(mktemp)
 declare -i ssr_node_i=0
 add_node()
 {
+    __logger__ "function add_node() is called."
     echo "$1" | base64 -d 1> ${TMP_FILEB} 2>/dev/null
     [ -z $(cat ${TMP_FILEB}) ] && return 1
     local first_part=$(cat ${TMP_FILEB} | cut -f 1 -d\/)
@@ -189,6 +193,7 @@ add_node()
 #{ function: print_json()
 print_json()
 {
+    __logger__ "function print_json() is called."
     echo "{" >> $2
     declare -n tmp_ref=ssr_node_$1
     __logger__ "INFO" "print json of <server: ${tmp_ref["server"]}>"
@@ -221,6 +226,7 @@ config ssrpro
     option enabled '1'"
 luci_ssrpro_config()
 {
+    __logger__ "function luci_ssrpro_config() is called."
     echo "${default_options}" >> "$2"
     declare -n tmp_ref=ssr_node_$1
     __logger__ "INFO" "print luci configuration of <server: ${tmp_ref["server"]}>"
@@ -234,6 +240,7 @@ luci_ssrpro_config()
 #{ function: write_to_fold() -- write nodes into files in specified fold
 write_to_fold()
 {
+    __logger__ "function write_to_fold() is called."
     [ ! $# -eq 1 ] && return 1
     if [ ! -d "$1" ]; then
         if [ ! -e $1 ]; then
@@ -258,6 +265,7 @@ write_to_fold()
 #{ function: start_ssr_process() -- as the function name suggests
 start_ssr_process()
 {
+    __logger__ "function start_ssr_process() is called."
     [ ! $# -eq 1 ] && __logger__ "ERROR" "Invaliated Argument at FUNCTION start_ssr_process()" && clean_exit 1
 
     [ -f ${SSR_CONF_JSON} ] && rm -f ${SSR_CONF_JSON} && \
@@ -276,6 +284,7 @@ start_ssr_process()
 #{ function: kill_ssr_process()
 kill_ssr_process()
 {
+    __logger__ "function kill_ssr_process() is called."
     local -i ssrpid=0
     [ -f ${SSR_PID} ] && rm -rf ${SSR_PID}
     while (true); do
@@ -293,6 +302,7 @@ kill_ssr_process()
 RANDOM=$$
 restart_ssr()
 {
+    __logger__ "function restart_ssr() is called."
     # amount of server that is available
     declare -ri count_of_server=$(ls ${SSR_SUB_DIR} | wc -l)
     [ ${count_of_server} -eq 0 ] && __logger__ "ERROR" "none of server is available." && clean_exit 1
@@ -310,6 +320,7 @@ restart_ssr()
 #{ function: check_accessibility()
 check_accessibility()
 {
+    __logger__ "function check_accessibility() is called."
     curl --max-time 5 https://google.com 1>/dev/null 2>&1
     if [ $? -eq 0 ]; then
         __logger__ "INFO" "google is accessible" && return 0
