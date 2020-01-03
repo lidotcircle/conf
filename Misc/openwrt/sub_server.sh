@@ -93,8 +93,8 @@ clean_exit()
     [ -f "${SUB_FILE}"  ]    && rm -f ${SUB_FILE}
     [ -f "${SUB_FILE_DST}" ] && rm -f ${SUB_FILE_DST}
     [ "${START_BANNER}" == 1 ] && __logger__ "BANNER" "----------------- END ------------------\n"
-    [ $# -eq 1 ] && return $1
-    return 1
+    [ $# -eq 1 ] && exit $1
+    exit 1
 } #}
 
 #{ function: get_fd() <ret_ref> -- aviliable file descriptor
@@ -332,6 +332,8 @@ curl --max-time 5 ${SSR_SUB} -o ${TMP_FILE} 1>>/dev/null 2>&1 && cp -f ${TMP_FIL
 
 
 while [ $SUBSCRIPTION_SUCCESS -eq 1 ]; do
+__logger__ "INFO" "subscription success"
+
 # decode subscription file
 base64 -d ${TMP_FILE} > ${SUB_FILE_DST} 2>/dev/null
 cat ${SUB_FILE_DST} | grep -oe "[^:^/]\{4,\}" > ${TMP_FILE}
