@@ -153,15 +153,15 @@ add_node()
     echo "$1" | base64 -d 1> ${TMP_FILEB} 2>/dev/null
     [ -z $(cat ${TMP_FILEB}) ] && return 1
     local first_part=$(cat ${TMP_FILEB} | cut -f 1 -d\/)
-    local server=$(echo "${first_part}" | cut -f 1 -d:)
+    local server="$(echo "${first_part}" | cut -f 1 -d:)"
     local server_port=$(echo "${first_part}" | cut -f 2 -d:)
     test_ssr_server "${server}" "${server_port}" || return 1
     local second_part=$(cat ${TMP_FILEB} | cut -f 2 -d?)
-    local -r declaration=$(eval "declare -g -A ssr_node_${ssr_node_i}")
-    __logger__ "INFO" "---------- Add Node ---------\n ${declaration}"
+    __logger__ "INFO" "---------- Add Node ---------"
+    eval "declare -g -A ssr_node_${ssr_node_i}"
     declare -n tmp_ref=ssr_node_${ssr_node_i}
     # First part
-    tmp_ref["server"]="$server"
+    tmp_ref["server"]=$server
     tmp_ref["server_port"]=$server_port
     tmp_ref["protocol"]=$(echo "${first_part}" | cut -f 3 -d:)
     tmp_ref["method"]=$(echo "${first_part}" | cut -f 4 -d:)
