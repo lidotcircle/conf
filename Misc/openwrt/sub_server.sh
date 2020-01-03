@@ -23,11 +23,16 @@ __logger__()
     fi
     PRIORITY="$1"
     MSG="$2"
+    if [ "${PRIORITY}" == "BANNER" ]; then
+        echo -e "$MSG"
+        return 0
+    fi
     if [ "${PRIORITY}" == "ERROR" ]; then
         echo -e "ERROR [$(date)]: $MSG" 1>&2
         return 0
     else
         echo -e "${PRIORITY} [$(date)]: $MSG"
+        return 0
     fi
 } #}
 
@@ -87,7 +92,7 @@ clean_exit()
     [ -f "${TMP_FILEB}" ]    && rm -f ${TMP_FILEB}
     [ -f "${SUB_FILE}"  ]    && rm -f ${SUB_FILE}
     [ -f "${SUB_FILE_DST}" ] && rm -f ${SUB_FILE_DST}
-    [ "${START_BANNER}" == 1 ] && __logger__ "INFO" "----------------- END ------------------\n"
+    [ "${START_BANNER}" == 1 ] && __logger__ "BANNER" "----------------- END ------------------\n"
     [ $# -eq 1 ] && return $1
     return 1
 } #}
@@ -151,7 +156,7 @@ add_node()
     __logger__ "INFO" "---------- Add Node ---------\n ${declaration}"
     declare -n tmp_ref=ssr_node_${ssr_node_i}
     # First part
-    tmp_ref["server"]=$server
+    tmp_ref["server"]="$server"
     tmp_ref["server_port"]=$server_port
     tmp_ref["protocol"]=$(echo "${first_part}" | cut -f 3 -d:)
     tmp_ref["method"]=$(echo "${first_part}" | cut -f 4 -d:)
@@ -186,6 +191,7 @@ print_json()
 {
     echo "{" >> $2
     declare -n tmp_ref=ssr_node_$1
+    __logger__ "INFO" "print json of <server: ${tmp_ref["server"]}>"
     for __sym in ${!tmp_ref[@]}; do
         eval "value=\${tmp_ref[\"$__sym\"]}"
         if [[ "${value}" =~ ^[0-9]*$ ]] && [ -n "${value}" ]; then
@@ -217,6 +223,7 @@ luci_ssrpro_config()
 {
     echo "${default_options}" >> "$2"
     declare -n tmp_ref=ssr_node_$1
+    __logger__ "INFO" "print luci configuration of <server: ${tmp_ref["server"]}>"
     for __sym in ${!tmp_ref[@]}; do
         eval "value=\${tmp_ref[\"$__sym\"]}"
         echo "    option ${__sym} '${value}'" >> $2
@@ -234,9 +241,11 @@ write_to_fold()
         fi
         rm -f $1
         mkdir -p $1
+        __logger__ "INFO" "create fold $1"
     else
         rm -rf "$1"
         mkdir $1
+        __logger__ "INFO" "clean fold $1"
     fi
 
     for ((i=1; i<=$ssr_node_i; ++i)); do
@@ -300,14 +309,17 @@ restart_ssr()
 #{ function: check_accessibility()
 check_accessibility()
 {
-    curl --max-time 5 https://google.com 1>/dev/null 2>&1 || \
-        (__logger__ "INFO" "Can't access google... " && return 1) && \
-        (__logger__ "INFO" "Google is accessible..." && return 0)
+    curl --max-time 5 https://google.com 1>/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        __logger__ "INFO" "google is accessible" && return 0
+    else
+        __logger__ "INFO" "can't reach https://google.com" && return 1
+    fi
 }
 #}
 
 # banner
-__logger__ "INFO" "\n--------------- START -------------------"
+__logger__ "BANNER" "\n--------------- START -------------------"
 declare -r START_BANNER="1"
 
 check_accessibility && clean_exit 0
