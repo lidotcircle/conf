@@ -238,9 +238,10 @@ write_to_fold()
     if [ ! -d "$1" ]; then
         if [ ! -e $1 ]; then
             mkdir -p $1
+        else
+            rm -f $1
+            mkdir -p $1
         fi
-        rm -f $1
-        mkdir -p $1
         __logger__ "INFO" "create fold $1"
     else
         rm -rf "$1"
@@ -294,7 +295,7 @@ restart_ssr()
 {
     # amount of server that is available
     declare -ri count_of_server=$(ls ${SSR_SUB_DIR} | wc -l)
-    [ ${count_of_server} -eq 0 ] && clean_exit 1
+    [ ${count_of_server} -eq 0 ] && __logger__ "ERROR" "none of server is available." && clean_exit 1
     __logger__ "INFO" "total amount of server that is available is ${count_of_server}"
 
     kill_ssr_process
