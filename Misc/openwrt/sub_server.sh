@@ -87,7 +87,7 @@ clean_exit()
     [ -f "${TMP_FILEB}" ]    && rm -f ${TMP_FILEB}
     [ -f "${SUB_FILE}"  ]    && rm -f ${SUB_FILE}
     [ -f "${SUB_FILE_DST}" ] && rm -f ${SUB_FILE_DST}
-    [ "${START_BANNER}" == 1] && __logger__ "INFO" "----------------- END ------------------\n"
+    [ "${START_BANNER}" == 1 ] && __logger__ "INFO" "----------------- END ------------------\n"
     [ $# -eq 1 ] && return $1
     return 1
 } #}
@@ -315,11 +315,11 @@ check_accessibility && clean_exit 0
 # get the subscription file from URL
 declare -i SUBSCRIPTION_SUCCESS=1
 curl --max-time 5 ${SSR_SUB} -o ${TMP_FILE} 1>>/dev/null 2>&1 && cp -f ${TMP_FILE} ${SUB_FILE} \
-    || ([ -f ${SUB_FILE}] && cp -f ${SUB_FILE} ${TMP_FILE})
+    || ([ -f ${SUB_FILE} ] && cp -f ${SUB_FILE} ${TMP_FILE})
 [ ! -f $SUB_FILE ] && __logger__ "WARNING" "subscription fail!!!"  && SUBSCRIPTION_SUCCESS=0
 
 
-while [ $SUBSCRIPTION_SUCCESS -eq 1]; do
+while [ $SUBSCRIPTION_SUCCESS -eq 1 ]; do
 # decode subscription file
 base64 -d ${TMP_FILE} > ${SUB_FILE_DST} 2>/dev/null
 cat ${SUB_FILE_DST} | grep -oe "[^:^/]\{4,\}" > ${TMP_FILE}
