@@ -354,6 +354,7 @@ cat ${SUB_FILE_DST} | grep -oe "[^:^/]\{4,\}" > ${TMP_FILE}
 
 # add node to hash table
 declare -i node_all_i=$(cat ${TMP_FILE} | wc -l)
+__loger__ "INFO" "count of lines of subscription file is ${node_all_i}"
 for ((node_loop=1;$node_loop<=$node_all_i;node_loop++)); do
     __node=$(cat ${TMP_FILE} | head -n $node_loop | tail -n 1)
     add_node "${__node}" "${SUB_FILE_DST}"
