@@ -123,21 +123,21 @@ test_ssr_server()
     # just one argument passed
     if [ $# -eq 1 ]; then
         [ $PING_AVAIL -eq 1 ] && ping -w 5 -c 2 $1 || \
-            (__logger__ "WARNING" "CAN'T access server <$1>\n" && return 1)
+            (__logger__ "WARNING" "CAN'T access server <$1>" && return 1)
         return 0
     fi
     if [ $# -eq 2 ]; then
         if [ $NMAP_AVAIL -eq 1 ]; then
             nmap --host-timeout 2 $1 -p $2 2>/dev/null | grep -ie "OPEN" 1>/dev/null 2>&1 && return 0
-            __logger__ "WARNING" "CAN'T access server <$1:$2>\n" >&2 && return 1
+            __logger__ "WARNING" "CAN'T access server <$1:$2>" && return 1
         fi
         if [ $NETCAT_AVAIL -eq 1 ]; then
             $NETCAT_CMD -zvw2 $1 $2 1>/dev/null 2>&1 && return 0
-            __logger__ "WARNING" "CAN'T access server <$1:$2>\n" >&2 && return 1
+            __logger__ "WARNING" "CAN'T access server <$1:$2>" && return 1
         fi
         if [ $PING_AVAIL -eq 1 ]; then
             ping -w 5 -c 2 $1 1>/dev/null 2>&1 && return 0
-            __logger__ "WARNING" "CAN'T access server <$1>\n" >&2 && return 1
+            __logger__ "WARNING" "CAN'T access server <$1>" && return 1
         fi
     fi
     __logger__ "INFO" "unable to test accessibility of server, just return true." && return 0
