@@ -290,7 +290,7 @@ kill_ssr_process()
     local -i ssrpid=0
     [ -f ${SSR_PID} ] && rm -rf ${SSR_PID}
     while (true); do
-        ssrpid="$(ps | grep "ssr" | grep -v "grep" | tail -n 1 | cut -f 1)"
+        ssrpid="$(ps | grep "ssr" | grep -v "grep" | tail -n 1 | cut -d\  -f 1)"
         if [ $ssrpid -eq 0 ]; then
             return 0
         fi
@@ -306,14 +306,15 @@ restart_ssr()
 {
     __logger__ "function restart_ssr() is called."
     # amount of server that is available
-    declare -ri count_of_server=$(ls ${SSR_SUB_DIR} | wc -l)
+    declare -ri count_of_server=$(ls ${SSR_SUB_DIR} | grep "json" | wc -l)
     [ ${count_of_server} -eq 0 ] && __logger__ "ERROR" "none of server is available." && clean_exit 1
     __logger__ "INFO" "total amount of server that is available is ${count_of_server}"
 
     kill_ssr_process
 
-    local rand=$(($RANDOM%$count_of_server))
+    local -i rand=$(($RANDOM%$count_of_server))
     [ -n "$1" ] && rand=$1
+    let rand++
 
     start_ssr_process "${rand}"
 }
@@ -354,7 +355,7 @@ cat ${SUB_FILE_DST} | grep -oe "[^:^/]\{4,\}" > ${TMP_FILE}
 
 # add node to hash table
 declare -i node_all_i=$(cat ${TMP_FILE} | wc -l)
-__loger__ "INFO" "count of lines of subscription file is ${node_all_i}"
+__logger__ "INFO" "count of lines of subscription file is ${node_all_i}"
 for ((node_loop=1;$node_loop<=$node_all_i;node_loop++)); do
     __node=$(cat ${TMP_FILE} | head -n $node_loop | tail -n 1)
     add_node "${__node}" "${SUB_FILE_DST}"
