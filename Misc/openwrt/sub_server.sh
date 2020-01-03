@@ -20,9 +20,10 @@ __logger__()
     if [ $# -eq 1 ]; then
         MSG="$1"
         PRIORITY="INFO"
+    else
+        PRIORITY="$1"
+        MSG="$2"
     fi
-    PRIORITY="$1"
-    MSG="$2"
     if [ "${PRIORITY}" == "BANNER" ]; then
         echo -e "$MSG"
         return 0
@@ -249,13 +250,14 @@ write_to_fold()
             rm -f $1
             mkdir -p $1
         fi
-        __logger__ "INFO" "create fold $1"
+        __logger__ "INFO" "create fold <$1>"
     else
         rm -rf "$1"
         mkdir $1
-        __logger__ "INFO" "clean fold $1"
+        __logger__ "INFO" "clean fold <$1>"
     fi
 
+    __logger__ "amount of available server is $ssr_node_i"
     for ((i=1; i<=$ssr_node_i; ++i)); do
         print_json "$i" "$1/json_$i"
         luci_ssrpro_config "$i" "$1/conf_$i"
