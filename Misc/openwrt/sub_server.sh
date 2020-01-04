@@ -14,7 +14,16 @@
 
 # file mutex
 declare -r EXCLUSIVE_PROCESS="/var/run/sub_server_sh.mutex"
-[ -f ${EXCLUSIVE_PROCESS} ] && exit 0
+if [ -e ${EXCLUSIVE_PROCESS} ]; then
+    the_modification_of_previous_mutex_file=$(date -r ${EXCLUSIVE_PROCESS} +%s)
+    current_time=$(date +%s)
+    difference_time=$((current_time - the_modification_of_previous_mutex_file))
+    if [ ${difference_time} -gt 600 ]; then
+        rm -rf ${EXCLUSIVE_PROCESS}
+    else
+        exit 0
+    fi
+fi
 echo -e "$$" > ${EXCLUSIVE_PROCESS}
 
 #{ logger
@@ -198,6 +207,7 @@ add_node()
 #}
 
 #{ function: print_json()
+declare -ri RUNNING_PORT=7070
 print_json()
 {
     __logger__ "function print_json() is called."
@@ -213,7 +223,7 @@ print_json()
         fi
     done
     local node_info_tail="    \"local_address\" : \"0.0.0.0\",
-    \"local_port\" : 7070,
+    \"local_port\" : ${RUNNING_PORT},
     \"time_out\" : 60,
     \"fast_open\" : false
 }"
@@ -284,7 +294,7 @@ start_ssr_process()
     cp -f "${SSR_SUB_DIR}/json_$1" ${SSR_CONF_JSON}
     cp -f "${SSR_SUB_DIR}/conf_$1" ${LUCI_SSRPRO}
     __logger__ "INFO" "To start ssr with server $1"
-    ${SSR_START} && __logger__ "INFO" "start ssr success."
+    ${SSR_START} && __logger__ "INFO" "start ssr success, \n           command line: [${SSR_START}]"
     return 0
 }
 #}
@@ -293,12 +303,15 @@ start_ssr_process()
 kill_ssr_process()
 {
     __logger__ "function kill_ssr_process() is called."
-    local -i ssrpid=0
     [ -f ${SSR_PID} ] && rm -rf ${SSR_PID}
-    while (true); do
-        ssrpid="$(ps | grep "ssr" | grep -v "grep" | tail -n 1 | cut -d\  -f 1)"
+    local -i ssrpid=0
+    local IFS=$'\n'
+    ssrprocess=$(ps | grep "ssr-redir" | grep -v "grep")
+    for ssrpcs in ${ssrprocess}; do
+        ssrpid=0
+        ssrpid=$(echo ${ssrpcs} | cut -d\  -f 1)
         if [ $ssrpid -eq 0 ]; then
-            return 0
+            ssrpid=$(echo ${ssrpcs} | cut -d\  -f 2)
         fi
         kill -9 $ssrpid
         __logger__ "INFO" "kill shadowsocksr process #${ssrpid} ###"
