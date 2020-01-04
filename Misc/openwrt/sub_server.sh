@@ -12,6 +12,11 @@
 #          and redo this step until can connect to <https times://google.com> with 
 #          interval of 20 seconds and maxmimum trying of 5 times.
 
+# file mutex
+declare -r EXCLUSIVE_PROCESS="/var/run/sub_server_sh.mutex"
+[ -f ${EXCLUSIVE_PROCESS} ] && exit 0
+echo -e "$$" > ${EXCLUSIVE_PROCESS}
+
 #{ logger
 __logger__()
 {
@@ -90,11 +95,12 @@ done
 clean_exit()
 {
     __logger__ "function clean_exit() is called."
-    [ -f "${TMP_FILE}"  ]    && rm -f ${TMP_FILE}
-    [ -f "${TMP_FILEB}" ]    && rm -f ${TMP_FILEB}
-    [ -f "${SUB_FILE}"  ]    && rm -f ${SUB_FILE}
-    [ -f "${SUB_FILE_DST}" ] && rm -f ${SUB_FILE_DST}
-    [ "${START_BANNER}" == 1 ] && __logger__ "BANNER" "----------------- END ------------------\n"
+    [ -f "${TMP_FILE}"  ]         && rm -f ${TMP_FILE}
+    [ -f "${TMP_FILEB}" ]         && rm -f ${TMP_FILEB}
+    [ -f "${SUB_FILE}"  ]         && rm -f ${SUB_FILE}
+    [ -f "${SUB_FILE_DST}" ]      && rm -f ${SUB_FILE_DST}
+    [ -f "${EXCLUSIVE_PROCESS}" ] && rm -f ${EXCLUSIVE_PROCESS}
+    [ "${START_BANNER}" == 1 ] && __logger__ "BANNER" "----------------- END $$ ------------------\n"
     [ $# -eq 1 ] && exit $1
     exit 1
 } #}
@@ -334,7 +340,7 @@ check_accessibility()
 #}
 
 # banner
-__logger__ "BANNER" "\n--------------- START -------------------"
+__logger__ "BANNER" "\n--------------- START $$ -------------------"
 declare -r START_BANNER="1"
 
 check_accessibility && clean_exit 0
