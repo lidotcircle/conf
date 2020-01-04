@@ -346,6 +346,11 @@ curl --max-time 5 ${SSR_SUB} -o ${TMP_FILE} 1>>/dev/null 2>&1 && cp -f ${TMP_FIL
     || ([ -f ${SUB_FILE} ] && cp -f ${SUB_FILE} ${TMP_FILE})
 [ ! -f $SUB_FILE ] && __logger__ "WARNING" "subscription fail!!!"  && SUBSCRIPTION_SUCCESS=0
 
+if [ "$(cat ${TMP_FILE} | wc -l)" == "0" ]; then
+    __logger__ "WARNING" "subscription fail, empty."
+    SUBSCRIPTION_SUCCESS=0
+fi
+
 
 while [ $SUBSCRIPTION_SUCCESS -eq 1 ]; do
 __logger__ "INFO" "subscription success"
