@@ -341,6 +341,7 @@ check_accessibility && clean_exit 0
 
 # get the subscription file from URL
 declare -i SUBSCRIPTION_SUCCESS=1
+__logger__ "INFO" "Try to update subscription, [$SSR_SUB]"
 curl --max-time 5 ${SSR_SUB} -o ${TMP_FILE} 1>>/dev/null 2>&1 && cp -f ${TMP_FILE} ${SUB_FILE} \
     || ([ -f ${SUB_FILE} ] && cp -f ${SUB_FILE} ${TMP_FILE})
 [ ! -f $SUB_FILE ] && __logger__ "WARNING" "subscription fail!!!"  && SUBSCRIPTION_SUCCESS=0
