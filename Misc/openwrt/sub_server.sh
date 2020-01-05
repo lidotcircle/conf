@@ -196,8 +196,8 @@ add_node()
         para_cont=$(echo "$para" | cut -f 2 -d=)
         echo $para_cont | base64 -d 1>/dev/null 2>&1 
         # FIXXX
-        if [ $? -eq 0 ] || [ $para_name == "obfsparam" ] || [ $para_name == "protoparam" ]; then
-            para_cont=$(echo $para_cont | base64 -d 2>/dev/null)
+        if [ $? -eq 0 ] || [ $para_name == "obfsparam" ] || [ $para_name == "protoparam" ] || [ $para_name == "remarks" ] || [ $para_name == "group" ]; then
+            para_cont=$(echo $para_cont | sed 's/-/+/g; s/_/\//g' | base64 -d 2>/dev/null)
         fi
         eval "tmp_ref[\"${para_name}\"]=\"${para_cont}\""
     done
@@ -361,9 +361,14 @@ check_accessibility && clean_exit 0
 # get the subscription file from URL
 declare -i SUBSCRIPTION_SUCCESS=1
 __logger__ "INFO" "Try to update subscription, [$SSR_SUB]"
-curl --max-time 5 ${SSR_SUB} -o ${TMP_FILE} 1>>/dev/null 2>&1 && cp -f ${TMP_FILE} ${SUB_FILE} \
-    || ([ -f ${SUB_FILE} ] && cp -f ${SUB_FILE} ${TMP_FILE})
-[ ! -f $SUB_FILE ] && __logger__ "WARNING" "subscription fail!!!"  && SUBSCRIPTION_SUCCESS=0
+SUBSCRIPTION_CACHE=$(curl --connect-timeout 10 "${SSR_SUB}" 2>/dev/null)
+if [ ! $? -eq 0 ]; then
+    SUBSCRIPTION_SUCCESS=0
+    __logger__ "WARNING" "fetch subscription fail"
+else
+    echo "${SUBSCRIPTION_CACHE}" > ${TMP_FILE}
+    echo "${SUBSCRIPTION_CACHE}" > ${SUB_FILE}
+fi
 
 if [ "$(cat ${TMP_FILE} | wc -l)" == "0" ]; then
     __logger__ "WARNING" "subscription fail, empty."
