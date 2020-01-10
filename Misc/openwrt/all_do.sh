@@ -107,7 +107,8 @@ opkg_install()
     for package in $@; do
         if !(has_installed $package); then
             if (in_packages $package); then
-                install_list=$install_list $package
+                install_list="$install_list $package"
+                continue
             else
                 __logger__ "ERROR" "unknown package ${package}, exit 1"
                 clean_exit 1
@@ -163,5 +164,11 @@ fi
 
 opkg_install git git-http
 opkg_install vim-fuller
+
+opkg_install curl netcat tcpdump ss nmap
+opkg_install tar file lsof
+
+# shadowsocksr
+opkg_install luci-app-ssr-pro luci-i18n-ssr-pro-zh-cn
 
 clean_exit 0
