@@ -3,7 +3,7 @@
 # load color functions
 source ./bash/functions
 
-# UNFINISHED
+# TODO
 ### HANDING OPTIONS #{
 #__options=$(getopt "-o avtbsn --long all")
 print_usage()
