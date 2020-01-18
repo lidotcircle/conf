@@ -52,7 +52,7 @@ endif
 " 7. YCM
 " Only load YCM when python is supported, and YCM DON'T support Android Termux
 if (has('python') || has('python3')) && !(g:isandroid) && !exists('g:disable_YouCompleteMe')
-    Bundle 'Valloric/YouCompleteMe'
+   Bundle 'Valloric/YouCompleteMe'
 endif
 
 " 8. Python mode
@@ -78,8 +78,8 @@ endfunction " }}}
 autocmd FileType c,cpp call s:conque_gdb()
 
 " 11. ultisnips
-if has('python') || has('python3') && !exists('g:disable_ultsnips')
-    Bundle 'SirVer/ultisnips'
+if has('python') || has('python3') && !exists('g:disable_ultisnips')
+   Bundle 'SirVer/ultisnips'
 endif
 
 " 12. powershell syntax and indent
@@ -127,6 +127,16 @@ endif
 if !exists('g:disable_vim_notes')
     Bundle 'xolox/vim-notes'
 endif
+
+" 21. typescript-vim
+if !exists('g:disable_typescript_vim')
+    Bundle 'leafgarland/typescript-vim'
+endif
+
+" 22. vim-lua-ftplugin
+" if !exists('g:disable_vim_lua_ftplugin')
+"    Bundle 'xolox/vim-lua-ftplugin'
+" endif
 
 Bundle 'pboettch/vim-cmake-syntax'
 

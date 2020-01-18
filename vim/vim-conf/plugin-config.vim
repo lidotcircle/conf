@@ -73,7 +73,7 @@ function! s:ycm_shortcut_c_sopport() " {{{
     nnoremap <leader>ry  :YcmCompleter RestartServer<cr>
 endfunction " }}}
 " 只在 c,cpp时开启
-autocmd Filetype c,cpp call s:ycm_shortcut_c_sopport()
+autocmd Filetype javascript,typescript,c,cpp call s:ycm_shortcut_c_sopport()
 
 " 关闭YCM在以下类型的开启
 let g:ycm_filetype_blacklist = {
@@ -134,4 +134,8 @@ let g:session_autosave="yes"
 "{{{ easy-vim-align
 vmap <Enter> <Plug>(EasyAlign)
 nmap <leader> <Plug>(EasyAlign)
+"}}}
+
+"{{{ vim-lua-ftplugin
+let g:lua_complete_omni = 1
 "}}}
