@@ -138,6 +138,16 @@ endif
 "    Bundle 'xolox/vim-lua-ftplugin'
 " endif
 
+" 22. scss
+if !exists('g:disable_scss_syntax_vim')
+    Bundle 'cakebaker/scss-syntax.vim'
+endif
+
+" 23. new css
+if !exists('g:csscomplete.vim')
+    Bundle 'othree/csscomplete.vim'
+endif
+
 Bundle 'pboettch/vim-cmake-syntax'
 
 Bundle 'kovisoft/paredit'

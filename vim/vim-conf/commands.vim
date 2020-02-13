@@ -189,7 +189,7 @@ function! Foldmethod_Marker_Clang() " {{{
   return 1
 endfunction " }}}
 
-autocmd FileType typescript,javascript,c,cpp,asy call Foldmethod_Marker_Clang()
+autocmd FileType css,scss,typescript,javascript,c,cpp,asy call Foldmethod_Marker_Clang()
 " }}} End
 
 "{{{ powrshell, shell, python fold
@@ -212,6 +212,15 @@ endfunction " }}}
 
 autocmd FileType lisp call Foldmethod_Marker_LISP()
 
+"}}}
+
+"{{{ Lua
+function! Foldmethod_Marker_LUA() " {{{
+  set foldmethod=marker
+  set foldmarker=--<,-->
+  return 1
+endfunction " }}}
+autocmd FileType lua call Foldmethod_Marker_LUA()
 "}}}
 
 "}}} End fold

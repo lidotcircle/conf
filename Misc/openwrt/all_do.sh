@@ -168,6 +168,8 @@ opkg_install vim-fuller
 opkg_install curl netcat tcpdump ss nmap
 opkg_install tar file lsof
 
+opkg_install coreutils-sleep
+
 # shadowsocksr
 opkg_install luci-app-ssr-pro luci-i18n-ssr-pro-zh-cn
 

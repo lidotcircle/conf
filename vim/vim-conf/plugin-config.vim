@@ -87,6 +87,10 @@ let g:ycm_filetype_blacklist = {
       \ 'infolog' : 1,
       \ 'mail' : 1
       \}
+let g:ycm_semantic_triggers = {
+            \ 'css': [ 're!^', 're!^\s+', ': ' ],
+            \ 'scss': [ 're!^', 're!^\s+', ': ' ],
+            \ }
 " }}}
 
 " Vimtex {{{
