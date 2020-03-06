@@ -137,6 +137,8 @@ Bundle 'junegunn/vim-easy-align'
 Bundle 'rhysd/vim-grammarous'
 
 Bundle 'haya14busa/vim-gtrans'
+
+Bundle 'vim-scripts/ZoomWin'
 " }}}
 
 " {{{ Plugin End

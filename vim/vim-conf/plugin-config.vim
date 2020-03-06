@@ -135,3 +135,7 @@ let g:session_autosave="yes"
 vmap <Enter> <Plug>(EasyAlign)
 nmap <leader> <Plug>(EasyAlign)
 "}}}
+
+"{{{ ZoomWin
+nmap <unique> <c-x>o  <Plug>ZoomWin
+"}}}
