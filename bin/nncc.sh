@@ -10,6 +10,7 @@ Usage:
         -r <file-r>      file that send from server to cilent
         -l <listen port> listening this port
         -c <dst server>  the host:port combination that user want to connnect
+        -a               just append files, default action is overwrite it
 EOF
 }
 
@@ -20,6 +21,7 @@ declare R_FILE=""
 declare L_PORT=""
 declare DST_HOST=""
 declare DST_PORT=""
+declare APPEND=""
 
 # var_name, value, pattern
 assign_what_empty()
@@ -45,6 +47,9 @@ while [ $# -ge 1 ]; do
         -c) assign_what_empty DST_HOST "$(echo $2 | grep -oe '^[^:]*')" '^.*$'
             assign_what_empty DST_PORT "$(echo $2 | grep -oe ':.*$' | grep -o '[^:]*$')" '^.*$'
             shift 2
+            continue;;
+        -a) assign_what_empty APPEND "yes" '^.*$'
+            shift 1
             continue;;
         -*) USAGE && exit 5
             ;;
@@ -73,28 +78,47 @@ mkfifo -m 600 "$send___"
 declare recieve=$(mktemp -u)
 mkfifo -m 600 "$recieve"
 
+# function: clear_exit(exit_status) #{
 clear_exit()
 {
     [ $# -eq 1 ] || exit 8
-    [ -f $send___ ] && rm -f $send___
-    [ -f $recieve ] && rm -f $recieve
+    [ -p $send___ ] && rm -f $send___ && echo "remove $send___"
+    [ -p $recieve ] && rm -f $recieve && echo "remove $recieve"
+    for cpid in $(pgrep -P $$); do
+        kill -9 $cpid 2>/dev/null && echo "killed $cpid"
+    done
     exit $1
+} #}
+
+clear_exit_zero() 
+{ 
+    clear_exit 0 
 }
+trap "clear_exit_zero" SIGINT
 
-$recieve | $NC -l L_PORT | tee $send___ > $S_FILE &
-declare LS=$?
-declare LP=$!
-if [ ! $LS -eq 0 ]; then
-    echo "nc listening fail with $LS"
-    clear_exit $LS
+if [ -z "${APPEND}" ]; then
+    [ -f $S_FILE ] && rm $S_FILE && touch $S_FILE
+    [ -f $R_FILE ] && rm $R_FILE && touch $R_FILE
 fi
 
-cat $send___ | $NC $DST_HOST $DST_PORT | tee $recieve > $R_FILE
-LS=$?
-if [ ! $LS -eq 0 ]; then
-    echo "nc connecting fail with $LS"
-    kill -9 ${LP}
-    clear_exit $LS
-fi
+while (true); do
+    cat $recieve | $NC -k -l $L_PORT | tee -a $S_FILE > $send___ &
+    declare LS=$?
+    if [ ! $LS -eq 0 ]; then
+        echo "nc listening fail with $LS"
+        clear_exit $LS
+    fi
+
+    cat $send___ | $NC $DST_HOST $DST_PORT | tee -a $R_FILE > $recieve
+    LS=$?
+    if [ ! $LS -eq 0 ]; then
+        echo "nc connecting fail with $LS"
+        clear_exit $LS
+    fi
+
+    for cpid in $(pgrep -P $$); do
+        kill -9 $cpid 1>/dev/null 2>&1 && echo "killed $cpid"
+    done
+done
 
 clear_exit 0
