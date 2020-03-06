@@ -3,6 +3,7 @@ import platform
 import os
 import ycm_core
 import copy
+import re
 
 if os.getenv("YCM_EXTRA_CONF_DEBUG"):
     DEBUG = True
@@ -46,6 +47,30 @@ common_clang_flags = [
     '-fexceptions',
     '-DNDEBUG'
 ]
+
+
+include_pattern = re.compile("^(include|Include|Inc)$")
+
+
+def find_include_dir(where, res):
+    dirs = filter(lambda x: os.path.isdir(os.path.join(where, x)),
+                  os.listdir(where))
+    for val in dirs:
+        if include_pattern.match(val):
+            res.append(os.path.join(where, val))
+        elif not val.startswith("."):
+            find_include_dir(os.path.join(where, val), res)
+    return res
+
+
+pwd = os.getcwd()
+for val in find_include_dir(pwd, []):
+    common_clang_flags.append("-I")
+    common_clang_flags.append(val)
+
+append_to_ycm_compilation_log_file(
+    {"INC": find_include_dir(pwd, [])})
+
 
 common_linux_header_folder = list(filter(os.path.exists,
                                          ["/usr/include",
@@ -226,7 +251,7 @@ if DEBUG:
 def Settings(**kwargs):
     if kwargs["language"] != "cfamily":
         return []
-    file_extension: str = os.path.splitext(kwargs["filename"])[1]
+    file_extension = os.path.splitext(kwargs["filename"])[1]
     flags = GetFlags(file_extension in
                      [".cpp", ".hpp", ".cx", ".cxx", ".hx", ".hxx", ".cc"])
     kwargs["flags"] = flags
