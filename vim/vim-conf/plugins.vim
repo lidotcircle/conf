@@ -159,6 +159,8 @@ Bundle 'rhysd/vim-grammarous'
 Bundle 'haya14busa/vim-gtrans'
 
 Bundle 'vim-scripts/ZoomWin'
+
+Bundle 'mileszs/ack.vim'
 " }}}
 
 " {{{ Plugin End

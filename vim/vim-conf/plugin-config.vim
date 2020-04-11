@@ -144,3 +144,7 @@ nmap <leader> <Plug>(EasyAlign)
 "{{{ ZoomWin
 nmap <unique> <c-x>o  <Plug>ZoomWin
 "}}}
+
+" Ack "{{{
+nnoremap <leader>t :Ack \(FIXME\)\\|\(TODO\)<cr>
+"}}}
