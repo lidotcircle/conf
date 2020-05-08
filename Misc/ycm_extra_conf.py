@@ -68,9 +68,6 @@ for val in find_include_dir(pwd, []):
     common_clang_flags.append("-I")
     common_clang_flags.append(val)
 
-append_to_ycm_compilation_log_file(
-    {"INC": find_include_dir(pwd, [])})
-
 
 common_linux_header_folder = list(filter(os.path.exists,
                                          ["/usr/include",
@@ -199,8 +196,7 @@ def GetFlags(is_cplusplus: bool = False):
     return flags
 
 
-compilation_database_folder = ''
-
+compilation_database_folder = os.getcwd()
 if os.path.exists(compilation_database_folder):
     database = ycm_core.CompilationDatabase(compilation_database_folder)
 else:
@@ -254,20 +250,27 @@ def Settings(**kwargs):
     file_extension = os.path.splitext(kwargs["filename"])[1]
     flags = GetFlags(file_extension in
                      [".cpp", ".hpp", ".cx", ".cxx", ".hx", ".hxx", ".cc"])
-    kwargs["flags"] = flags
-    append_to_ycm_compilation_log_file(kwargs)
     if not database:
+        kwargs["flags"] = flags
+        append_to_ycm_compilation_log_file(kwargs)
         return {
             'flags': flags,
             'include_paths_relative_to_dir': DirectoryOfThisScript()
         }
 
-    compilation_info = GetCompilationInfoForFile(kwargs["filename"])
+    compilation_info = database.GetCompilationInfoForFile(kwargs["filename"])
     if not compilation_info:
-        return None
+        kwargs["warn"] = "get flags from compilation database fail"
+        append_to_ycm_compilation_log_file(kwargs)
+        return {
+            'flags': flags,
+            'include_paths_relative_to_dir': DirectoryOfThisScript()
+        }
 
     final_flags = list(compilation_info.compiler_flags_)
 
+    kwargs["flags"] = final_flags
+    append_to_ycm_compilation_log_file(kwargs)
     return {
         'flags': final_flags,
         'include_paths_relative_to_dir': compilation_info.compiler_working_dir_
