@@ -123,6 +123,7 @@ let g:ps1_nofold_blocks = 1
 
 "{{{ Python-mode
 let g:pymode_rope = 0
+let g:pymode_rope_complete_on_dot = 0
 "}}}
 
 "{{{ minibufexpl
@@ -142,4 +143,8 @@ nmap <leader> <Plug>(EasyAlign)
 
 "{{{ ZoomWin
 nmap <unique> <c-x>o  <Plug>ZoomWin
+"}}}
+
+" Ack "{{{
+nnoremap <leader>t :Ack \(FIXME\)\\|\(TODO\)<cr>
 "}}}
