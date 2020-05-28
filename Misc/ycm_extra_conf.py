@@ -5,6 +5,7 @@ import ycm_core
 import copy
 import re
 
+
 if os.getenv("YCM_EXTRA_CONF_DEBUG"):
     DEBUG = True
 else:
@@ -197,7 +198,8 @@ def GetFlags(is_cplusplus: bool = False):
 
 
 compilation_database_folder = os.getcwd()
-if os.path.exists(compilation_database_folder):
+if os.path.exists(os.path.join(compilation_database_folder,
+                               "compile_commands.json")):
     database = ycm_core.CompilationDatabase(compilation_database_folder)
 else:
     database = None
