@@ -46,6 +46,8 @@ while(true); do
     for soc_fil in ${soc_lis[@]}; do
         try_source_fil $soc_fil
     done
+
+    [ -x ${HOME}/.bashrc_extra ] && source ${HOME}/.bashrc_extra
     break
 done
 #}
