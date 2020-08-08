@@ -142,7 +142,10 @@ nmap <leader> <Plug>(EasyAlign)
 "}}}
 
 "{{{ ZoomWin
-nmap <unique> <c-x>o  <Plug>ZoomWin
+try
+nnoremap <unique> <c-x>o  <Plug>ZoomWin
+catch /.*/
+endtry
 "}}}
 
 " Ack "{{{

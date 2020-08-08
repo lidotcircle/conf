@@ -191,3 +191,53 @@ nnoremap <silent><C-F11> :Finish<cr>
 nnoremap <silent><C-F5>  :Continue<cr>
 nnoremap <silent><S-F5>  :Stop<cr>
 "}}}
+
+" tab management {{{
+nnoremap <silent>g1 1gt
+nnoremap <silent>g2 2gt
+nnoremap <silent>g3 3gt
+nnoremap <silent>g4 4gt
+nnoremap <silent>g5 5gt
+nnoremap <silent>g6 6gt
+nnoremap <silent>g7 7gt
+nnoremap <silent>g8 8gt
+nnoremap <silent>g9 9gt
+
+function! Wipeout() "{{{
+    " list of *all* buffer numbers
+    let l:buffers = range(1, bufnr('$'))
+
+    " what tab page are we in?
+    let l:currentTab = tabpagenr()
+    try
+        " go through all tab pages
+        let l:tab = 0
+        while l:tab < tabpagenr('$')
+            let l:tab += 1
+
+            " go through all windows
+            let l:win = 0
+            while l:win < winnr('$')
+                let l:win += 1
+                " whatever buffer is in this window in this tab, remove it from
+                " l:buffers list
+                let l:thisbuf = winbufnr(l:win)
+                call remove(l:buffers, index(l:buffers, l:thisbuf))
+            endwhile
+        endwhile
+
+        " if there are any buffers left, delete them
+        if len(l:buffers)
+            try
+                execute 'bwipeout' join(l:buffers)
+            catch /.*/
+            endtry
+        endif
+    finally
+        " go back to our original tab page
+        execute 'tabnext' l:currentTab
+    endtry
+endfunction "}}}
+nnoremap <silent><leader>ct :call Wipeout()<cr>
+" }}} 
+

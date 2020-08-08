@@ -223,4 +223,13 @@ endfunction " }}}
 autocmd FileType lua call Foldmethod_Marker_LUA()
 "}}}
 
+"{{{ Markdown
+function! Markdown_fold()
+    set foldmethod=marker
+    set foldmarker=<!--[-->,<!--]-->
+    setlocal nofoldenable
+endfunction
+autocmd Filetype markdown call Markdown_fold()
+"}}}
+
 "}}} End fold

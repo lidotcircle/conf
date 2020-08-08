@@ -52,7 +52,7 @@ endif
 " 7. YCM
 " Only load YCM when python is supported, and YCM DON'T support Android Termux
 if (has('python') || has('python3')) && !(g:isandroid) && !exists('g:disable_YouCompleteMe')
-   Bundle 'Valloric/YouCompleteMe'
+   Bundle 'ycm-core/YouCompleteMe'
 endif
 
 " 8. Python mode
