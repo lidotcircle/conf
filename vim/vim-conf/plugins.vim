@@ -20,9 +20,9 @@ if !exists('g:disable_vim_powerline')
 endif
 
 " 2. TeX plugin
-if !exists('g:disable_vimtex')
-    Bundle 'lervag/vimtex'
-endif
+"if !exists('g:disable_vimtex')
+"    Bundle 'lervag/vimtex'
+"endif
 
 " 3. Tagbar
 if !exists('g:disable_tagbar')
