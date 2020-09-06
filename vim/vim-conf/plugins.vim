@@ -161,6 +161,8 @@ Bundle 'haya14busa/vim-gtrans'
 Bundle 'vim-scripts/ZoomWin'
 
 Bundle 'mileszs/ack.vim'
+
+Bundle 'digitaltoad/vim-pug'
 " }}}
 
 " {{{ Plugin End
