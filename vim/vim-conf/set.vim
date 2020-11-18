@@ -35,6 +35,8 @@ set cindent
 " message
 set cmdheight=2
 
+set completeopt-=preview
+
 " }}}
 
 " Display {{{
