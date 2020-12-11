@@ -248,7 +248,7 @@ if DEBUG:
 
 def Settings(**kwargs):
     if kwargs["language"] != "cfamily":
-        return []
+        return {}
     file_extension = os.path.splitext(kwargs["filename"])[1]
     flags = GetFlags(file_extension in
                      [".cpp", ".hpp", ".cx", ".cxx", ".hx", ".hxx", ".cc"])
