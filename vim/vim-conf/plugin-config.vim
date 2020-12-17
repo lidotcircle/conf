@@ -58,7 +58,7 @@ let g:ycm_server_python_interpreter = '/usr/bin/python3'
 let g:ycm_always_populate_location_list=1
 let g:ycm_key_invoke_completion = '<C-Space>'
 
-function! s:ycm_shortcut_c_sopport() " {{{
+function! s:ycm_subcommand_shortcut_sopport() " {{{
     nnoremap <F5>        :YcmForceCompileAndDiagnostics<cr>
     nnoremap <leader>yd  :YcmShowDetailedDiagnostics<cr>
     nnoremap <leader>gdc :YcmCompleter GoToDeclaration<cr>
@@ -73,7 +73,7 @@ function! s:ycm_shortcut_c_sopport() " {{{
     nnoremap <leader>ry  :YcmCompleter RestartServer<cr>
 endfunction " }}}
 " 只在 c,cpp时开启
-autocmd Filetype javascript,typescript,c,cpp call s:ycm_shortcut_c_sopport()
+autocmd Filetype javascript,typescript,c,cpp,rust,go call s:ycm_subcommand_shortcut_support()
 
 " 关闭YCM在以下类型的开启
 let g:ycm_filetype_blacklist = {
