@@ -58,22 +58,18 @@ let g:ycm_server_python_interpreter = '/usr/bin/python3'
 let g:ycm_always_populate_location_list=1
 let g:ycm_key_invoke_completion = '<C-Space>'
 
-function! s:ycm_subcommand_shortcut_sopport() " {{{
-    nnoremap <F5>        :YcmForceCompileAndDiagnostics<cr>
-    nnoremap <leader>yd  :YcmShowDetailedDiagnostics<cr>
-    nnoremap <leader>gdc :YcmCompleter GoToDeclaration<cr>
-    nnoremap <leader>gdf :YcmCompleter GoToDefinition<cr>
-    nnoremap <leader>gip :YcmCompleter GoToImplementation<cr>
-    nnoremap <leader>gic :YcmCompleter GoToInclude<cr>
-    nnoremap <leader>go  :YcmCompleter GoTo<cr>
-    nnoremap <leader>gt  :YcmCompleter GetType<cr>
-    nnoremap <leader>gr  :YcmCompleter GoToReferences<cr>
-    nnoremap <leader>ff  :YcmCompleter Format<cr>
-    nnoremap <leader>yf  :YcmCompleter FixIt<cr>
-    nnoremap <leader>ry  :YcmCompleter RestartServer<cr>
-endfunction " }}}
-" 只在 c,cpp时开启
-autocmd Filetype javascript,typescript,c,cpp,rust,go call s:ycm_subcommand_shortcut_support()
+nnoremap <F5>        :YcmForceCompileAndDiagnostics<cr>
+nnoremap <leader>yd  :YcmShowDetailedDiagnostics<cr>
+nnoremap <leader>gdc :YcmCompleter GoToDeclaration<cr>
+nnoremap <leader>gdf :YcmCompleter GoToDefinition<cr>
+nnoremap <leader>gip :YcmCompleter GoToImplementation<cr>
+nnoremap <leader>gic :YcmCompleter GoToInclude<cr>
+nnoremap <leader>go  :YcmCompleter GoTo<cr>
+nnoremap <leader>gt  :YcmCompleter GetType<cr>
+nnoremap <leader>gr  :YcmCompleter GoToReferences<cr>
+nnoremap <leader>ff  :YcmCompleter Format<cr>
+nnoremap <leader>yf  :YcmCompleter FixIt<cr>
+nnoremap <leader>ry  :YcmCompleter RestartServer<cr>
 
 " 关闭YCM在以下类型的开启
 let g:ycm_filetype_blacklist = {
