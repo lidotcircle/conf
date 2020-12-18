@@ -178,7 +178,8 @@ call vundle#end()
 let plugins_list_raw = [
             \"$LOADPATH/self-plugins/markdown-tools",
             \"$LOADPATH/self-plugins/various-exec",
-            \"$LOADPATH/self-plugins/asy-compile"
+            \"$LOADPATH/self-plugins/asy-compile",
+            \"$LOADPATH/self-plugins/win-buffer-only"
             \]
 let plugins_list_abs = map(plugins_list_raw, "expand(v:val)")
 
