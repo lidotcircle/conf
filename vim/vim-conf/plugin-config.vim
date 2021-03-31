@@ -43,6 +43,9 @@ endif
 
 " Ultisnips {{{
 let g:ycm_use_ultisnips_comleter = 1        " YCM使用ultisnips补全,默认值
+let g:UltiSnipsExpandTrigger="<c-u>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 " }}}
 
 " YCM {{{

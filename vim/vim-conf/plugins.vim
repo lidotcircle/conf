@@ -80,6 +80,7 @@ autocmd FileType c,cpp call s:conque_gdb()
 " 11. ultisnips
 if has('python') || has('python3') && !exists('g:disable_ultisnips')
    Bundle 'SirVer/ultisnips'
+   Plugin 'honza/vim-snippets'
 endif
 
 " 12. powershell syntax and indent
