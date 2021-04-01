@@ -100,6 +100,12 @@ set shiftwidth=4
 set expandtab
 "" 用于调整插入<TAB>时插入的缩进量 = (softtabstop/tabstop)*<TAB> + (softtabstop%tabstop)*<SPACE>
 set softtabstop=4
+function! Buffer_tab2() "{{{
+    setlocal tabstop=2
+    setlocal shiftwidth=2
+    setlocal softtabstop=2
+endfunction "}}}
+autocmd FileType html,xml,yaml,yml call Buffer_tab2()
 
 " 实时搜索
 set incsearch
