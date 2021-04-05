@@ -34,6 +34,8 @@ if !exists('g:disable_vim_markdown')
     Bundle 'plasticboy/vim-markdown'
 endif
 
+Bundle 'mzlogin/vim-markdown-toc'
+
 " 5. Tabular
 if !exists('g:disable_tabular')
     Bundle 'godlygeek/tabular'
