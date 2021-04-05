@@ -41,11 +41,14 @@ else
 endif
 " }}}
 
-" Ultisnips {{{
+" UltiSnips {{{
 let g:ycm_use_ultisnips_comleter = 1        " YCM使用ultisnips补全,默认值
 let g:UltiSnipsExpandTrigger="<c-u>"
+" let g:UltiSnipsListSnippets="<c-l>"
 let g:UltiSnipsJumpForwardTrigger="<c-o>"
 let g:UltiSnipsJumpBackwardTrigger="<c-i>"
+set rtp+=~/.vim/UltiSnips
+autocmd BufRead *.snippets set filetype=snippets
 " }}}
 
 " YCM {{{

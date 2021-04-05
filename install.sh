@@ -160,6 +160,7 @@ declare -A FILE_LIST=(["$PWD/bashrc_main"]="${HOME}/.bashrc_main" \
 
 declare -A VIM_DIRS_LIST_SLINK=(["$PWD/vim/colors"]="${HOME}/.vim/colors" \
     ["$PWD/vim/vim-conf"]="${HOME}/.vim/vim-conf" \
+    ["$PWD/vim/UltiSnips"]="${HOME}/.vim/UltiSnips" \
     ["$PWD/vim/self-plugins"]="${HOME}/.vim/self-plugins")
 declare -A TMUX_DIRS_LIST_SLINK=()
 declare -A TEX_DIRS_LIST_SLINK=(["$PWD/tex"]="${HOME}/.tex")

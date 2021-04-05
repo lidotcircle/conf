@@ -1,0 +1,23 @@
+priority 0
+
+
+global !p
+def firstUpper(word):
+	if not word: return ''
+	return word[0].upper() + word[1:]
+
+def firstLower(word):
+	if not word: return ''
+	return word[0].lower() + word[1:]
+endglobal
+
+snippet gs "bean getter setter"
+private ${1:String} ${2:name};
+public $1 get`!p snip.rv=firstUpper(t[2])`() {
+	return this.$2;
+}
+public void set`!p snip.rv=firstUpper(t[2])`($1 $2) {
+	this.$2 = $2;
+}
+endsnippet
+

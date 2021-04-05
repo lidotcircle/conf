@@ -107,6 +107,11 @@ function! Buffer_tab2() "{{{
 endfunction "}}}
 autocmd FileType html,xml,yaml,yml call Buffer_tab2()
 
+function! Using_tab() "{{{
+    setlocal expandtab&
+endfunction "}}}
+autocmd BufRead *.snippets call Using_tab()
+
 " 实时搜索
 set incsearch
 " 大小写不敏感
