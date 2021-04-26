@@ -79,6 +79,7 @@ nnoremap <c-v> "+p
 vnoremap <c-x> "+c
 " clear search result
 nnoremap <silent><leader>cs :let @/ = ""<cr>
+nnoremap <silent><leader>p :set paste!<cr>
 " }}}
 
 " ReadLine in insert mode {{{

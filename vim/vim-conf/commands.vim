@@ -189,7 +189,7 @@ function! Foldmethod_Marker_Clang() " {{{
   return 1
 endfunction " }}}
 
-autocmd FileType css,scss,typescript,javascript,c,cpp,asy call Foldmethod_Marker_Clang()
+autocmd FileType css,scss,typescript,javascript,c,cpp,java,asy call Foldmethod_Marker_Clang()
 " }}} End
 
 "{{{ powrshell, shell, python, cmake fold
