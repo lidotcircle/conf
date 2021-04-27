@@ -1,6 +1,6 @@
 " Setting
 
-" Important {{{
+" Important [[
 
 " nocompatible with vi
 set nocompatible
@@ -16,9 +16,6 @@ filetype indent on
 " turn on syntax
 syntax enable
 syntax on
-
-" the <mapleader>
-let mapleader = ","
 
 " file encoding
 set encoding=utf-8
@@ -36,10 +33,9 @@ set cindent
 set cmdheight=2
 
 set completeopt-=preview
+" ]]
 
-" }}}
-
-" Display {{{
+" Display [[
 
 " Line number in left side
 set number
@@ -56,7 +52,7 @@ set showmatch
 set matchtime=3
 
 "statusline的相关的设置
-set laststatus=2
+set laststatus=1
 "set statusline=
 " 显示当前光标位置
 set ruler
@@ -76,20 +72,9 @@ set guioptions-=R
 " 禁止显示菜单和工具条
 set guioptions-=m
 set guioptions-=T
+" ]]
 
-" Font
-if has('gui_running')
-    set columns=110 lines=60
-    if g:islinux
-        set guifont=Bitstream\ Vera\ Sans\ Mono\ 14
-    elseif g:iswindows
-        set guifont=Bitstream_Vera_Sans_Mono:h11
-    endif
-endif
-
-" }}}
-
-" Miscellaneous {{{
+" Miscellaneous [[
 
 " <TAB>与缩进的有关设置
 "" <TAB>的显示空格数
@@ -100,16 +85,16 @@ set shiftwidth=4
 set expandtab
 "" 用于调整插入<TAB>时插入的缩进量 = (softtabstop/tabstop)*<TAB> + (softtabstop%tabstop)*<SPACE>
 set softtabstop=4
-function! Buffer_tab2() "{{{
+function! Buffer_tab2() "[[
     setlocal tabstop=2
     setlocal shiftwidth=2
     setlocal softtabstop=2
-endfunction "}}}
+endfunction "]]
 autocmd FileType html,xml,yaml,yml call Buffer_tab2()
 
-function! Using_tab() "{{{
+function! Using_tab() "[[
     setlocal expandtab&
-endfunction "}}}
+endfunction "]]
 autocmd BufRead *.snippets call Using_tab()
 
 " 实时搜索
@@ -121,19 +106,17 @@ set wildmenu
 
 set autowrite
 set noswapfile
+" ]]
 
-" }}}
-
-"{{{ TAGS
+"[[ TAGS
 let s:extraTags = [
-            \      $HOME . '/linux.tag']
-"            \      $HOME . '/cpython.tag',
-"            \      $HOME . '/llvmlibcxx.tag',
-"            \      $HOME . '/c++stl.tag',
+            \      $HOME . '/linux.tag',
+            \ ]
 let s:currentTags = &tags
 let s:extraTagsString = ""
 for s:exT in s:extraTags
     let s:extraTagsString .= "," . s:exT
 endfor
 exec "set tags=" . s:currentTags . s:extraTagsString
-"}}}
+"]]
+

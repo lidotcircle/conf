@@ -1,9 +1,3 @@
 [submodule "otherRepo/bash-it"]
 	path = otherRepo/bash-it
 	url = https://github.com/Bash-it/bash-it.git
-[submodule "otherRepo/translate-shell"]
-	path = otherRepo/translate-shell
-	url = https://github.com/soimort/translate-shell.git
-[submodule "otherRepo/termux-sudo"]
-	path = otherRepo/termux-sudo
-	url = https://github.com/st42/termux-sudo.git

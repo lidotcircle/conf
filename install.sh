@@ -2,6 +2,8 @@
 
 # load color functions
 source ./bash/functions
+source $(dirname ${BASH_SOURCE[0]})/script/utils.sh
+
 
 # TODO
 ### HANDING OPTIONS #{
@@ -94,245 +96,154 @@ if [ ${SET_ALL} -eq 1 ]; then
 fi
 #}
 
-#{ Check the dependencies
-## git
-if [[ $0 =~ ^.*install\.sh$ ]]; then
-    [ -z $(which git) ] && echo "Need install git, exit." && return 1 || clear
-fi
-#}
-#{ Some variables
-## Exit status
-readonly SUCCESS=0
-readonly FAIL=1
+# Check the dependencies
+assert "[ -n "$(which git)" ]" "require git"
+assert "[ -n "$(which curl)" ]" "require curl"
 
-## Backup directory
-readonly BACKUP_DIRE=./backup
-
-## Git clone flags
-GIT_CLONE_FLAGS='--recurse-submodules'
-## Git update
 GIT_UPDATE='git fetch origin >> /dev/null && git merge origin/master >>/dev/null && git submodule update --init --recursive >> /dev/null'
-## Git clone address
 GIT_REP='https://github.com/'
 
-## Plugins directory
-VIM_PLUG_DEST=${HOME}/.vim/bundle
-TMUX_PLUG_DEST=${HOME}/.tmux/plugins
+declare -A INSTALL_FILES=()
+declare -A INSTALL_DIRS=()
+declare -A GITHUB_REPO=()
 
-## error counter and warning count
-declare -i error_count=0
-declare -i warning_count=0
-#}
-#{ OS TYPE
-[[ -n $(uname -a | grep "Android") ]] && android=1 || android=0
-machine=$(uname -m)
-#}
+INSTALL_FILES["$PWD/vimrc"]="${HOME}/.vimrc"
+INSTALL_FILES["$PWD/config/nvim/init.vim"]="${HOME}/.config/nvim/init.vim"
+INSTALL_FILES["$PWD/Misc/ycm_extra_conf.py"]="${HOME}/.ycm_extra_conf.py"
 
-#{ function: add_HT_to(src, dst) -- add one hash table to other
-add_HT_to()
+INSTALL_FILES["$PWD/vscode/keybindings.json"]="${HOME}/.config/Code/User/keybindings.json"
+INSTALL_FILES["$PWD/vscode/settings.json"]="${HOME}/.config/Code/User/settings.json"
+
+INSTALL_FILES["$PWD/bashrc_main"]="${HOME}/.bashrc"
+INSTALL_FILES["$PWD/bashrc_main"]="${HOME}/.bashrc_main"
+INSTALL_FILES["$PWD/inputrc"]="${HOME}/.inputrc"
+
+INSTALL_DIRS["$PWD/vim/colors"]="${HOME}/.vim/colors"
+INSTALL_DIRS["$PWD/vim/vim-conf"]="${HOME}/.vim/vim-conf"
+INSTALL_DIRS["$PWD/vim/UltiSnips"]="${HOME}/.vim/UltiSnips"
+INSTALL_DIRS["$PWD/vim/self-plugins"]="${HOME}/.vim/self-plugins"
+
+GITHUB_REPO["tmux-plugins/tpm"]=${HOME}/.tmux/plugins
+GITHUB_REPO["tmux-plugins/tmux-sensible"]=${HOME}/.tmux/plugins
+
+# install_file() $src_file [$dst_file | $dst_dir] #{
+install_file()
 {
-    declare -p $1 > /dev/null 2>&1 || (echo -e $(red "undeclare variable <$1>") && return 1)
-    declare -p $2 > /dev/null 2>&1 || (echo -e $(red "undeclare variable <$2>") && return 1)
-    local -n tref1=$1
-    local -n tref2=$2
-    for __key in ${!tref1[@]}; do
-        eval "tref2[${__key}]=\${tref1[${__key}]}"
-    done
-    return 0
-}
-#}
-#{ Install list
-declare -a VIM_PLUGIN_LIST=("VundleVim/Vundle.vim" \
-    "Lokaltog/vim-powerline")
-declare -a TMUX_PLUGIN_LIST=("tmux-plugins/tpm" \
-    "tmux-plugins/tmux-sensible")
+    assert "[ $# -eq 2 ]"
+    assert "[ -f $1 ]" "file $1 doesn't exist"
 
-declare -A VIM_FILE_LIST=(
-    ["$PWD/vimrc"]="${HOME}/.vimrc"
-    ["$PWD/init.vim"]="${HOME}/init.vim"
-)
-declare -A TMUX_FILE_LIST=(["$PWD/tmux.conf"]="${HOME}/.tmux.conf")
-declare -A TEX_FILE_LIST=(["$PWD/texrc.tex"]="${HOME}/texrc.tex")
-declare -A VSCODE_FILE_LIST=(\
-    ["$PWD/vscode/keybindings.json"]="${HOME}/.config/Code/User/keybindings.json" \
-    ["$PWD/vscode/settings.json"]="${HOME}/.config/Code/User/settings.json")
-declare -A FILE_LIST=(["$PWD/bashrc_main"]="${HOME}/.bashrc_main" \
-    ["$PWD/inputrc"]="${HOME}/.inputrc")
-[ $android -eq 1 ] && \
-    FILE_LIST["$PWD/bin/exec_script/android/sudo"]="${HOME}/bin/sudo"
+    [ ! -e $2 ] || rm -f $2
+    assert "[ $? -eq 0 ]" "clean file '$2' fail"
 
-declare -A VIM_DIRS_LIST_SLINK=(["$PWD/vim/colors"]="${HOME}/.vim/colors" \
-    ["$PWD/vim/vim-conf"]="${HOME}/.vim/vim-conf" \
-    ["$PWD/vim/UltiSnips"]="${HOME}/.vim/UltiSnips" \
-    ["$PWD/vim/self-plugins"]="${HOME}/.vim/self-plugins")
-declare -A TMUX_DIRS_LIST_SLINK=()
-declare -A TEX_DIRS_LIST_SLINK=(["$PWD/tex"]="${HOME}/.tex")
-declare -A VSCODE_DIRS_LIST_SLINK=(\
-    ["$PWD/vscode/snippets"]="${HOME}/.config/Code/User/snippets")
-declare -A ASYMPTOTE_DIRS_LIST_SLINK=(["$PWD/asyLib"]="${HOME}/.asy/asyLib")
-declare -A DIRS_LIST_SLINK=(["$PWD/bash"]="${HOME}/.bash")
-
-# base on options to set <FILE_LIST> and <DIRS_LIST_SLINK>
-[ ${SET_VIM} -eq 1 ] && add_HT_to VIM_FILE_LIST FILE_LIST &&\
-    add_HT_to VIM_DIRS_LIST_SLINK DIRS_LIST_SLINK
-[ ${SET_TMUX} -eq 1 ] && add_HT_to TMUX_FILE_LIST FILE_LIST &&\
-    add_HT_to TMUX_DIRS_LIST_SLINK DIRS_LIST_SLINK
-[ ${SET_TEX} -eq 1 ] && add_HT_to TEX_FILE_LIST FILE_LIST &&\
-    add_HT_to TEX_DIRS_LIST_SLINK DIRS_LIST_SLINK
-[ ${SET_VSCODE} -eq 1 ] && add_HT_to VSCODE_FILE_LIST FILE_LIST &&\
-    add_HT_to VSCODE_DIRS_LIST_SLINK DIRS_LIST_SLINK
-[ ${SET_ASYMPTOTE} -eq 1 ] && add_HT_to ASYMPTOTE_DIRS_LIST_SLINK DIRS_LIST_SLINK
-
-declare -A DIRS_FILES_SLINK_LIST=(["$PWD/bin"]="$HOME/bin" \
-    ["$PWD/bin/exec_script"]="$HOME/bin")
-[[ $machine =~ [xX]86[_]64 ]] && DIRS_FILES_SLINK_LIST["$PWD/bin/x86_64"]="$HOME/bin"
-#}
-
-## WARNING and ERROR functions
-#{ function : __warning()
-__warning()
-{
-    echo -e "$(red WARNING) : $(blueb ${1} )" && \
-        let warning_count++ && return 0
-}
-#}
-#{ function : __error()
-__error()
-{
-    echo -e "$(red ERROR) : $(blueb ${1})" && \
-        let error_count++ && return 0
-}
-#}
-
-# Install <src> to <dest>, <dest> must be a full filepath,
-# not just a directory of destination
-#{ function : install_fil()
-install_fil()
-{
-    # parameter check.
-    [ $# -eq 2 ] || (__error "parameter error, in install_fil()" && return $FAIL)
-    [ -e $1 ] || (__error "File $1 don't exist, exit!"; return $FAIL)
-
-    # if <dest> already exist, move it to backup directory.
-    ([ -e $2 ] || [ -h $2 ]) && mv -f $2 $BACKUP_DIRE >> /dev/null || \
-        __warning "backup file $2 fail, but continue"
-
-    # final coppy $1 to $2
-    # if $1 is a files, then just make symlink
-    if [ -d $1 ]; then
+    if [ -d $2 ]; then
         cp -rf $1 $2
     else
         [ -d ${2%/*} ] || mkdir -p ${2%/*} && ln -s $1 $2
-    fi && return $SUCCESS >> /dev/null || \
-        (__error "install \"$1\" to \"$2\" FAILED." && return $FAIL)
-}
-#}
-#{ function : dir_symbol_link()
-dir_symbol_link()
-{
-    [ ${#@} -eq 2 ] || return 1
-    ([ -e $2 ] || [ -h $2 ]) && mv $2 $BACKUP_DIRE
-    ln -s $1 $2
-}
-#}
-
-# Installing vim plugins or tmux plugins from github
-#{ function : install_plug()
-install_plug()
-{
-    [ ${#@} -eq 2 ] || (__error "Error parameter, in install_plug()." && return $FAIL)
-    # pushd to <parameter 2>
-    pushd $2 >> /dev/null || \
-        (__error "pushd to $2 fail, exit." && return $FAIL)
-    if [ -e ${1##*/} ]; then
-        echo "Already installed <${1##*/}> , just update it, proccess..."
-        pushd ${1##*/} >> /dev/null || (__error "pushd ${1##*/} failed" && return $FAIL)
-        if (eval $GIT_UPDATE >> /dev/null); then
-            echo "update ${1##*/} success." && popd >> /dev/null && return $SUCCESS
-        else
-            __warning "update ${1##*/} fail, remove it and continue to install it." && \
-                popd && rm -rf ${1##*/}
-        fi
     fi
-    echo "Installing ${1#*/}..."
-    git clone $GIT_CLONE_FLAGS ${GIT_REP}${1} >> /dev/null && (popd; return $SUCCESS) || \
-        (popd && __error "install ${1##*/} failed!" && return $FAIL)
+    assert "[ $? -eq 0 ]" "install file '$1' fail"
+}
+#}
+# install_directory() #{
+install_directory()
+{
+    assert "[ $# -eq 2 ]"
+    assert "[ -d $1 ]" "directory $1 doesn't exist"
+
+    [ ! -d $2 ] || rm -rf $2
+    assert "[ $? -eq 0 ]" "clean $2 fail"
+
+    [ ! -d ${2%/*} ] || mkdir -p ${2%/*} && ln -s $1 $2
+    assert "[ $? -eq 0 ]" "install directory '$1' fail"
+}
+#}
+#{ function : install_github_repo()
+install_github_repo()
+{
+    assert "[ $# -eq 2 ]"
+    pushd $2 >> /dev/null
+    assert "[ $? -eq 0 ]" "'pushd $2' fail"
+
+    if [ -e ${1##*/} ]; then
+        info "'${1##*/}' have installed, just update it, proccess..."
+        pushd ${1##*/} >> /dev/null
+        assert "[ $? -eq 0 ]" "'pushd ${1##*/}' fail"
+
+        eval $GIT_UPDATE >> /dev/null
+        if [ $? -eq 0 ]; then
+            info "update ${1##*/} success." && popd >> /dev/null
+        else
+            warn "update ${1##*/} fail, remove it and continue to install it." && popd && rm -rf ${1##*/}
+        fi
+    else
+        info "cloning ${GIT_REP}${1}"
+        git clone --recurse-submodules ${GIT_REP}${1} >> /dev/null
+        assert "[ $? -eq 0 ]" "clone repo '$1' fail"
+        info "$1 finish"
+    fi
+
+    popd >> /dev/null
 }
 #}
 
-#{ function : make_trans()
-make_trans()
+# InstallVimPlug #{
+function InstallVimPlug 
 {
-    [ -f ./otherRepo/translate-shell/README.md ] || return 1
-    [ -f ./otherRepo/translate-shell/build/trans ] && return 0
-    ([ -z "$(which awk)" ] && [ -z "$(which gawk)" ]) && return 1
-    pushd ./otherRepo/translate-shell && make
-    popd
-}
-#}
-#{ function : make_bash_it()
-make_bash_it()
+    info "install/update vim-plug"
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim >> /dev/null 2>&1
+    assert "[ $? -eq 0 ]" "fail to install/update vim-plug"
+} #}
+#{ IntallBashIt()
+InstallBashIt()
 {
-    [ -f ./otherRepo/bash-it/install.sh ] || return 1
-    ./otherRepo/bash-it/install.sh --silent
+    if [ ! -f ./otherRepo/bash-it/install.sh ]; then
+        warn "please init submodules, 'git submodule update --init'"
+        return 1
+    fi
+    info "setup bash-it"
+    rm -f $HOME/.bashrc.bak
+    ./otherRepo/bash-it/install.sh --silent >> /dev/null && \
+    echo "source $HOME/.bashrc_main" >> $HOME/.bashrc
+    assert "[ $? -eq 0 ]" "bash-it fatal error"
     return 0
 }
 #}
+# InstallFiles() #{
+function InstallFiles() 
+{
+    info "install files"
+    for file in "${!INSTALL_FILES[@]}"; do
+        local dst=${INSTALL_FILES[$file]}
+        debug "file: [ $file -> $dst ]"
+        install_file $file $dst
+    done
+} #}
+# InstallDirectories() #{
+function InstallDirecotories() 
+{
+    info "install directories"
+    for src in "${!INSTALL_DIRS[@]}"; do
+        local dst=${INSTALL_DIRS[$src]}
+        debug "directory: [ $src -> $dst ]"
+        install_directory $src $dst
+    done
+} #}
+# InstallGitRepo() #{
+function InstallGitRepo() 
+{
+    info "install git repos"
+    for repo in "${!GITHUB_REPO[@]}"; do
+        local dst=${GITHUB_REPO[$repo]}
+        install_github_repo  $repo $dst
+    done
+} #}
 
-# Main process
-#{ Main proccess
-# safely source this files
-[[ $0 =~ ^.*install\.sh$ ]] || return 0
 while (true); do
-    echo -e "$(green REMOVE) previous backup." && rm -rf ./backup && mkdir ./backup
-
-    # ensure some essential directory is existing.
-    [ -d $HOME/.vim ] || mkdir $HOME/.vim
-    [ -d $VIM_PLUG_DEST ] || mkdir -p $VIM_PLUG_DEST
-    [ -d $TMUX_PLUG_DEST ] || mkdir -p $TMUX_PLUG_DEST
-
-    echo -e "$(green BEGIN) install files..."
-
-    if [ $SET_TRANS -eq 1 ]; then
-        # try to make trans from source
-        make_trans >> /dev/null || __warning "build trans failure"
-    fi
-
-    # install files, dirs, and symlinks
-    for __file in ${!FILE_LIST[@]}; do
-        install_fil ${__file} ${FILE_LIST[$__file]}
-    done
-    for __dir in ${!DIRS_LIST_SLINK[@]}; do
-        dir_symbol_link $__dir ${DIRS_LIST_SLINK[$__dir]}
-    done
-    for __dir_link in ${!DIRS_FILES_SLINK_LIST[@]}; do
-       dir_files_link $__dir_link ${DIRS_FILES_SLINK_LIST[$__dir_link]} 
-   done
-    echo -e "$(green FINISH) install files!"
-    
-    if [ $SET_BASH_IT -eq 1 ]; then
-        echo -e "$(green "Install") $(green "bash-it")"
-        make_bash_it >> /dev/null || __warning "Install bash-it failure."
-        echo "source \$HOME/.bashrc_main" >> $HOME/.bashrc
-    fi
-
-    if [ $SET_VIM -eq 1 ] && [ $SET_NVIMP -eq 0 ] ;then
-        echo -e "$(green BEGIN) install vim plugins..."
-        for __plug in ${VIM_PLUGIN_LIST[@]}; do
-            install_plug ${__plug} ${VIM_PLUG_DEST}
-        done
-        echo -e "$(green FINISH) install vim plugins!"
-    fi
-
-    if [ $SET_TMUX -eq 1 ] && [ $SET_NTMUXP -eq 0 ] ;then
-        echo -e "$(green BEGIN) install tmux plugins..."
-        for __plug in ${TMUX_PLUGIN_LIST[@]}; do
-            install_plug ${__plug} ${TMUX_PLUG_DEST}
-        done
-        echo -e "$(green FINISH) install tmux plugins!"
-    fi
-
-    echo -e "$(green FINISH Installation)"
-    [ $error_count -eq 0 ] && exit $SUCCESS || exit $FAIL
+    InstallVimPlug
+    InstallFiles
+    InstallDirecotories
+    InstallGitRepo
+    InstallBashIt
+    break;
 done
-#}
+

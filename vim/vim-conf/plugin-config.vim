@@ -1,11 +1,11 @@
 " Plugins configure
 
-" Statusline {{{
+" Statusline [[
 " 设置statusline样式
 let g:Powerline_colorscheme='solarized256'
-" }}}
+" ]]
 
-" NERDTree {{{
+" NERDTree [[
 if filereadable(expand("$HOME/.vim/bundle/nerdtree/plugin/NERD_tree.vim"))
     " 没有指定文件打开vim默认界面为NERDTee
     autocmd StdinReadPre * let s:std_in=1
@@ -24,24 +24,9 @@ if filereadable(expand("$HOME/.vim/bundle/nerdtree/plugin/NERD_tree.vim"))
 endif
 " gt --- 下一个tab windows(normal mode)
 " gT --- 上一个tab windows
-" }}}
+" ]]
 
-" Tagbar {{{
-nnoremap <silent><F8> :TagbarToggle<cr>
-" }}}
-
-" Ctrlp {{{
-let g:ctrlp_map = '<c-p>'
-
-" 忽略版本控制的文件
-if g:islinux
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*        " Linux/MacOSX
-else
-    set wildignore+=*\\.git\\*,*\\.hg\\*,*\\.svn\\*  " Windows ('noshellslash')
-endif
-" }}}
-
-" UltiSnips {{{
+" UltiSnips [[
 let g:ycm_use_ultisnips_comleter = 1        " YCM使用ultisnips补全,默认值
 let g:UltiSnipsExpandTrigger="<c-u>"
 " let g:UltiSnipsListSnippets="<c-l>"
@@ -49,35 +34,40 @@ let g:UltiSnipsJumpForwardTrigger="<c-o>"
 let g:UltiSnipsJumpBackwardTrigger="<c-i>"
 set rtp+=~/.vim/UltiSnips
 autocmd BufRead *.snippets set filetype=snippets
-" }}}
+" ]]
 
-" YCM {{{
+" YCM [[
 " default ycm_extra_conf
-let g:ycm_global_ycm_extra_conf =
-\'~/.ycm_extra_conf.py'
-
+let g:ycm_global_ycm_extra_conf = expand('~/.ycm_extra_conf.py')
+function! Strip(input_string)
+    return substitute(a:input_string, '^[\s\n\r]*\(.\{-}\)[\r\n\s]*$', '\1', '')
+endfunction
 " turn off the tip in load .ycm_extra_conf.py
 let g:ycm_confirm_extra_conf = 0
-let g:ycm_server_python_interpreter = '/usr/bin/python3'
+let g:ycm_server_python_interpreter = Strip(system('which python3'))
 
 " update location-list every time when YCMDiags run
 let g:ycm_always_populate_location_list=1
 let g:ycm_key_invoke_completion = '<C-Space>'
 
-nnoremap <F5>        :YcmForceCompileAndDiagnostics<cr>
-nnoremap <leader>yd  :YcmShowDetailedDiagnostics<cr>
-nnoremap <leader>gdc :YcmCompleter GoToDeclaration<cr>
-nnoremap <leader>gdf :YcmCompleter GoToDefinition<cr>
-nnoremap <leader>gip :YcmCompleter GoToImplementation<cr>
-nnoremap <leader>gic :YcmCompleter GoToInclude<cr>
-nnoremap <leader>go  :YcmCompleter GoTo<cr>
-nnoremap <leader>gt  :YcmCompleter GetType<cr>
-nnoremap <leader>gr  :YcmCompleter GoToReferences<cr>
-nnoremap <leader>ff  :YcmCompleter Format<cr>
-nnoremap <leader>yf  :YcmCompleter FixIt<cr>
-nnoremap <leader>ry  :YcmCompleter RestartServer<cr>
+function EnableYCMShortcuts() 
+    nnoremap <buffer><F5>        :YcmForceCompileAndDiagnostics<cr>
+    nnoremap <buffer><leader>yd  :YcmShowDetailedDiagnostics<cr>
+    nnoremap <buffer><leader>gd  :YcmCompleter GoToDeclaration<cr>
+    nnoremap <buffer><leader>gD  :YcmCompleter GoToDefinition<cr>
+    nnoremap <buffer><leader>gi  :YcmCompleter GoToImplementation<cr>
+    nnoremap <buffer><leader>gc  :YcmCompleter GoToInclude<cr>
+    nnoremap <buffer><leader>go  :YcmCompleter GoTo<cr>
+    nnoremap <buffer><leader>gt  :YcmCompleter GetType<cr>
+    nnoremap <buffer><leader>gr  :YcmCompleter GoToReferences<cr>
+    nnoremap <buffer><leader>ff  :YcmCompleter Format<cr>
+    nnoremap <buffer><leader>yf  :YcmCompleter FixIt<cr>
+    nnoremap <buffer><leader>ry  :YcmCompleter RestartServer<cr>
+endfunction
 
-" 关闭YCM在以下类型的开启
+autocmd! FileType c,cpp,typescript,javascript,rust,java call EnableYCMShortcuts()
+
+" disable ycm in following filetype
 let g:ycm_filetype_blacklist = {
       \ 'tagbar' : 1,
       \ 'qf' : 1,
@@ -88,68 +78,36 @@ let g:ycm_filetype_blacklist = {
       \ 'pandoc' : 1,
       \ 'infolog' : 1,
       \ 'mail' : 1
-      \}
+      \ }
 let g:ycm_semantic_triggers = {
             \ 'css': [ 're!^', 're!^\s+', ': ' ],
             \ 'scss': [ 're!^', 're!^\s+', ': ' ],
             \ }
-" }}}
+" ]]
 
-" Vimtex {{{
-if g:iswindows
-    if executable('acrobat')
-        let vimtex_view_general_viewer = 'acrobat'
-    elseif executable('chrome')
-        let vimtex_view_general_viewer = 'chrome'
-    endif
-elseif g:islinux
-    if executable('evince')
-        let vim_tex_view_general = 'evince'
-    elseif executable('okular')
-        let vim_tex_view_general = 'okular'
-    elseif executable('google-chrome')
-        let vim_tex_view_general = 'google-chrome'
-    endif
-endif
-" }}}
-
-" Vim-ps1 {{{
-" PowerShell的文件类型
+" PowerShell filetype [[
 augroup filetypedetect
     au BufNewFile,BufRead *.ps1 set filetype=ps1
 augroup END
 
 let g:ps1_nofold_sig = 1
 let g:ps1_nofold_blocks = 1
-" }}}
+" ]]
 
-"{{{ Python-mode
-let g:pymode_rope = 0
-let g:pymode_rope_complete_on_dot = 0
-"}}}
-
-"{{{ minibufexpl
+"[[ minibufexpl
 nnoremap <leader>mbe :MBEOpen<cr>
 nnoremap <leader>mbc :MBEClose<cr>
 nnoremap <leader>mbt :MBEToggle<cr>
-"}}}
+"]]
 
-"{{{ vim-session
-let g:session_autosave="yes"
-"}}}
-
-"{{{ easy-vim-align
+" Easy-Align
 vmap <Enter> <Plug>(EasyAlign)
-nmap <leader> <Plug>(EasyAlign)
-"}}}
 
-"{{{ ZoomWin
-try
-nnoremap <unique> <c-x>o  <Plug>ZoomWin
-catch /.*/
-endtry
-"}}}
-
-" Ack "{{{
+" Ack
 nnoremap <leader>t :Ack \(FIXME\)\\|\(TODO\)<cr>
-"}}}
+
+" Which Key
+nnoremap <silent>, :WhichKey '*'<CR>
+set timeoutlen=500
+call which_key#register('*', "g:which_key_map")
+

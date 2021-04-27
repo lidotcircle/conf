@@ -1,88 +1,74 @@
 " Map keys in this part
 
-" <ESC> in insert and visual mode {{{
+let g:mapleader = "*"
+
+let g:which_key_map = {
+            \ 'name': 'leader',
+            \ }
+
+" <ESC> in insert and visual mode [[
 inoremap jk <esc>
 vnoremap ui <esc>
-" }}}
+" ]]
 
-" write buffer and exit {{{
-nnoremap <leader>q :q<cr>
+" write buffer and exit [[
+nnoremap <silent><leader>q :q<cr>
 nnoremap <leader>w :w<cr>
-" }}}
+" ]]
 
-" command line with <..> {{{
-nnoremap .. :
-" }}}
+let g:which_key_map.v = {
+            \ "name": "+ adjust window size",
+            \ "k": [":resize +1", "Increase view's height by 1"],
+            \ "j": [":resize -1", "Decrease view's height by 1"],
+            \ "l": [":vertical resize +1", "Increase view's width by 1"],
+            \ "h": [":vertical resize -1", "Decrease view's width by 1"],
+            \ }
 
-" Size of current view {{{
-" Increase view's height by 1
-nnoremap <silent><leader>vk :resize +1<cr>
-" Decrease view's height by 1
-nnoremap <silent><leader>vj :resize -1<cr>
-" Increase view's width by 1
-nnoremap <silent><leader>vl :vertical resize +1<cr>
-" Decrease view's width by 1
-nnoremap <silent><leader>vh :vertical resize -1<cr>
-" }}}
+let g:which_key_map.c = {
+            \ "name": "+ change focus",
+            \ "j": [":wincmd j", "focus into below"],
+            \ "k": [":wincmd k", "focus into upside"],
+            \ "h": [":wincmd h", "focus into left"],
+            \ "l": [":wincmd l", "focus into right"],
+            \ "t": [":wincmd t", "focus into top"],
+            \ "b": [":wincmd b", "focus into bottom"],
+            \ }
 
-" Change focus on view {{{
-" change to below view
-nnoremap <silent><leader>cj :wincmd j<cr>
-" change to upside view
-nnoremap <silent><leader>ck :wincmd k<cr>
-" change to left view
-nnoremap <silent><leader>ch :wincmd h<cr>
-" change to right view
-nnoremap <silent><leader>cl :wincmd l<cr>
-" change to top view
-nnoremap <silent><leader>ct :wincmd t<cr>
-" change to bottom view
-nnoremap <silent><leader>cb :wincmd b<cr>
-" }}}
+let g:which_key_map.e = {
+            \ "name": "+ move view",
+            \ "j": [":wincmd J", "move into below"],
+            \ "k": [":wincmd K", "move into upside"],
+            \ "h": [":wincmd H", "move into left"],
+            \ "l": [":wincmd L", "move into right"],
+            \ "r": [":wincmd r", "roate view downward or rightward"],
+            \ "R": [":wincmd R", "roate view upward or leftward"],
+            \ "x": [":wincmd x", "move into lat"],
+            \ "o": [":only",     "close other view"],
+            \ }
 
-" change position of view in window {{{
-" Move to below position
-nnoremap <silent><leader>ej :wincmd J<cr>
-" Move to upside position
-nnoremap <silent><leader>ek :wincmd K<cr>
-" Move to left position
-nnoremap <silent><leader>eh :wincmd H<cr>
-" Move to right position
-nnoremap <silent><leader>el :wincmd L<cr>
-" Rotate view downward or rightward
-nnoremap <silent><leader>er :wincmd r<cr>
-" Rotate view upward or leftward
-nnoremap <silent><leader>eR :wincmd R<cr>
-" Move to last
-nnoremap <silent><leader>ex :wincmd x<cr>
-" close other views
-nnoremap <silent><leader>eo :only<cr>
-" }}}
-
-" Work in Buffer {{{
-" Next buffer, if it exist
-nnoremap <silent><leader>bn :bn<cr>
-" Previos buffer, if it exist.
-nnoremap <silent><leader>bp :bp<cr>
-" }}}
-
-" Full screen toggle in linux {{{
-if has('gui_running') && g:islinux
-    nnoremap <silent><F11>
-\   :call system("wmctrl -ir ".v:windowid." -b toggle,fullscreen")<cr>
-endif
-" }}}
-
-" Copy, cut, paste {{{
+" Copy, cut, paste [[
 vnoremap <c-c> "+y
 nnoremap <c-v> "+p
 vnoremap <c-x> "+c
 " clear search result
 nnoremap <silent><leader>cs :let @/ = ""<cr>
-nnoremap <silent><leader>p :set paste!<cr>
-" }}}
+let g:which_key_map.p=[":set paste!", "toggle paste mode"]
+" ]]
 
-" ReadLine in insert mode {{{
+let g:which_key_map.b = {
+            \ 'name' : '+buffer' ,
+            \ '1': [':b1',        'buffer 1'],
+            \ '2': [':b2',        'buffer 2'],
+            \ '3': [':b3',        'buffer 3'],
+            \ '4': [':b4',        'buffer 4'],
+            \ '5': [':b5',        'buffer 5'],
+            \ 'l': [':blast',     'last-buffer'],
+            \ 'n': [':bnext',     'next-buffer'],
+            \ 'p': [':bprevious', 'previous-buffer'],
+            \ '?': [':buffers',   'list-buffer'],
+            \ }
+
+" ReadLine in insert mode [[
 inoremap <silent><c-f> <right>
 inoremap <silent><c-b> <left>
 inoremap <silent><c-n> <down>
@@ -90,35 +76,11 @@ inoremap <silent><c-p> <up>
 inoremap <silent><c-d> <backspace>
 inoremap <silent><a-f> <esc><right>wi
 inoremap <silent><a-b> <esc><right>bi
-"}}}
+"]]
 
-"{{{ source file
-" avoiding source this file by that functions
-function! Source_current_file() "{{{
-    let filename = expand('%:p')
-    if (&filetype != 'vim')
-        return 1
-    endif
-    exec "source ".filename
-    echo "source ".filename
-endfunction "}}}
-autocmd Filetype vim nnoremap <silent><buffer><leader>lc :call Source_current_file()<cr>
-" reload vimrc
-nnoremap <silent><leader>rl :exec 
-            \"if exists('g:vimrc_loaded') 
-            \\| unlet g:vimrc_loaded
-            \\| endif 
-            \\| source " . 
-            \expand("$HOME/.vimrc") . "
-            \\| echo \"reload vimrc.\""<cr>
-"}}}
+let g:which_key_map.i = [":call setreg('/', '')", "clear search"]
 
-"{{{ clear "/ register
-nnoremap <silent><leader>i :call setreg("/", "")<cr>
-"}}}
-
-"{{{ quickfix
-function! NextError() "{{{
+function! NextError() "[[
     let l:qflen = len(getqflist())
     if  l:qflen == 0
         echom "quickfix list is empty"
@@ -131,8 +93,8 @@ function! NextError() "{{{
             cc 1
         endtry
     endif
-endfunction "}}}
-function! PrevError() "{{{
+endfunction "]]
+function! PrevError() "[[
     let l:qflen = len(getqflist())
     if  l:qflen == 0
         echom "quickfix list is empty"
@@ -145,11 +107,14 @@ function! PrevError() "{{{
             exec "cc " . string(l:qflen)
         endtry
     endif
-endfunction "}}}
-nnoremap <silent><leader>en :call NextError()<cr>
-nnoremap <silent><leader>ep :call PrevError()<cr>
+endfunction "]]
+let g:which_key_map.e = {
+            \ 'name' : '+error(all)' ,
+            \ 'n': [':call NextError()', 'next-error'],
+            \ 'p': [':call PrevError()', 'previous-error'],
+            \ }
 
-function! CNextError() "{{{
+function! CNextError() "[[
     let l:cqflen = len(getloclist(0))
     if  l:cqflen == 0
         echom "current window quickfix list is empty"
@@ -162,8 +127,8 @@ function! CNextError() "{{{
             ll 1
         endtry
     endif
-endfunction "}}}
-function! CPrevError() "{{{
+endfunction "]]
+function! CPrevError() "[[
     let l:cqflen = len(getloclist(0))
     if  l:cqflen == 0
         echom "current window quickfix list is empty"
@@ -176,13 +141,14 @@ function! CPrevError() "{{{
             exec "ll " . string(l:cqflen)
         endtry
     endif
-endfunction "}}}
-nnoremap <silent><leader>sn :call CNextError()<cr>
-nnoremap <silent><leader>sp :call CPrevError()<cr>
+endfunction "]]
+let g:which_key_map.s = {
+            \ 'name' : '+error(current)' ,
+            \ 'n': [':call CNextError()', 'next-error'],
+            \ 'p': [':call CPrevError()', 'previous-error'],
+            \ }
 
-"}}}
-
-" termdebug "{{{
+" termdebug "[[
 nnoremap <silent><F5>    :Run<cr>
 nnoremap <silent><F9>    :Break<cr>
 nnoremap <silent><C-F9>  :Delete<cr>
@@ -191,9 +157,9 @@ nnoremap <silent><F11>   :Over<cr>
 nnoremap <silent><C-F11> :Finish<cr>
 nnoremap <silent><C-F5>  :Continue<cr>
 nnoremap <silent><S-F5>  :Stop<cr>
-"}}}
+"]]
 
-" tab management {{{
+" tab management [[
 nnoremap <silent>g1 1gt
 nnoremap <silent>g2 2gt
 nnoremap <silent>g3 3gt
@@ -203,42 +169,5 @@ nnoremap <silent>g6 6gt
 nnoremap <silent>g7 7gt
 nnoremap <silent>g8 8gt
 nnoremap <silent>g9 9gt
-
-function! Wipeout() "{{{
-    " list of *all* buffer numbers
-    let l:buffers = range(1, bufnr('$'))
-
-    " what tab page are we in?
-    let l:currentTab = tabpagenr()
-    try
-        " go through all tab pages
-        let l:tab = 0
-        while l:tab < tabpagenr('$')
-            let l:tab += 1
-
-            " go through all windows
-            let l:win = 0
-            while l:win < winnr('$')
-                let l:win += 1
-                " whatever buffer is in this window in this tab, remove it from
-                " l:buffers list
-                let l:thisbuf = winbufnr(l:win)
-                call remove(l:buffers, index(l:buffers, l:thisbuf))
-            endwhile
-        endwhile
-
-        " if there are any buffers left, delete them
-        if len(l:buffers)
-            try
-                execute 'bwipeout' join(l:buffers)
-            catch /.*/
-            endtry
-        endif
-    finally
-        " go back to our original tab page
-        execute 'tabnext' l:currentTab
-    endtry
-endfunction "}}}
-nnoremap <silent><leader>ct :call Wipeout()<cr>
-" }}} 
+" ]] 
 

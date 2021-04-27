@@ -1,4 +1,4 @@
-" 配色方案
+" theme
 if has('gui_running')
     "set background=dark
     set background=light

@@ -1,7 +1,6 @@
 # from distutils.sysconfig import get_python_inc
 import platform
 import os
-import ycm_core
 import copy
 import re
 
@@ -197,12 +196,8 @@ def GetFlags(is_cplusplus: bool = False):
     return flags
 
 
+database = None
 compilation_database_folder = os.getcwd()
-if os.path.exists(os.path.join(compilation_database_folder,
-                               "compile_commands.json")):
-    database = ycm_core.CompilationDatabase(compilation_database_folder)
-else:
-    database = None
 
 if c_language:
     source_extensions = ['.c']
@@ -247,6 +242,14 @@ if DEBUG:
 
 
 def Settings(**kwargs):
+    # Do NOT import ycm_core at module scope
+    import ycm_core
+
+    global database
+    if os.path.exists(os.path.join(compilation_database_folder,
+                                   "compile_commands.json")):
+        database = ycm_core.CompilationDatabase(compilation_database_folder)
+
     if kwargs["language"] != "cfamily":
         return {}
     file_extension = os.path.splitext(kwargs["filename"])[1]
