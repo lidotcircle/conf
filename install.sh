@@ -147,7 +147,10 @@ declare -a VIM_PLUGIN_LIST=("VundleVim/Vundle.vim" \
 declare -a TMUX_PLUGIN_LIST=("tmux-plugins/tpm" \
     "tmux-plugins/tmux-sensible")
 
-declare -A VIM_FILE_LIST=(["$PWD/vimrc"]="${HOME}/.vimrc")
+declare -A VIM_FILE_LIST=(
+    ["$PWD/vimrc"]="${HOME}/.vimrc"
+    ["$PWD/init.vim"]="${HOME}/init.vim"
+)
 declare -A TMUX_FILE_LIST=(["$PWD/tmux.conf"]="${HOME}/.tmux.conf")
 declare -A TEX_FILE_LIST=(["$PWD/texrc.tex"]="${HOME}/texrc.tex")
 declare -A VSCODE_FILE_LIST=(\
