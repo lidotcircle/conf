@@ -3,20 +3,34 @@ call plug#begin('~/.vim/bundle')
 
 let s:plugins= [
             \ [ 'liuchengxu/vim-which-key' ],
-            \ [ 'neovim/nvim-lspconfig',  'has("nvim")' ],
-            \ [ 'ycm-core/YouCompleteMe', 'has("python3") || has("python")'],
+            \ [ 'tjdevries/nlua.nvim',      'has("nvim")' ],
+            \ [ 'nvim-lua/completion-nvim', 'has("nvim")' ],
+            \ [ 'neovim/nvim-lspconfig',    'has("nvim")' ],
+            \ [ 'ycm-core/YouCompleteMe',   'has("python3") || has("python")'],
             \
-            \ [ 'Lokaltog/vim-powerline' ],
+            \ [ 'nvim-lua/popup.nvim',           'has("nvim")' ],
+            \ [ 'nvim-lua/plenary.nvim',         'has("nvim")' ],
+            \ [ 'nvim-lua/lsp-status.nvim',      'has("nvim")' ],
+            \ [ 'nvim-telescope/telescope.nvim', 'has("nvim")' ],
+            \
+            \ [ 'vim-airline/vim-airline' ],
+            \ [ 'vim-airline/vim-airline-themes' ],
             \ [ 'scrooloose/nerdtree' ],
             \ [ 'fholgado/minibufexpl.vim' ],
-            \ [ 'othree/csscomplete.vim' ],
+            \ [ 'arzg/vim-colors-xcode', 'v:false'],
+            \
+            \ [ 'itchyny/calendar.vim' ],
+            \ [ 'mbbill/undotree' ],
+            \ [ 'airblade/vim-gitgutter' ],
             \
             \ [ 'mattn/emmet-vim' ],
+            \ [ 'othree/csscomplete.vim' ],
             \ [ 'SirVer/ultisnips' ],
             \ [ 'honza/vim-snippets' ],
             \ [ 'mileszs/ack.vim' ],
             \ [ 'junegunn/vim-easy-align' ],
             \
+            \ [ 'euclidianAce/BetterLua.vim' ],
             \ [ 'PProvost/vim-ps1' ],
             \ [ 'leafgarland/typescript-vim' ],
             \ [ 'pboettch/vim-cmake-syntax' ],
@@ -26,7 +40,10 @@ let s:plugins= [
 
 function! s:plugDoAutocmd(plugin)
     let l:v = match(a:plugin, "\/[^/]*$")
-    execute "doautocmd User ".a:plugin[l:v+1:]."-loaded"
+    let basename = a:plugin[l:v+1:]
+    let l:santiBasename = substitute(basename, '-\|\.', "_", "g")
+    execute "let g:is_".l:santiBasename."_loaed = v:true"
+    execute "doautocmd User ".basename."-loaded"
 endfunction
 let s:installedPlugins = []
 

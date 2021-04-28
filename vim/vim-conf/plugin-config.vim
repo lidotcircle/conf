@@ -1,9 +1,8 @@
 " Plugins configure
 
-" Statusline [[
-" 设置statusline样式
-let g:Powerline_colorscheme='solarized256'
-" ]]
+" airline "[[
+" let g:airline_theme='random'
+"]]
 
 function! s:nerdtreeConfig() "[[
     if filereadable(expand("$HOME/.vim/bundle/nerdtree/plugin/NERD_tree.vim"))
@@ -68,6 +67,10 @@ autocmd! FileType c,cpp,typescript,javascript,rust,java call EnableYCMShortcuts(
 
 " disable ycm in following filetype
 let g:ycm_filetype_blacklist = {
+      \ 'lua' : 1,
+      \ 'vim' : 1,
+      \ 'bash' : 1,
+      \
       \ 'tagbar' : 1,
       \ 'qf' : 1,
       \ 'notes' : 1,
@@ -105,6 +108,14 @@ vmap <Enter> <Plug>(EasyAlign)
 " Ack
 nnoremap <leader>t :Ack \(FIXME\)\\|\(TODO\)<cr>
 
+function! s:telescopeConfig() "[[
+    nnoremap <leader>ff <cmd>Telescope find_files<cr>
+    nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+    nnoremap <leader>fb <cmd>Telescope buffers<cr>
+    nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+endfunction "]]
+autocmd! User telescope.nvim-loaded call s:telescopeConfig()
+
 function! s:whichKeyConfig() "[[
     nnoremap <silent>, :WhichKey '*'<CR>
     set timeoutlen=500
@@ -112,4 +123,22 @@ function! s:whichKeyConfig() "[[
 endfunction "]]
 autocmd! User vim-which-key-loaded call s:whichKeyConfig()
 
+function! s:completionnvimConfig() "[[
+    set shortmess+=c
+    set completeopt=menuone,noinsert,noselect
+    let g:completion_enable_auto_popup = 1
+    let g:completion_trigger_on_delete = 1
+    let g:completion_trigger_character = ['.', '::', '->']
+    let g:completion_enable_snippet='UltiSnips'
+    let g:completion_trigger_keyword_length=2
+    let g:completion_confirm_key = ""
+    let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
+    imap <silent> <c-space> <Plug>(completion_trigger)
+endfunction "]]
+autocmd! User completion-nvim-loaded call s:completionnvimConfig()
+
+function! s:vimColorsXcode() "[[
+    colorscheme xcodewwdc
+endfunction "]]
+autocmd! User vim-colors-xcode-loaded call s:vimColorsXcode()
 
