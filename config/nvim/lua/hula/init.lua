@@ -1,4 +1,3 @@
-
 local lspconfig = require('lspconfig')
 
 local on_attach = function(_, bufnr)
@@ -8,6 +7,7 @@ local on_attach = function(_, bufnr)
 
     -- Mappings.
     local opts = { noremap=true, silent=true }
+    buf_set_keymap('n', '<ctrl><space>', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', '<leader>gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', '<leader>go', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
     buf_set_keymap('n', '<leader>K',  '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)

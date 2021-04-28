@@ -8,84 +8,45 @@ if exists('g:vimrc_loaded')
 endif
 let g:vimrc_loaded = 1
 
-" OS Type{{{
+" OS Type[[
 
 "" Set some environment variables, for detemining current
 "" running environment
-let g:islinux = 0
-let g:iswindows = 0
-let g:isandroid = 0
+let g:islinux = v:false
+let g:iswindows = v:false
 
 if (has("win32")||has("win64")||has("win95")||has("win16"))
-    let g:iswindows = 1
+    let g:iswindows = v:true
 elseif (has('unix'))
-    let g:islinux = 1
-    if !empty(system("uname -a | grep 'Android'"))
-        let g:isandroid = 1
-    endif
+    let g:islinux = v:true
 endif
 
-" }}}
+" ]]
 
-" Functions for loading files {{{
 
-" FuncName: LoadDir
-function! s:LoadDir(_dir) "{{{
-    echo "Hello"
-endfunc "}}}
-
-" End loading functions }}}
-
-" Load config files {{{
+let loadpath = expand('~/.vim')
 
 "" Add '~/.vim/' to runtime path
 if (iswindows)
-    set rtp+=~/.vim
+    execute 'set runtimepath+='.loadpath
 endif
 
-"" Set loading path
-let $LOADPATH='~/.vim'
 
-""" before source main configure
-if filereadable(expand($LOADPATH."/extra_pre.vim"))
-    source $LOADPATH/extra_pre.vim
-endif
+let vimfiles = [
+            \ "/extra_pre.vim",
+            \ "/vim-conf/set.vim",
+            \ "/vim-conf/map.vim",
+            \ "/vim-conf/colors.vim",
+            \ "/vim-conf/commands.vim",
+            \ "/vim-conf/plugin-config.vim",
+            \ "/vim-conf/plugins.vim",
+            \ "/extra_post.vim",
+            \ ]
 
-" Main configure files {{{
-""" set.vim
-if filereadable(expand($LOADPATH."/vim-conf/set.vim"))
-    source $LOADPATH/vim-conf/set.vim
-endif
-""" map.vim
-if filereadable(expand($LOADPATH."/vim-conf/map.vim"))
-    source $LOADPATH/vim-conf/map.vim
-endif
-""" abbreviate.vim
-if filereadable(expand($LOADPATH."/vim-conf/abbreviate.vim"))
-    source $LOADPATH/vim-conf/abbreviate.vim
-endif
-""" colors.vim
-if filereadable(expand($LOADPATH."/vim-conf/colors.vim"))
-    source $LOADPATH/vim-conf/colors.vim
-endif
-""" plugins.vim
-if filereadable(expand($LOADPATH."/vim-conf/plugins.vim"))
-    source $LOADPATH/vim-conf/plugins.vim
-endif
-""" plugin-config.vim
-if filereadable(expand($LOADPATH."/vim-conf/plugin-config.vim"))
-    source $LOADPATH/vim-conf/plugin-config.vim
-endif
+for vfile in vimfiles
+    let vff = loadpath.vfile
+    if filereadable(vff)
+        execute 'source '.vff
+    endif
+endfor
 
-""" commands.vim
-if filereadable(expand($LOADPATH."/vim-conf/commands.vim"))
-    source $LOADPATH/vim-conf/commands.vim
-endif
-" End Main configure files}}}
-
-""" after source main configure
-if filereadable(expand($LOADPATH."/extra_post.vim"))
-    source $LOADPATH/extra_post.vim
-endif
-
-" End Configure}}} 

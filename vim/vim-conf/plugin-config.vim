@@ -5,26 +5,25 @@
 let g:Powerline_colorscheme='solarized256'
 " ]]
 
-" NERDTree [[
-if filereadable(expand("$HOME/.vim/bundle/nerdtree/plugin/NERD_tree.vim"))
-    " 没有指定文件打开vim默认界面为NERDTee
-    autocmd StdinReadPre * let s:std_in=1
-    if g:islinux
-        autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree
-                    \ | endif
-    elseif g:iswindows
-        autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree ~/
-                    \ | endif
-    endif
+function! s:nerdtreeConfig() "[[
+    if filereadable(expand("$HOME/.vim/bundle/nerdtree/plugin/NERD_tree.vim"))
+        " 没有指定文件打开vim默认界面为NERDTee
+        autocmd StdinReadPre * let s:std_in=1
+        if g:islinux
+            autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree
+                        \ | endif
+        elseif g:iswindows
+            autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree ~/
+                        \ | endif
+        endif
 
-    " NERDTree Toggle
-    nnoremap <leader>n :NERDTreeToggle<cr>
-    nnoremap <c-n> :NERDTreeToggle<cr>
-    nnoremap <F7> :NERDTreeToggle<cr>
-endif
-" gt --- 下一个tab windows(normal mode)
-" gT --- 上一个tab windows
-" ]]
+        " NERDTree Toggle
+        nnoremap <leader>n :NERDTreeToggle<cr>
+        nnoremap <c-n> :NERDTreeToggle<cr>
+        nnoremap <F7> :NERDTreeToggle<cr>
+    endif
+endfunction "]]
+autocmd User nerdtree-loaded call s:nerdtreeConfig()
 
 " UltiSnips [[
 let g:ycm_use_ultisnips_comleter = 1        " YCM使用ultisnips补全,默认值
@@ -106,8 +105,11 @@ vmap <Enter> <Plug>(EasyAlign)
 " Ack
 nnoremap <leader>t :Ack \(FIXME\)\\|\(TODO\)<cr>
 
-" Which Key
-nnoremap <silent>, :WhichKey '*'<CR>
-set timeoutlen=500
-call which_key#register('*', "g:which_key_map")
+function! s:whichKeyConfig() "[[
+    nnoremap <silent>, :WhichKey '*'<CR>
+    set timeoutlen=500
+    call which_key#register('*', "g:which_key_map")
+endfunction "]]
+autocmd! User vim-which-key-loaded call s:whichKeyConfig()
+
 
