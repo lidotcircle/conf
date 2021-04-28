@@ -122,6 +122,7 @@ INSTALL_DIRS["$PWD/vim/colors"]="${HOME}/.vim/colors"
 INSTALL_DIRS["$PWD/vim/vim-conf"]="${HOME}/.vim/vim-conf"
 INSTALL_DIRS["$PWD/vim/UltiSnips"]="${HOME}/.vim/UltiSnips"
 INSTALL_DIRS["$PWD/vim/self-plugins"]="${HOME}/.vim/self-plugins"
+INSTALL_DIRS["$PWD/config/nvim/lua/hula"]="${HOME}/.config/nvim/lua/hula"
 
 GITHUB_REPO["tmux-plugins/tpm"]=${HOME}/.tmux/plugins
 GITHUB_REPO["tmux-plugins/tmux-sensible"]=${HOME}/.tmux/plugins
@@ -152,11 +153,11 @@ install_directory()
     [ ! -d $2 ] || rm -rf $2
     assert "[ $? -eq 0 ]" "clean $2 fail"
 
-    [ ! -d ${2%/*} ] || mkdir -p ${2%/*} && ln -s $1 $2
+    [ -d ${2%/*} ] || mkdir -p ${2%/*} && ln -s $1 $2
     assert "[ $? -eq 0 ]" "install directory '$1' fail"
 }
 #}
-#{ function : install_github_repo()
+#{  install_github_repo()
 install_github_repo()
 {
     assert "[ $# -eq 2 ]"

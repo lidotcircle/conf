@@ -52,7 +52,7 @@ nnoremap <c-v> "+p
 vnoremap <c-x> "+c
 " clear search result
 nnoremap <silent><leader>cs :let @/ = ""<cr>
-let g:which_key_map.p=[":set paste!", "toggle paste mode"]
+let g:which_key_map.p=[':setlocal paste!', "toggle paste mode"]
 " ]]
 
 let g:which_key_map.b = {
@@ -108,11 +108,9 @@ function! PrevError() "[[
         endtry
     endif
 endfunction "]]
-let g:which_key_map.e = {
-            \ 'name' : '+error(all)' ,
-            \ 'n': [':call NextError()', 'next-error'],
-            \ 'p': [':call PrevError()', 'previous-error'],
-            \ }
+let g:which_key_map.e.n  = [':call NextError()', 'next-error']
+let g:which_key_map.e.p  = [':call PrevError()', 'previous-error']
+
 
 function! CNextError() "[[
     let l:cqflen = len(getloclist(0))
@@ -143,7 +141,7 @@ function! CPrevError() "[[
     endif
 endfunction "]]
 let g:which_key_map.s = {
-            \ 'name' : '+error(current)' ,
+            \ 'name' : '+ error(current)' ,
             \ 'n': [':call CNextError()', 'next-error'],
             \ 'p': [':call CPrevError()', 'previous-error'],
             \ }

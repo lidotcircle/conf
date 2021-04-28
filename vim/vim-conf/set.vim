@@ -101,10 +101,7 @@ autocmd BufRead *.snippets call Using_tab()
 set incsearch
 " 大小写不敏感
 set ignorecase
-" vim 自身命令行智能补全
-set wildmenu
 
-set autowrite
 set noswapfile
 " ]]
 
