@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # load color functions
-source ./bash/functions
 source $(dirname ${BASH_SOURCE[0]})/script/utils.sh
 
 
@@ -177,7 +176,7 @@ install_github_repo()
         fi
     else
         info "cloning ${GIT_REP}${1}"
-        git clone --recurse-submodules ${GIT_REP}${1} >> /dev/null
+        git clone --depth=1 --recurse-submodules ${GIT_REP}${1} >> /dev/null
         assert "[ $? -eq 0 ]" "clone repo '$1' fail"
         info "$1 finish"
     fi

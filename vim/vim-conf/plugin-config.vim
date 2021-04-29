@@ -118,7 +118,7 @@ autocmd! User telescope.nvim-loaded call s:telescopeConfig()
 
 function! s:whichKeyConfig() "[[
     nnoremap <silent>, :WhichKey '*'<CR>
-    set timeoutlen=100
+    set timeoutlen=200
     call which_key#register('*', "g:which_key_map")
 endfunction "]]
 autocmd! User vim-which-key-loaded call s:whichKeyConfig()

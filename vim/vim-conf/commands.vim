@@ -9,7 +9,7 @@ let s:fileTypeFolds = {
             \ "css,scss,asy":         "//{,//}",
             \ "typescript,javascript": "//{,//}",
             \ "c,cpp,java":            "//{,//}",
-            \ "sh,python,ps1,cmake":   "#{,#}",
+            \ "bash,sh,python,ps1,cmake":   "#{,#}",
             \ "lisp":                  "{,}",
             \ "lua":                   "--<,-->",
             \ "markdown":              "<!--[-->,<!--]-->",
