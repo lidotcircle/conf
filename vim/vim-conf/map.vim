@@ -18,10 +18,10 @@ nnoremap <leader>w :w<cr>
 
 let g:which_key_map.v = {
             \ "name": "+ adjust window size",
-            \ "k": [":resize +1", "Increase view's height by 1"],
-            \ "j": [":resize -1", "Decrease view's height by 1"],
-            \ "l": [":vertical resize +1", "Increase view's width by 1"],
-            \ "h": [":vertical resize -1", "Decrease view's width by 1"],
+            \ "k": [":resize -10", "Decrease view's height"],
+            \ "j": [":resize +10", "Increase view's height"],
+            \ "l": [":vertical resize -10", "Decrease view's width"],
+            \ "h": [":vertical resize +10", "Increase view's width"],
             \ }
 
 let g:which_key_map.c = {

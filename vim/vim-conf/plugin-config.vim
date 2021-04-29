@@ -118,7 +118,7 @@ autocmd! User telescope.nvim-loaded call s:telescopeConfig()
 
 function! s:whichKeyConfig() "[[
     nnoremap <silent>, :WhichKey '*'<CR>
-    set timeoutlen=500
+    set timeoutlen=100
     call which_key#register('*', "g:which_key_map")
 endfunction "]]
 autocmd! User vim-which-key-loaded call s:whichKeyConfig()
@@ -144,6 +144,7 @@ autocmd! User vim-colors-xcode-loaded call s:vimColorsXcode()
 
 function! s:luadevConfig() "[[
     autocmd! FileType lua vmap <buffer>lx <Plug>(Luadev-Run)
+    autocmd! FileType lua nmap <buffer><leader>lx <Plug>(Luadev-RunLine)
 endfunction "]]
 autocmd! User nvim-luadev-loaded call s:luadevConfig()
 
