@@ -143,8 +143,10 @@ endfunction "]]
 autocmd! User vim-colors-xcode-loaded call s:vimColorsXcode()
 
 function! s:luadevConfig() "[[
-    autocmd! FileType lua vmap <buffer>le <Plug>(Luadev-Run)
-    autocmd! FileType lua nmap <buffer><leader>lx <Plug>(Luadev-RunLine)
+    augroup LuadevMapping
+        autocmd! FileType lua nmap <buffer><leader>lx <Plug>(Luadev-RunLine) 
+                    \ |       vmap <buffer>lx <Plug>(Luadev-Run)
+    augroup end
 endfunction "]]
 autocmd! User nvim-luadev-loaded call s:luadevConfig()
 
