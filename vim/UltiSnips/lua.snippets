@@ -1,0 +1,45 @@
+priority 0
+
+snippet ecls "emmylua @class annotation"
+--@class ${1:table}
+endsnippet
+
+snippet efield "emmylua @filed annotation"
+--@field ${1:private} ${2:name} ${3:type}
+endsnippet
+
+
+snippet etype "emmylua @type annotation"
+--@type ${1:type}
+endsnippet
+
+snippet eret "emmylua @return annotation"
+--@return ${1:table}
+endsnippet
+
+snippet ealias "emmylua @alias annotation"
+--@alias ${1:name} ${2:definition}
+endsnippet
+
+snippet eparam "emmylua @param annotation"
+--@param ${1:name} ${2:type}
+endsnippet
+
+snippet fori "for ipairs"
+for ${1:_}, ${2:value} in ipairs(${3:array}) do
+    ${4}
+end
+endsnippet
+
+snippet fort "for pairs"
+for ${1:key}, ${2:value} in pairs(${3:table}) do
+    ${4}
+end
+endsnippet
+
+snippet func "function"
+function ${1:func}(${2})
+    ${3}
+end
+endsnippet
+
