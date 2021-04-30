@@ -58,7 +58,7 @@ function EnableYCMShortcuts()
     nnoremap <buffer><leader>go  :YcmCompleter GoTo<cr>
     nnoremap <buffer><leader>gt  :YcmCompleter GetType<cr>
     nnoremap <buffer><leader>gr  :YcmCompleter GoToReferences<cr>
-    nnoremap <buffer><leader>ff  :YcmCompleter Format<cr>
+    nnoremap <buffer><leader>y=  :YcmCompleter Format<cr>
     nnoremap <buffer><leader>yf  :YcmCompleter FixIt<cr>
     nnoremap <buffer><leader>ry  :YcmCompleter RestartServer<cr>
 endfunction

@@ -50,8 +50,6 @@ let g:which_key_map.e = {
 vnoremap <c-c> "+y
 nnoremap <c-v> "+p
 vnoremap <c-x> "+c
-" clear search result
-nnoremap <silent><leader>cs :let @/ = ""<cr>
 let g:which_key_map.p=[':setlocal paste!', "toggle paste mode"]
 " ]]
 
@@ -78,7 +76,8 @@ inoremap <silent><a-f> <esc><right>wi
 inoremap <silent><a-b> <esc><right>bi
 "]]
 
-let g:which_key_map.i = [":call setreg('/', '')", "clear search"]
+nnoremap <silent><leader>i :call setreg('/', '')<cr>
+" let g:which_key_map.i = [":call setreg('/', '')", "clear search"]
 
 function! NextError() "[[
     let l:qflen = len(getqflist())

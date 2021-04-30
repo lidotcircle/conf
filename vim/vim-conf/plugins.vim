@@ -44,6 +44,9 @@ function! s:plugDoAutocmd(plugin)
     let basename = a:plugin[l:v+1:]
     let l:santiBasename = substitute(basename, '-\|\.', "_", "g")
     execute "let g:is_".l:santiBasename."_loaed = v:true"
+    augroup DummyAutocmd
+        execute "autocmd! User ".basename."-loaded normal ''"
+    augroup end
     execute "doautocmd User ".basename."-loaded"
 endfunction
 let s:installedPlugins = []
