@@ -162,6 +162,9 @@ function!s:nvimReplConfig() "[[
     nmap <leader>at <Plug>(nvim-repl-win-toggle)
     nmap <leader>al <Plug>(nvim-repl-buffer-clear)
     nmap <leader>as <Plug>(nvim-repl-buffer-close)
+
+    nmap <leader>am <Plug>(nvim-repl-toggle-internal-external-mode)
+    nmap <leader>ap <Plug>(nvim-repl-show-prompt)
 endfunction "]]
 autocmd! User nvim-repl-loaded call s:nvimReplConfig()
 

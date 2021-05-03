@@ -30,7 +30,7 @@ set linespace=5
 set cindent
 
 " message
-set cmdheight=2
+set cmdheight=1
 
 set completeopt-=preview
 " ]]

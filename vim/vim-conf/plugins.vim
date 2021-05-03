@@ -22,7 +22,6 @@ let s:plugins= [
             \
             \ [ 'itchyny/calendar.vim' ],
             \ [ 'mbbill/undotree' ],
-            \ [ 'bfredl/nvim-luadev', 'has("nvim")'],
             \ [ 'airblade/vim-gitgutter' ],
             \
             \ [ 'mattn/emmet-vim' ],
