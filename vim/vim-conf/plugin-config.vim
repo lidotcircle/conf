@@ -150,3 +150,18 @@ function! s:luadevConfig() "[[
 endfunction "]]
 autocmd! User nvim-luadev-loaded call s:luadevConfig()
 
+function!s:nvimReplConfig() "[[
+    nmap <leader>ax <Plug>(nvim-repl-current-line)
+    nmap <leader>af <Plug>(nvim-repl-current-file)
+    vmap <silent>aa <Plug>(nvim-repl-selection)
+
+    nmap <leader>ar <Plug>(nvim-repl-reset-interpreter)
+
+    nmap <leader>ac <Plug>(nvim-repl-win-close)
+    nmap <leader>ao <Plug>(nvim-repl-win-open)
+    nmap <leader>at <Plug>(nvim-repl-win-toggle)
+    nmap <leader>al <Plug>(nvim-repl-buffer-clear)
+    nmap <leader>as <Plug>(nvim-repl-buffer-close)
+endfunction "]]
+autocmd! User nvim-repl-loaded call s:nvimReplConfig()
+

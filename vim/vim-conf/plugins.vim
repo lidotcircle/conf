@@ -12,6 +12,7 @@ let s:plugins= [
             \ [ 'nvim-lua/plenary.nvim',         'has("nvim")' ],
             \ [ 'nvim-lua/lsp-status.nvim',      'has("nvim")' ],
             \ [ 'nvim-telescope/telescope.nvim', 'has("nvim")' ],
+            \ [ 'lidotcircle/nvim-repl',         'has("nvim")' ],
             \
             \ [ 'vim-airline/vim-airline' ],
             \ [ 'vim-airline/vim-airline-themes' ],
@@ -76,10 +77,10 @@ endfor
 
 
 let plugins_list = [
-            \ "$LOADPATH/self-plugins/win-buffer-only"
+            \ "self-plugins/win-buffer-only"
             \ ]
 
-for plugpath in map(plugins_list, "expand(v:val)")
+for plugpath in map(plugins_list, "expand(loadpath . '/' . v:val)")
     exec "set rtp+=".plugpath
 endfor
 
