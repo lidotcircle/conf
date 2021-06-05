@@ -23,6 +23,7 @@ let s:plugins= [
             \ [ 'itchyny/calendar.vim' ],
             \ [ 'mbbill/undotree' ],
             \ [ 'airblade/vim-gitgutter' ],
+            \ [ 'mzlogin/vim-markdown-toc' ],
             \
             \ [ 'mattn/emmet-vim' ],
             \ [ 'othree/csscomplete.vim' ],

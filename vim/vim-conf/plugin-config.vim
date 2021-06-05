@@ -70,6 +70,7 @@ let g:ycm_filetype_blacklist = {
       \ 'lua' : 1,
       \ 'vim' : 1,
       \ 'bash' : 1,
+      \ 'python' : 1,
       \
       \ 'tagbar' : 1,
       \ 'qf' : 1,
