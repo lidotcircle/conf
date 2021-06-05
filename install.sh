@@ -160,6 +160,7 @@ install_directory()
 install_github_repo()
 {
     assert "[ $# -eq 2 ]"
+    [ -d "$2" ] || mkdir -p $2
     pushd $2 >> /dev/null
     assert "[ $? -eq 0 ]" "'pushd $2' fail"
 
