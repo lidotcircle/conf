@@ -119,7 +119,7 @@ autocmd! User telescope.nvim-loaded call s:telescopeConfig()
 
 function! s:whichKeyConfig() "[[
     nnoremap <silent>, :WhichKey '*'<CR>
-    set timeoutlen=200
+    set timeoutlen=400
     call which_key#register('*', "g:which_key_map")
 endfunction "]]
 autocmd! User vim-which-key-loaded call s:whichKeyConfig()
@@ -168,4 +168,9 @@ function!s:nvimReplConfig() "[[
     nmap <leader>ap <Plug>(nvim-repl-show-prompt)
 endfunction "]]
 autocmd! User nvim-repl-loaded call s:nvimReplConfig()
+
+function!s:emmetVim() "[[
+    imap <C-y>; <plug>(emmet-expand-abbr)
+endfunction "]]
+autocmd! User emmet-vim-loaded call s:emmetVim()
 
