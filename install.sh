@@ -110,12 +110,14 @@ INSTALL_FILES["$PWD/vimrc"]="${HOME}/.vimrc"
 INSTALL_FILES["$PWD/config/nvim/init.vim"]="${HOME}/.config/nvim/init.vim"
 INSTALL_FILES["$PWD/Misc/ycm_extra_conf.py"]="${HOME}/.ycm_extra_conf.py"
 
+INSTALL_FILES["$PWD/tmux.conf"]="${HOME}/.tmux.conf"
+INSTALL_FILES["$PWD/inputrc"]="${HOME}/.inputrc"
+
 INSTALL_FILES["$PWD/vscode/keybindings.json"]="${HOME}/.config/Code/User/keybindings.json"
 INSTALL_FILES["$PWD/vscode/settings.json"]="${HOME}/.config/Code/User/settings.json"
 
 INSTALL_FILES["$PWD/bashrc_main"]="${HOME}/.bashrc"
 INSTALL_FILES["$PWD/bashrc_main"]="${HOME}/.bashrc_main"
-INSTALL_FILES["$PWD/inputrc"]="${HOME}/.inputrc"
 
 INSTALL_DIRS["$PWD/vim/colors"]="${HOME}/.vim/colors"
 INSTALL_DIRS["$PWD/vim/vim-conf"]="${HOME}/.vim/vim-conf"
@@ -160,6 +162,7 @@ install_directory()
 install_github_repo()
 {
     assert "[ $# -eq 2 ]"
+    [ -d "$2" ] || mkdir -p $2
     pushd $2 >> /dev/null
     assert "[ $? -eq 0 ]" "'pushd $2' fail"
 
