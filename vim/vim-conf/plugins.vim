@@ -16,6 +16,7 @@ let s:plugins= [
             \
             \ [ 'vim-airline/vim-airline' ],
             \ [ 'vim-airline/vim-airline-themes' ],
+            \ [ 'lfv89/vim-interestingwords' ],
             \ [ 'scrooloose/nerdtree' ],
             \ [ 'fholgado/minibufexpl.vim' ],
             \ [ 'arzg/vim-colors-xcode', 'v:false'],
