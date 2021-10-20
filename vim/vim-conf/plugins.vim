@@ -32,6 +32,7 @@ let s:plugins= [
             \ [ 'honza/vim-snippets' ],
             \ [ 'mileszs/ack.vim' ],
             \ [ 'junegunn/vim-easy-align' ],
+            \ [ 'rhysd/vim-clang-format' ],
             \
             \ [ 'euclidianAce/BetterLua.vim' ],
             \ [ 'PProvost/vim-ps1' ],

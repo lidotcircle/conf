@@ -174,3 +174,16 @@ function!s:emmetVim() "[[
 endfunction "]]
 autocmd! User emmet-vim-loaded call s:emmetVim()
 
+" vim-clang-format [[
+let g:clang_format#style_options = {
+            \ "AccessModifierOffset" : -4,
+            \ "AllowShortIfStatementsOnASingleLine" : "true",
+            \ "AlwaysBreakTemplateDeclarations" : "true",
+            \ "Standard" : "C++11"}
+let g:clang_format#detect_style_file = 1
+
+" map to <Leader>cf in C++ code
+autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
+" ]]
+
