@@ -3,10 +3,11 @@ call plug#begin('~/.vim/bundle')
 
 let s:plugins= [
             \ [ 'liuchengxu/vim-which-key' ],
-            \ [ 'tjdevries/nlua.nvim',      'has("nvim")' ],
-            \ [ 'nvim-lua/completion-nvim', 'has("nvim")' ],
-            \ [ 'neovim/nvim-lspconfig',    'has("nvim")' ],
-            \ [ 'ycm-core/YouCompleteMe',   'has("python3") || has("python")'],
+            \ [ 'tjdevries/nlua.nvim',    'has("nvim")' ],
+            \ [ 'hrsh7th/nvim-cmp',       'has("nvim")' ],
+            \ [ 'neovim/nvim-lspconfig',  'has("nvim")' ],
+            \ [ 'ycm-core/YouCompleteMe', 'has("python3") || has("python")'],
+            \ [ 'williamboman/nvim-lsp-installer', 'has("nvim")' ],
             \
             \ [ 'nvim-lua/popup.nvim',           'has("nvim")' ],
             \ [ 'nvim-lua/plenary.nvim',         'has("nvim")' ],
