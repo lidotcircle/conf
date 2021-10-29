@@ -14,6 +14,8 @@ let s:plugins= [
             \ [ 'nvim-telescope/telescope.nvim', 'has("nvim")' ],
             \ [ 'lidotcircle/nvim-repl',         'has("nvim")' ],
             \
+            \ [ 'github/copilot.vim', 'has("nvim")' ],
+            \
             \ [ 'vim-airline/vim-airline' ],
             \ [ 'vim-airline/vim-airline-themes' ],
             \ [ 'lfv89/vim-interestingwords' ],
