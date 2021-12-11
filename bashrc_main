@@ -3,9 +3,10 @@
 [ -z $LOAD_BASHRC_MAIN ] || return
 LOAD_BASHRC_MAIN="BASHRC_MAIN_LOADED"
 
+_stoptmux_="/tmp/stoptmux_$(whoami)"
 # tmux
-while [ -n "$(which tmux)" ] && [ -z "$TMUX" ] && [ ! -e "/tmp/stoptmux" ]; do
-    touch /tmp/stoptmux
+while [ -n "$(which tmux)" ] && [ -z "$TMUX" ] && [ ! -e "$_stoptmux_" ]; do
+    touch $_stoptmux_
     exec tmux -u
 done
 
