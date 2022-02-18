@@ -174,6 +174,19 @@ function!s:emmetVim() "[[
 endfunction "]]
 autocmd! User emmet-vim-loaded call s:emmetVim()
 
+function!s:gitgutter() "[[
+endfunction "]]
+    nnoremap <leader>hp :GitGutterPrevHunk<cr>
+    nnoremap <leader>hn :GitGutterNextHunk<cr>
+    nnoremap <leader>hq :GitGutterQuickFixCurrentFile<cr>
+    nnoremap <leader>hQ :GitGutterQuickFix<cr>
+    nnoremap <leader>hg :GitGutterToggle<cr>
+    nnoremap <leader>hs :GitGutterStageHunk<cr>
+    nnoremap <leader>hu :GitGutterUndoHunk<cr>
+    nnoremap <leader>hv :GitGutterPreviewHunk<cr>
+    nnoremap <leader>hf : GitGutterFold<cr>
+autocmd! User vim-gitgutter-loaded call s:gitgutter()
+
 " vim-clang-format [[
 let g:clang_format#style_options = {
             \ "AccessModifierOffset" : -4,
