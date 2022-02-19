@@ -175,7 +175,6 @@ endfunction "]]
 autocmd! User emmet-vim-loaded call s:emmetVim()
 
 function!s:gitgutter() "[[
-endfunction "]]
     nnoremap <leader>hp :GitGutterPrevHunk<cr>
     nnoremap <leader>hn :GitGutterNextHunk<cr>
     nnoremap <leader>hq :GitGutterQuickFixCurrentFile<cr>
@@ -184,7 +183,8 @@ endfunction "]]
     nnoremap <leader>hs :GitGutterStageHunk<cr>
     nnoremap <leader>hu :GitGutterUndoHunk<cr>
     nnoremap <leader>hv :GitGutterPreviewHunk<cr>
-    nnoremap <leader>hf : GitGutterFold<cr>
+    nnoremap <leader>hf :GitGutterFold<cr>
+endfunction "]]
 autocmd! User vim-gitgutter-loaded call s:gitgutter()
 
 " vim-clang-format [[
