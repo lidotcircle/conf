@@ -10,7 +10,7 @@ let s:plugins= [
             \ [ 'hrsh7th/cmp-path',     'has("nvim")' ],
             \ [ 'hrsh7th/cmp-cmdline',  'has("nvim")' ],
             \ [ 'hrsh7th/nvim-cmp',     'has("nvim")' ],
-            \ [ 'ycm-core/YouCompleteMe', 'v:false && has("python3") || has("python")'],
+            \ [ 'ycm-core/YouCompleteMe', '!has("nvim") && (has("python3") || has("python"))'],
             \ [ 'williamboman/nvim-lsp-installer', 'has("nvim")' ],
             \
             \ [ 'nvim-lua/popup.nvim',           'has("nvim")' ],
@@ -50,6 +50,7 @@ let s:plugins= [
             \ [ 'digitaltoad/vim-pug' ],
             \ ]
 
+if has("nvim")
 lua <<EOF
 local function setup_vim_plug(plug)
     if (_G['plugcallbacks'] and
@@ -63,6 +64,7 @@ local function setup_vim_plug(plug)
 end
 _G['setup_vim_plug'] = setup_vim_plug
 EOF
+endif
 
 function! s:trigger_lua_plugin_load_callback(plug)
     if !has("nvim")

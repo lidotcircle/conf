@@ -63,7 +63,9 @@ function EnableYCMShortcuts()
     nnoremap <buffer><leader>ry  :YcmCompleter RestartServer<cr>
 endfunction
 
-" autocmd! FileType c,cpp,typescript,javascript,rust,java call EnableYCMShortcuts()
+if !has("nvim")
+autocmd! FileType c,cpp,typescript,javascript,rust,java call EnableYCMShortcuts()
+endif
 
 " disable ycm in following filetype
 let g:ycm_filetype_blacklist = {
