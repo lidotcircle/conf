@@ -4,9 +4,13 @@ call plug#begin('~/.vim/bundle')
 let s:plugins= [
             \ [ 'liuchengxu/vim-which-key' ],
             \ [ 'tjdevries/nlua.nvim',    'has("nvim")' ],
-            \ [ 'hrsh7th/nvim-cmp',       'has("nvim")' ],
             \ [ 'neovim/nvim-lspconfig',  'has("nvim")' ],
-            \ [ 'ycm-core/YouCompleteMe', 'has("python3") || has("python")'],
+            \ [ 'hrsh7th/cmp-nvim-lsp', 'has("nvim")' ],
+            \ [ 'hrsh7th/cmp-buffer',   'has("nvim")' ],
+            \ [ 'hrsh7th/cmp-path',     'has("nvim")' ],
+            \ [ 'hrsh7th/cmp-cmdline',  'has("nvim")' ],
+            \ [ 'hrsh7th/nvim-cmp',     'has("nvim")' ],
+            \ [ 'ycm-core/YouCompleteMe', 'v:false && has("python3") || has("python")'],
             \ [ 'williamboman/nvim-lsp-installer', 'has("nvim")' ],
             \
             \ [ 'nvim-lua/popup.nvim',           'has("nvim")' ],
@@ -32,6 +36,7 @@ let s:plugins= [
             \ [ 'mattn/emmet-vim' ],
             \ [ 'othree/csscomplete.vim' ],
             \ [ 'SirVer/ultisnips' ],
+            \ [ 'quangnguyen30192/cmp-nvim-ultisnips', 'has("nvim")' ],
             \ [ 'honza/vim-snippets' ],
             \ [ 'mileszs/ack.vim' ],
             \ [ 'junegunn/vim-easy-align' ],
@@ -45,6 +50,28 @@ let s:plugins= [
             \ [ 'digitaltoad/vim-pug' ],
             \ ]
 
+lua <<EOF
+local function setup_vim_plug(plug)
+    if (_G['plugcallbacks'] and
+        _G['plugcallbacks'][plug] and
+        type(_G['plugcallbacks'][plug]) == 'function') then
+        _G['plugcallbacks'][plug]()
+    else
+        _G['loaded_but_not_setup_plugs'] = _G['loaded_but_not_setup_plugs'] or {}
+        _G['loaded_but_not_setup_plugs'][plug] = true
+    end
+end
+_G['setup_vim_plug'] = setup_vim_plug
+EOF
+
+function! s:trigger_lua_plugin_load_callback(plug)
+    if !has("nvim")
+        return
+    endif
+
+    call luaeval("setup_vim_plug(_A)", a:plug)
+endfunction
+
 function! s:plugDoAutocmd(plugin)
     let l:v = match(a:plugin, "\/[^/]*$")
     let basename = a:plugin[l:v+1:]
@@ -54,6 +81,7 @@ function! s:plugDoAutocmd(plugin)
         execute "autocmd! User ".basename."-loaded normal ''"
     augroup end
     execute "doautocmd User ".basename."-loaded"
+    call s:trigger_lua_plugin_load_callback(basename)
 endfunction
 let s:installedPlugins = []
 
