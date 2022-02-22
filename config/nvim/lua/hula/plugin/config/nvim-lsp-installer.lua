@@ -1,4 +1,4 @@
-local on_attach = function(client, bufnr)
+local on_attach = function(_, bufnr)
     -- Enable completion triggered by <c-x><c-o>
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -20,15 +20,37 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f',   '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
 
+local lsp_opts = {
+    sumneko_lua = {
+        settings = {
+            Lua = {
+                diagnostics = {
+                    globals = {'vim'}
+                },
+                runtime = {
+                    version = "LuaJIT",
+                    path = vim.split(package.path, ";")
+                },
+                workspace = {
+                    library = {
+                        [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+                        [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
+                    }
+                }
+            }
+        },
+    };
+};
+
 return function()
     local lsp_installer = require("nvim-lsp-installer")
     lsp_installer.on_server_ready(function(server)
-        local opts = {
-            on_attach = on_attach,
-            flags = {
-                -- This will be the default in neovim 0.7+
-                debounce_text_changes = 150,
-            }
+        local lsp_name = server.name;
+        local opts = lsp_opts[lsp_name] or {}
+        opts["on_attach"] = on_attach
+        opts["flags"] = {
+            -- This will be the default in neovim 0.7+
+            debounce_text_changes = 150,
         }
         server:setup(opts)
         vim.cmd [[ do User LspAttachBuffers ]]
