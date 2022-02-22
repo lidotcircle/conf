@@ -112,7 +112,7 @@ nnoremap <leader>mbt :MBEToggle<cr>
 vmap <Enter> <Plug>(EasyAlign)
 
 " Ack
-nnoremap <leader>t :Ack \(FIXME\)\\|\(TODO\)<cr>
+nnoremap <leader>tt :Ack \(FIXME\)\\|\(TODO\)<cr>
 
 function! s:telescopeConfig() "[[
     nnoremap <leader>ff <cmd>Telescope find_files<cr>
@@ -205,3 +205,13 @@ autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 " ]]
 
+" hello
+function!s:vimTranslator()
+    nnoremap <leader>th :TranslateW --engines=google --target_lang=zh<cr>
+    nnoremap <leader>te :TranslateW --engines=google --target_lang=en<cr>
+    vnoremap th         :TranslateW --engines=google --target_lang=zh<cr>
+    vnoremap te         :TranslateW --engines=google --target_lang=en<cr>
+    vnoremap trh        :TranslateR --engines=google --target_lang=zh<cr>
+    vnoremap tre        :TranslateR --engines=google --target_lang=en<cr>
+endfunction
+autocmd! User vim-translator-loaded call s:vimTranslator()

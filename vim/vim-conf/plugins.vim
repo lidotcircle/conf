@@ -34,6 +34,7 @@ let s:plugins= [
             \ [ 'mzlogin/vim-markdown-toc' ],
             \
             \ [ 'mattn/emmet-vim' ],
+            \ [ 'voldikss/vim-translator' ],
             \ [ 'othree/csscomplete.vim' ],
             \ [ 'SirVer/ultisnips' ],
             \ [ 'quangnguyen30192/cmp-nvim-ultisnips', 'has("nvim")' ],
