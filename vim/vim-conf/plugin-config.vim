@@ -207,11 +207,11 @@ autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 
 " hello
 function!s:vimTranslator()
-    nnoremap <leader>th :TranslateW --engines=google --target_lang=zh<cr>
-    nnoremap <leader>te :TranslateW --engines=google --target_lang=en<cr>
-    vnoremap th         :TranslateW --engines=google --target_lang=zh<cr>
-    vnoremap te         :TranslateW --engines=google --target_lang=en<cr>
-    vnoremap trh        :TranslateR --engines=google --target_lang=zh<cr>
-    vnoremap tre        :TranslateR --engines=google --target_lang=en<cr>
+    nnoremap <leader>th :TranslateW --target_lang=zh<cr>
+    nnoremap <leader>te :TranslateW --target_lang=en<cr>
+    vnoremap th         :TranslateW --target_lang=zh<cr>
+    vnoremap te         :TranslateW --target_lang=en<cr>
+    vnoremap trh        :TranslateR --target_lang=zh<cr>
+    vnoremap tre        :TranslateR --target_lang=en<cr>
 endfunction
 autocmd! User vim-translator-loaded call s:vimTranslator()
