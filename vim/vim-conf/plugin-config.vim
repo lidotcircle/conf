@@ -115,6 +115,7 @@ vmap <Enter> <Plug>(EasyAlign)
 nnoremap <leader>tt :Ack \(FIXME\)\\|\(TODO\)<cr>
 
 function! s:telescopeConfig() "[[
+    nnoremap <leader>fs <cmd>Telescope<cr>
     nnoremap <leader>ff <cmd>Telescope find_files<cr>
     nnoremap <leader>fg <cmd>Telescope live_grep<cr>
     nnoremap <leader>fb <cmd>Telescope buffers<cr>
@@ -205,13 +206,22 @@ autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
 " ]]
 
-" hello
-function!s:vimTranslator()
+function!s:vimTranslator() "[[
     nnoremap <leader>th :TranslateW --target_lang=zh<cr>
     nnoremap <leader>te :TranslateW --target_lang=en<cr>
     vnoremap th         :TranslateW --target_lang=zh<cr>
     vnoremap te         :TranslateW --target_lang=en<cr>
     vnoremap trh        :TranslateR --target_lang=zh<cr>
     vnoremap tre        :TranslateR --target_lang=en<cr>
-endfunction
+endfunction "]]
 autocmd! User vim-translator-loaded call s:vimTranslator()
+
+function!s:troubleNvim() "[[
+    nnoremap <leader>xx <cmd>TroubleToggle<cr>
+    nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
+    nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
+    nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
+    nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
+    nnoremap <leader>gR <cmd>TroubleToggle lsp_references<cr>
+endfunction "]]
+autocmd! User trouble.nvim-loaded call s:troubleNvim()
