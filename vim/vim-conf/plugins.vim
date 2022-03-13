@@ -10,6 +10,7 @@ let s:plugins= [
             \ [ 'hrsh7th/cmp-path',     'has("nvim")' ],
             \ [ 'hrsh7th/cmp-cmdline',  'has("nvim")' ],
             \ [ 'hrsh7th/nvim-cmp',     'has("nvim")' ],
+            \ [ 'sakhnik/nvim-gdb',     'has("nvim")' ],
             \ [ 'ycm-core/YouCompleteMe', '!has("nvim") && (has("python3") || has("python"))'],
             \ [ 'williamboman/nvim-lsp-installer', 'has("nvim")' ],
             \
