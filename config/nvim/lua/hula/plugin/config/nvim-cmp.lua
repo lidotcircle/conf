@@ -18,6 +18,8 @@ return function()
                 c = cmp.mapping.close(),
             }),
             ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+            ['<C-n>'] = cmp.mapping(cmp.mapping.select_next_item(), {'i','c'}),
+            ['<C-p>'] = cmp.mapping(cmp.mapping.select_prev_item(), {'i','c'}),
         },
         sources = cmp.config.sources({
             { name = 'nvim_lsp' },
