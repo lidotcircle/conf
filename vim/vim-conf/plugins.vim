@@ -25,6 +25,7 @@ let s:plugins= [
             \
             \ [ 'github/copilot.vim', 'has("nvim")' ],
             \
+            \ [ 'nvim-treesitter/nvim-treesitter', 'has("nvim")' ],
             \ [ 'vim-airline/vim-airline' ],
             \ [ 'vim-airline/vim-airline-themes' ],
             \ [ 'lfv89/vim-interestingwords' ],
@@ -36,6 +37,9 @@ let s:plugins= [
             \ [ 'mbbill/undotree' ],
             \ [ 'airblade/vim-gitgutter' ],
             \ [ 'mzlogin/vim-markdown-toc' ],
+            \ [ 'xolox/vim-session', '!has("nvim")' ],
+            \ [ 'xolox/vim-misc', '!has("nvim")' ],
+            \ [ 'Shatur/neovim-session-manager', 'has("nvim")' ],
             \
             \ [ 'mattn/emmet-vim' ],
             \ [ 'voldikss/vim-translator' ],

@@ -225,3 +225,5 @@ function!s:troubleNvim() "[[
     nnoremap <leader>gR <cmd>TroubleToggle lsp_references<cr>
 endfunction "]]
 autocmd! User trouble.nvim-loaded call s:troubleNvim()
+
+let g:session_autosave = 'no'

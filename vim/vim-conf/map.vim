@@ -143,6 +143,7 @@ let g:which_key_map.s = {
             \ 'name' : '+ error(current)' ,
             \ 'n': [':call CNextError()', 'next-error'],
             \ 'p': [':call CPrevError()', 'previous-error'],
+            \ 's': [':syntax sync fromstart', 'sync syntax highlight'],
             \ }
 
 " termdebug "[[

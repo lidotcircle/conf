@@ -7,6 +7,7 @@ local plugins = {
     "nvim-cmp";
     "nvim-lsp-installer";
     "copilot.vim";
+    "neovim-session-manager";
 }
 
 for _,i in ipairs(plugins) do

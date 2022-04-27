@@ -33,6 +33,8 @@ set cindent
 set cmdheight=1
 
 set completeopt-=preview
+
+syntax sync fromstart
 " ]]
 
 " Display [[
