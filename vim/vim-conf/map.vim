@@ -69,8 +69,8 @@ let g:which_key_map.b = {
 " ReadLine in insert mode [[
 inoremap <silent><c-f> <right>
 inoremap <silent><c-b> <left>
-inoremap <silent><c-n> <down>
-inoremap <silent><c-p> <up>
+" inoremap <silent><c-n> <down>
+" inoremap <silent><c-p> <up>
 inoremap <silent><c-d> <backspace>
 inoremap <silent><a-f> <esc><right>wi
 inoremap <silent><a-b> <esc><right>bi
