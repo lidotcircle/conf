@@ -226,4 +226,25 @@ function!s:troubleNvim() "[[
 endfunction "]]
 autocmd! User trouble.nvim-loaded call s:troubleNvim()
 
+function!s:nvimdap() "[[
+    nnoremap <silent> <leader>lc <Cmd>lua require'dap'.continue()<CR>
+    nnoremap <silent> <leader>ln <Cmd>lua require'dap'.step_over()<CR>
+    nnoremap <silent> <leader>ls <Cmd>lua require'dap'.step_into()<CR>
+    nnoremap <silent> <leader>lo <Cmd>lua require'dap'.step_out()<CR>
+    nnoremap <silent> <Leader>lb <Cmd>lua require'dap'.toggle_breakpoint()<CR>
+    nnoremap <silent> <Leader>lB <Cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
+    nnoremap <silent> <Leader>lp <Cmd>lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>
+    nnoremap <silent> <Leader>dr <Cmd>lua require'dap'.repl.open()<CR>
+    nnoremap <silent> <Leader>dl <Cmd>lua require'dap'.run_last()<CR>
+endfunction "]]
+autocmd! User nvim-dap-loaded call s:nvimdap()
+
+function!s:nvimdappython() "[[
+    lua require('dap-python').setup('/usr/bin/python3')
+    nnoremap <silent> <leader>dn :lua require('dap-python').test_method()<CR>
+    nnoremap <silent> <leader>df :lua require('dap-python').test_class()<CR>
+    vnoremap <silent> <leader>ds <ESC>:lua require('dap-python').debug_selection()<CR>
+endfunction "]]
+autocmd! User nvim-dap-python-loaded call s:nvimdappython()
+
 let g:session_autosave = 'no'

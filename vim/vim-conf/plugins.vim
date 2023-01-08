@@ -14,6 +14,10 @@ let s:plugins= [
             \ [ 'ycm-core/YouCompleteMe', '!has("nvim") && (has("python3") || has("python"))'],
             \ [ 'williamboman/nvim-lsp-installer', 'has("nvim")' ],
             \
+            \ [ 'mfussenegger/nvim-dap-python', 'has("nvim")'],
+            \ [ 'mfussenegger/nvim-dap', 'has("nvim")'],
+            \ [ 'nvim-treesitter/nvim-treesitter', 'has("nvim")'],
+            \
             \ [ 'nvim-lua/popup.nvim',           'has("nvim")' ],
             \ [ 'nvim-lua/plenary.nvim',         'has("nvim")' ],
             \ [ 'nvim-lua/lsp-status.nvim',      'has("nvim")' ],
