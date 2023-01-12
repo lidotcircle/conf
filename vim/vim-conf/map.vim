@@ -1,6 +1,10 @@
 " Map keys in this part
 
+if has("nvim")
+let g:mapleader = ","
+else
 let g:mapleader = "*"
+endif
 
 let g:which_key_map = {
             \ 'name': 'leader',

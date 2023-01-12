@@ -61,7 +61,7 @@ return function()
         "pyright",
         "clangd",
     }
-    local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+    local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
     for _, srv in ipairs(lspservers) do
         require('lspconfig')[srv].setup {
             capabilities = capabilities;

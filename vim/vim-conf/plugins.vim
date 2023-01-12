@@ -2,7 +2,9 @@
 call plug#begin('~/.vim/bundle')
 
 let s:plugins= [
-            \ [ 'liuchengxu/vim-which-key' ],
+            \ [ 'liuchengxu/vim-which-key', '!has("nvim")' ],
+            \ [ 'folke/which-key.nvim',     'has("nvim")' ],
+            \ [ 'numToStr/Comment.nvim',    'has("nvim")' ],
             \ [ 'tjdevries/nlua.nvim',    'has("nvim")' ],
             \ [ 'neovim/nvim-lspconfig',  'has("nvim")' ],
             \ [ 'hrsh7th/cmp-nvim-lsp', 'has("nvim")' ],
@@ -16,6 +18,7 @@ let s:plugins= [
             \
             \ [ 'mfussenegger/nvim-dap-python', 'has("nvim")'],
             \ [ 'mfussenegger/nvim-dap', 'has("nvim")'],
+            \ [ 'rcarriga/nvim-dap-ui', 'has("nvim")'],
             \ [ 'nvim-treesitter/nvim-treesitter', 'has("nvim")'],
             \
             \ [ 'nvim-lua/popup.nvim',           'has("nvim")' ],
@@ -26,6 +29,8 @@ let s:plugins= [
             \
             \ [ 'kyazdani42/nvim-web-devicons',    'has("nvim")' ],
             \ [ 'folke/trouble.nvim',              'has("nvim")' ],
+            \ [ 'f-person/git-blame.nvim',         'has("nvim")' ],
+            \ [ 'sindrets/diffview.nvim',          'has("nvim")' ],
             \
             \ [ 'github/copilot.vim', 'has("nvim")' ],
             \
@@ -117,6 +122,11 @@ for plugin in s:plugins
         endif
     endif
 endfor
+
+if has("nvim")
+    Plug 'michaelb/sniprun', {'do': 'bash install.sh'}
+    Plug 'gennaro-tedesco/nvim-peekup'
+endif
 
 call plug#end()
 for plugin in s:installedPlugins

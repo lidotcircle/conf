@@ -8,6 +8,9 @@ local plugins = {
     "nvim-lsp-installer";
     "copilot.vim";
     "neovim-session-manager";
+    "nvim-treesitter";
+    "which-key-nvim";
+    "Comment-nvim";
 }
 
 for _,i in ipairs(plugins) do
