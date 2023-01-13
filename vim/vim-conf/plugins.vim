@@ -6,6 +6,7 @@ let s:plugins= [
             \ [ 'folke/which-key.nvim',     'has("nvim")' ],
             \ [ 'numToStr/Comment.nvim',    'has("nvim")' ],
             \ [ 'tjdevries/nlua.nvim',    'has("nvim")' ],
+            \ [ 'folke/neodev.nvim',      'has("nvim")' ],
             \ [ 'neovim/nvim-lspconfig',  'has("nvim")' ],
             \ [ 'hrsh7th/cmp-nvim-lsp', 'has("nvim")' ],
             \ [ 'hrsh7th/cmp-buffer',   'has("nvim")' ],
@@ -31,8 +32,6 @@ let s:plugins= [
             \ [ 'folke/trouble.nvim',              'has("nvim")' ],
             \ [ 'f-person/git-blame.nvim',         'has("nvim")' ],
             \ [ 'sindrets/diffview.nvim',          'has("nvim")' ],
-            \
-            \ [ 'github/copilot.vim', 'has("nvim")' ],
             \
             \ [ 'nvim-treesitter/nvim-treesitter', 'has("nvim")' ],
             \ [ 'vim-airline/vim-airline' ],

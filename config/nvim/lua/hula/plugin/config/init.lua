@@ -3,6 +3,7 @@ local plugcallbacks = _G["plugcallbacks"]
 local lbss = _G["loaded_but_not_setup_plugs"] or {}
 
 local plugins = {
+    "neodev-nvim";
     "nvim-lspconfig";
     "nvim-cmp";
     "nvim-lsp-installer";
