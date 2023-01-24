@@ -12,6 +12,7 @@ local plugins = {
     "nvim-treesitter";
     "which-key-nvim";
     "Comment-nvim";
+    "symbols-outline-nvim";
 }
 
 for _,i in ipairs(plugins) do

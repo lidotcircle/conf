@@ -27,6 +27,7 @@ let s:plugins= [
             \ [ 'nvim-lua/lsp-status.nvim',      'has("nvim")' ],
             \ [ 'nvim-telescope/telescope.nvim', 'has("nvim")' ],
             \ [ 'lidotcircle/nvim-repl',         'has("nvim")' ],
+            \ [ 'simrat39/symbols-outline.nvim', 'has("nvim")' ],
             \
             \ [ 'kyazdani42/nvim-web-devicons',    'has("nvim")' ],
             \ [ 'folke/trouble.nvim',              'has("nvim")' ],
