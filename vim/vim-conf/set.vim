@@ -119,3 +119,6 @@ endfor
 exec "set tags=" . s:currentTags . s:extraTagsString
 "]]
 
+if has("nvim")
+    set mouse=
+endif
