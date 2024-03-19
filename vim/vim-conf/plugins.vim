@@ -18,6 +18,7 @@ let s:plugins= [
             \ [ 'NeogitOrg/neogit', 'has("nvim")' ],
             \ [ 'ycm-core/YouCompleteMe', '!has("nvim") && (has("python3") || has("python"))'],
             \ [ 'williamboman/nvim-lsp-installer', 'has("nvim")' ],
+            \ [ 'tanvirtin/monokai.nvim', 'has("nvim")' ],
             \
             \ [ 'mfussenegger/nvim-dap-python', 'has("nvim")'],
             \ [ 'mfussenegger/nvim-dap', 'has("nvim")'],
