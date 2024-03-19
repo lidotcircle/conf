@@ -247,4 +247,10 @@ function!s:nvimdappython() "[[
 endfunction "]]
 autocmd! User nvim-dap-python-loaded call s:nvimdappython()
 
+function!s:neogit() "[[
+    lua require('neogit').setup()
+    nnoremap <silent> <leader>gg :Neogit<CR>
+endfunction "]]
+autocmd! User neogit-loaded call s:neogit()
+
 let g:session_autosave = 'no'
