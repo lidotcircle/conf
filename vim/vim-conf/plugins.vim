@@ -14,11 +14,14 @@ let s:plugins= [
             \ [ 'hrsh7th/cmp-cmdline',  'has("nvim")' ],
             \ [ 'hrsh7th/nvim-cmp',     'has("nvim")' ],
             \ [ 'sakhnik/nvim-gdb',     'has("nvim")' ],
+            \ [ 'mfussenegger/nvim-dap', 'has("nvim")' ],
+            \ [ 'NeogitOrg/neogit', 'has("nvim")' ],
             \ [ 'ycm-core/YouCompleteMe', '!has("nvim") && (has("python3") || has("python"))'],
             \ [ 'williamboman/nvim-lsp-installer', 'has("nvim")' ],
             \
             \ [ 'mfussenegger/nvim-dap-python', 'has("nvim")'],
             \ [ 'mfussenegger/nvim-dap', 'has("nvim")'],
+            \ [ 'leoluz/nvim-dap-go', 'has("nvim")'],
             \ [ 'rcarriga/nvim-dap-ui', 'has("nvim")'],
             \ [ 'nvim-treesitter/nvim-treesitter', 'has("nvim")'],
             \

@@ -13,6 +13,9 @@ local plugins = {
     "which-key-nvim";
     "Comment-nvim";
     "symbols-outline-nvim";
+    "nvim-dap";
+    "nvim-dap-go";
+    "neogit";
 }
 
 for _,i in ipairs(plugins) do
