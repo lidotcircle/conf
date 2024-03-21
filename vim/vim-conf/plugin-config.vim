@@ -257,4 +257,84 @@ function!s:monokai() "[[
 endfunction "]]
 autocmd! User monokai.nvim-loaded call s:monokai()
 
+function!s:nvimtree() "[[
+    lua require('nvim-tree').setup{ }
+    nnoremap <silent> <leader>n :NvimTreeToggle<CR>
+endfunction "]]
+autocmd! User nvim-tree.lua-loaded call s:nvimtree()
+
+function!s:symbolsOutline() "[[
+    lua require('symbols-outline').setup { }
+    nnoremap <silent> <leader>so :SymbolsOutline<CR>
+endfunction "]]
+autocmd! User symbols-outline.nvim-loaded call s:symbolsOutline()
+
+function!s:webDevicons() "[[
+    lua require('nvim-web-devicons').setup { }
+endfunction "]]
+autocmd! User nvim-web-devicons-loaded call s:webDevicons()
+
+function!s:barbar() "[[
+    lua require('barbar').setup { }
+    " Move to previous/next
+    nnoremap <silent>    <A-,> <Cmd>BufferPrevious<CR>
+    nnoremap <silent>    <A-.> <Cmd>BufferNext<CR>
+
+    " Re-order to previous/next
+    nnoremap <silent>    <A-<> <Cmd>BufferMovePrevious<CR>
+    nnoremap <silent>    <A->> <Cmd>BufferMoveNext<CR>
+
+    " Goto buffer in position...
+    nnoremap <silent>    <A-1> <Cmd>BufferGoto 1<CR>
+    nnoremap <silent>    <A-2> <Cmd>BufferGoto 2<CR>
+    nnoremap <silent>    <A-3> <Cmd>BufferGoto 3<CR>
+    nnoremap <silent>    <A-4> <Cmd>BufferGoto 4<CR>
+    nnoremap <silent>    <A-5> <Cmd>BufferGoto 5<CR>
+    nnoremap <silent>    <A-6> <Cmd>BufferGoto 6<CR>
+    nnoremap <silent>    <A-7> <Cmd>BufferGoto 7<CR>
+    nnoremap <silent>    <A-8> <Cmd>BufferGoto 8<CR>
+    nnoremap <silent>    <A-9> <Cmd>BufferGoto 9<CR>
+    nnoremap <silent>    <A-0> <Cmd>BufferLast<CR>
+
+    " Pin/unpin buffer
+    nnoremap <silent>    <A-p> <Cmd>BufferPin<CR>
+
+    " Close buffer
+    nnoremap <silent>    <A-c> <Cmd>BufferClose<CR>
+    " Restore buffer
+    nnoremap <silent>    <A-s-c> <Cmd>BufferRestore<CR>
+
+    " Wipeout buffer
+    "                          :BufferWipeout
+    " Close commands
+    "                          :BufferCloseAllButCurrent
+    "                          :BufferCloseAllButVisible
+    "                          :BufferCloseAllButPinned
+    "                          :BufferCloseAllButCurrentOrPinned
+    "                          :BufferCloseBuffersLeft
+    "                          :BufferCloseBuffersRight
+
+    " Magic buffer-picking mode
+    nnoremap <silent> <C-p>    <Cmd>BufferPick<CR>
+    nnoremap <silent> <C-p>    <Cmd>BufferPickDelete<CR>
+
+    " Sort automatically by...
+    nnoremap <silent> <Space>bb <Cmd>BufferOrderByBufferNumber<CR>
+    nnoremap <silent> <Space>bd <Cmd>BufferOrderByDirectory<CR>
+    nnoremap <silent> <Space>bl <Cmd>BufferOrderByLanguage<CR>
+    nnoremap <silent> <Space>bw <Cmd>BufferOrderByWindowNumber<CR>
+endfunction "]]
+autocmd! User barbar.nvim-loaded call s:barbar()
+
+function!s:telescopeRecentFiles() "[[
+    lua require('telescope').load_extension("recent_files")
+    lua vim.api.nvim_set_keymap("n", "<Leader><Leader>", [[<cmd>lua require('telescope').extensions.recent_files.pick()<CR>]], {noremap = true, silent = true})
+endfunction "]]
+autocmd! User telescope-recent-files-loaded call s:telescopeRecentFiles()
+
+function!s:tabby() "[[
+    lua require('tabby').setup()
+endfunction "]]
+autocmd! User tabby.nvim-loaded call s:tabby()
+
 let g:session_autosave = 'no'

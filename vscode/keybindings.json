@@ -1,8 +1,25 @@
 
 [
-	{
+
+    {
 		"key": "ctrl+\\",
 		"command": "editor.action.triggerSuggest" 
+	},
+	{
+		"key": "ctrl-f",
+		"command": "cursorRight"
+	},
+	{
+		"key": "ctrl-b",
+		"command": "cursorLeft"
+	},
+	{
+		"key": "ctrl-x",
+		"command": "workbench.action.closeSidebar"
+	},
+	{
+		"key": "ctrl-d",
+		"command": "editor.action.addSelectionToNextFindMatch"
 	}
 ]
 
