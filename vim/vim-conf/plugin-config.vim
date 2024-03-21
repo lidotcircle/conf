@@ -260,6 +260,7 @@ autocmd! User monokai.nvim-loaded call s:monokai()
 function!s:nvimtree() "[[
     lua require('nvim-tree').setup{ }
     nnoremap <silent> <leader>n :NvimTreeToggle<CR>
+    nnoremap <silent> <leader>fn :NvimTreeFindFileToggle<CR>
 endfunction "]]
 autocmd! User nvim-tree.lua-loaded call s:nvimtree()
 
