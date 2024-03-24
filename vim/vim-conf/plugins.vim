@@ -49,6 +49,7 @@ let s:plugins= [
             \ [ 'scrooloose/nerdtree', '!has("nvim")' ],
             \ [ 'fholgado/minibufexpl.vim', '!has("nvim")' ],
             \ [ 'arzg/vim-colors-xcode', 'v:false'],
+            \ [ 'andythigpen/nvim-coverage', 'has("nvim")' ],
             \
             \ [ 'itchyny/calendar.vim' ],
             \ [ 'mbbill/undotree' ],

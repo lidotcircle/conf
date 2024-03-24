@@ -338,4 +338,15 @@ function!s:tabby() "[[
 endfunction "]]
 autocmd! User tabby.nvim-loaded call s:tabby()
 
+function!s:nvimCoverage() "[[
+    lua require('coverage').setup(
+\   {
+\       auto_reload = true;
+\       lang = { cpp = { coverage_file = 'build/coverage.info' } }
+\   })
+    nnoremap <leader>cv <cmd>CoverageToggle<cr>
+    nnoremap <leader>cd <cmd>CoverageLoad<cr><cmd>CoverageShow<cr>
+endfunction "]]
+autocmd! User nvim-coverage-loaded call s:nvimCoverage()
+
 let g:session_autosave = 'no'
