@@ -204,6 +204,8 @@ let g:clang_format#detect_style_file = 1
 " map to <Leader>cf in C++ code
 autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
+autocmd FileType c,cpp,objc nnoremap <buffer>ff :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer>ff :ClangFormat<CR>
 " ]]
 
 function!s:vimTranslator() "[[
@@ -349,4 +351,23 @@ function!s:nvimCoverage() "[[
 endfunction "]]
 autocmd! User nvim-coverage-loaded call s:nvimCoverage()
 
+function!s:gitsigns() "[[
+    lua require('gitsigns').setup()
+    nnoremap [c <cmd>Gitsigns prev_hunk<cr>
+    nnoremap ]c <cmd>Gitsigns next_hunk<cr>
+    nnoremap <leader>hp <cmd>Gitsigns prev_hunk<cr>
+    nnoremap <leader>hn <cmd>Gitsigns next_hunk<cr>
+    nnoremap <leader>hq <cmd>Gitsigns setloclist<cr>
+    nnoremap <leader>hg <cmd>GitGutterToggle<cr>
+    nnoremap <leader>hs <cmd>Gitsigns stage_hunk<cr>
+    nnoremap <leader>hS <cmd>Gitsigns stage_buffer<cr>
+    nnoremap <leader>hu <cmd>Gitsigns reset_hunk<cr>
+    nnoremap <leader>hv <cmd>Gitsigns preview_hunk_inline<cr>
+    nnoremap <leader>hV <cmd>Gitsigns preview_hunk<cr>
+    nnoremap <leader>hf <cmd>Gitsigns toggle_signs<cr>
+    nnoremap <leader>hd <cmd>Gitsigns diffthis<cr>
+endfunction "]]
+autocmd! User gitsigns.nvim-loaded call s:gitsigns()
+
 let g:session_autosave = 'no'
+

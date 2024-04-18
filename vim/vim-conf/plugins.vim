@@ -53,7 +53,7 @@ let s:plugins= [
             \
             \ [ 'itchyny/calendar.vim' ],
             \ [ 'mbbill/undotree' ],
-            \ [ 'airblade/vim-gitgutter' ],
+            \ [ 'airblade/vim-gitgutter', '!has("nvim")' ],
             \ [ 'mzlogin/vim-markdown-toc' ],
             \ [ 'xolox/vim-session', '!has("nvim")' ],
             \ [ 'xolox/vim-misc', '!has("nvim")' ],
