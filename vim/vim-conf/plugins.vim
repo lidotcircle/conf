@@ -38,6 +38,7 @@ let s:plugins= [
             \ [ 'folke/trouble.nvim',              'has("nvim")' ],
             \ [ 'f-person/git-blame.nvim',         'has("nvim")' ],
             \ [ 'sindrets/diffview.nvim',          'has("nvim")' ],
+            \ [ 'github/copilot.vim' ],
             \
             \ [ 'vim-airline/vim-airline' ],
             \ [ 'romgrk/barbar.nvim', 'has("nvim") &&  v:false' ],
