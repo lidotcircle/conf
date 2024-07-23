@@ -108,7 +108,6 @@ declare -A GITHUB_REPO=()
 
 INSTALL_FILES["$PWD/vimrc"]="${HOME}/.vimrc"
 INSTALL_FILES["$PWD/config/nvim/init.vim"]="${HOME}/.config/nvim/init.vim"
-INSTALL_FILES["$PWD/Misc/ycm_extra_conf.py"]="${HOME}/.ycm_extra_conf.py"
 
 INSTALL_FILES["$PWD/tmux.conf"]="${HOME}/.tmux.conf"
 INSTALL_FILES["$PWD/inputrc"]="${HOME}/.inputrc"

@@ -88,8 +88,8 @@ let g:ycm_filetype_blacklist = {
       \ 'mail' : 1
       \ }
 let g:ycm_semantic_triggers = {
-            \ 'css': [ 're!^', 're!^\s+', ': ' ],
-            \ 'scss': [ 're!^', 're!^\s+', ': ' ],
+            \ 'css' : [ 're!^', 're!^\s+', ': ' ],
+            \ 'scss' : [ 're!^', 're!^\s+', ': ' ],
             \ }
 " ]]
 
@@ -202,10 +202,10 @@ let g:clang_format#style_options = {
 let g:clang_format#detect_style_file = 1
 
 " map to <Leader>cf in C++ code
-autocmd FileType c,cpp,objc nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
-autocmd FileType c,cpp,objc vnoremap <buffer><Leader>cf :ClangFormat<CR>
-autocmd FileType c,cpp,objc nnoremap <buffer>ff :<C-u>ClangFormat<CR>
-autocmd FileType c,cpp,objc vnoremap <buffer>ff :ClangFormat<CR>
+autocmd FileType c,cpp,objc,typescript,javascript nnoremap <buffer><Leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc,typescript,javascript vnoremap <buffer><Leader>cf :ClangFormat<CR>
+autocmd FileType c,cpp,objc,typescript,javascript nnoremap <buffer>ff :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc,typescript,javascript vnoremap <buffer>ff :ClangFormat<CR>
 " ]]
 
 function!s:vimTranslator() "[[
@@ -342,10 +342,10 @@ autocmd! User tabby.nvim-loaded call s:tabby()
 
 function!s:nvimCoverage() "[[
     lua require('coverage').setup(
-\   {
-\       auto_reload = true;
-\       lang = { cpp = { coverage_file = 'build/coverage.info' } }
-\   })
+                \   {
+                \ auto_reload = true;
+                \ lang = { cpp = {coverage_file = 'build/coverage.info'} }
+                \   })
     nnoremap <leader>cv <cmd>CoverageToggle<cr>
     nnoremap <leader>cd <cmd>CoverageLoad<cr><cmd>CoverageShow<cr>
 endfunction "]]
