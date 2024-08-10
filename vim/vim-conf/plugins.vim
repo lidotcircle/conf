@@ -17,7 +17,8 @@ let s:plugins= [
             \ [ 'mfussenegger/nvim-dap', 'has("nvim")' ],
             \ [ 'NeogitOrg/neogit', 'has("nvim")' ],
             \ [ 'ycm-core/YouCompleteMe', '!has("nvim") && (has("python3") || has("python"))'],
-            \ [ 'williamboman/nvim-lsp-installer', 'has("nvim")' ],
+            \ [ 'williamboman/mason.nvim', 'has("nvim")', 'require("mason").setup{}' ],
+            \ [ 'williamboman/mason-lspconfig.nvim', 'has("nvim")', 'require("mason-lspconfig").setup{}' ],
             \ [ 'tanvirtin/monokai.nvim', 'has("nvim")' ],
             \
             \ [ 'mfussenegger/nvim-dap-python', 'has("nvim")'],
@@ -42,6 +43,7 @@ let s:plugins= [
             \
             \ [ 'vim-airline/vim-airline', '!has("nvim")' ],
             \ [ 'NTBBloodbath/galaxyline.nvim', 'has("nvim")' ],
+            \ [ 'nvimdev/dashboard-nvim', 'has("nvim")', 'require("dashboard").setup()' ],
             \ [ 'romgrk/barbar.nvim', 'has("nvim") &&  v:false' ],
             \ [ 'nanozuki/tabby.nvim', 'has("nvim")' ],
             \ [ 'lewis6991/gitsigns.nvim', 'has("nvim")' ],
@@ -115,6 +117,7 @@ function! s:plugDoAutocmd(plugin)
     call s:trigger_lua_plugin_load_callback(basename)
 endfunction
 let s:installedPlugins = []
+let s:callbacks = []
 
 for plugin in s:plugins
     let name = plugin[0]
@@ -124,12 +127,14 @@ for plugin in s:plugins
     elseif len(plugin) >= 2
         let condition = plugin[1]
         if len(condition)==0 || eval(condition)
-            if len(plugin) == 2
-                Plug name
-            else
-                Plug name plugin[2]
-            endif
+            Plug name
             call add(s:installedPlugins, name)
+        endif
+        if len(plugin) >= 3
+            let expr = plugin[2]
+            if len(expr) > 0
+                call add(s:callbacks, expr)
+            endif
         endif
     endif
 endfor
@@ -144,6 +149,11 @@ for plugin in s:installedPlugins
     call s:plugDoAutocmd(plugin)
 endfor
 
+if has("nvim")
+    for callback in s:callbacks
+        call luaeval(callback)
+    endfor
+endif
 
 let plugins_list = [
             \ "self-plugins/win-buffer-only"

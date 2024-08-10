@@ -6,7 +6,7 @@ local plugins = {
     "neodev-nvim";
     "nvim-lspconfig";
     "nvim-cmp";
-    "nvim-lsp-installer";
+    "mason-lspconfig.nvim";
     "copilot.vim";
     "neovim-session-manager";
     "nvim-treesitter";

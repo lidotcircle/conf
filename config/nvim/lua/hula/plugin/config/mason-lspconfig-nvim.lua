@@ -20,20 +20,28 @@ local on_attach = function(_, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f',   '<cmd>lua vim.lsp.buf.format()<CR>', opts)
 end
 
-local lsp_opts = {
-};
-
 return function()
-    local lsp_installer = require("nvim-lsp-installer")
-    lsp_installer.on_server_ready(function(server)
-        local lsp_name = server.name;
-        local opts = lsp_opts[lsp_name] or {}
-        opts["on_attach"] = on_attach
-        opts["flags"] = {
-            -- This will be the default in neovim 0.7+
-            debounce_text_changes = 150,
-        }
-        server:setup(opts)
-        vim.cmd [[ do User LspAttachBuffers ]]
-    end)
+    require("mason-lspconfig").setup_handlers {
+        -- The first entry (without a key) will be the default handler
+        -- and will be called for each installed server that doesn't have
+        -- a dedicated handler.
+        function (server_name) -- default handler (optional)
+            require("lspconfig")[server_name].setup {
+                on_attach = on_attach,
+                flags = {
+                    debounce_text_changes = 150,
+                }
+            }
+        end,
+        -- Next, you can provide a dedicated handler for specific servers.
+        -- For example, a handler override for the `rust_analyzer`:
+        ["lua_ls"] = function ()
+            require("lspconfig").lua_ls.setup {
+                on_attach = on_attach,
+                flags = {
+                    debounce_text_changes = 150,
+                }
+            }
+        end
+    }
 end
