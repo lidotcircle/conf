@@ -369,5 +369,11 @@ function!s:gitsigns() "[[
 endfunction "]]
 autocmd! User gitsigns.nvim-loaded call s:gitsigns()
 
+function! s:galaxyline() "[[
+    lua require("galaxyline.themes.eviline")
+    lua require('galaxyline').load_galaxyline()
+endfunction "]]
+autocmd! User galaxyline.nvim-loaded call s:galaxyline()
+
 let g:session_autosave = 'no'
 

@@ -40,7 +40,8 @@ let s:plugins= [
             \ [ 'sindrets/diffview.nvim',          'has("nvim")' ],
             \ [ 'github/copilot.vim' ],
             \
-            \ [ 'vim-airline/vim-airline' ],
+            \ [ 'vim-airline/vim-airline', '!has("nvim")' ],
+            \ [ 'NTBBloodbath/galaxyline.nvim', 'has("nvim")' ],
             \ [ 'romgrk/barbar.nvim', 'has("nvim") &&  v:false' ],
             \ [ 'nanozuki/tabby.nvim', 'has("nvim")' ],
             \ [ 'lewis6991/gitsigns.nvim', 'has("nvim")' ],
