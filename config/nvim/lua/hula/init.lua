@@ -1,1 +1,2 @@
-require('hula.plugin.init')
+require('hula.plugins')
+require("hula.key-mapping")
