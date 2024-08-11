@@ -114,15 +114,6 @@ vmap <Enter> <Plug>(EasyAlign)
 " Ack
 nnoremap <leader>tt :Ack \(FIXME\)\\|\(TODO\)<cr>
 
-function! s:telescopeConfig() "[[
-    nnoremap <leader>fs <cmd>Telescope<cr>
-    nnoremap <leader>ff <cmd>Telescope find_files<cr>
-    nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-    nnoremap <leader>fb <cmd>Telescope buffers<cr>
-    nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-endfunction "]]
-autocmd! User telescope.nvim-loaded call s:telescopeConfig()
-
 function! s:whichKeyConfig() "[[
     nnoremap <silent>, :WhichKey '*'<CR>
     set timeoutlen=400
@@ -156,24 +147,6 @@ function! s:luadevConfig() "[[
     augroup end
 endfunction "]]
 autocmd! User nvim-luadev-loaded call s:luadevConfig()
-
-function!s:nvimReplConfig() "[[
-    nmap <leader>ax <Plug>(nvim-repl-current-line)
-    nmap <leader>af <Plug>(nvim-repl-current-file)
-    vmap <silent>aa <Plug>(nvim-repl-selection)
-
-    nmap <leader>ar <Plug>(nvim-repl-reset-interpreter)
-
-    nmap <leader>ac <Plug>(nvim-repl-win-close)
-    nmap <leader>ao <Plug>(nvim-repl-win-open)
-    nmap <leader>at <Plug>(nvim-repl-win-toggle)
-    nmap <leader>al <Plug>(nvim-repl-buffer-clear)
-    nmap <leader>as <Plug>(nvim-repl-buffer-close)
-
-    nmap <leader>am <Plug>(nvim-repl-toggle-internal-external-mode)
-    nmap <leader>ap <Plug>(nvim-repl-show-prompt)
-endfunction "]]
-autocmd! User nvim-repl-loaded call s:nvimReplConfig()
 
 function!s:emmetVim() "[[
     imap <C-y>; <plug>(emmet-expand-abbr)
@@ -218,29 +191,6 @@ function!s:vimTranslator() "[[
 endfunction "]]
 autocmd! User vim-translator-loaded call s:vimTranslator()
 
-function!s:troubleNvim() "[[
-    nnoremap <leader>xx <cmd>TroubleToggle<cr>
-    nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
-    nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
-    nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
-    nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
-    nnoremap <leader>gR <cmd>TroubleToggle lsp_references<cr>
-endfunction "]]
-autocmd! User trouble.nvim-loaded call s:troubleNvim()
-
-function!s:nvimdap() "[[
-    nnoremap <silent> <leader>lc <Cmd>lua require'dap'.continue()<CR>
-    nnoremap <silent> <leader>ln <Cmd>lua require'dap'.step_over()<CR>
-    nnoremap <silent> <leader>ls <Cmd>lua require'dap'.step_into()<CR>
-    nnoremap <silent> <leader>lo <Cmd>lua require'dap'.step_out()<CR>
-    nnoremap <silent> <Leader>lb <Cmd>lua require'dap'.toggle_breakpoint()<CR>
-    nnoremap <silent> <Leader>lB <Cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
-    nnoremap <silent> <Leader>lp <Cmd>lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>
-    nnoremap <silent> <Leader>dr <Cmd>lua require'dap'.repl.open()<CR>
-    nnoremap <silent> <Leader>dl <Cmd>lua require'dap'.run_last()<CR>
-endfunction "]]
-autocmd! User nvim-dap-loaded call s:nvimdap()
-
 function!s:nvimdappython() "[[
     lua require('dap-python').setup('/usr/bin/python3')
     nnoremap <silent> <leader>dn :lua require('dap-python').test_method()<CR>
@@ -248,34 +198,6 @@ function!s:nvimdappython() "[[
     vnoremap <silent> <leader>ds <ESC>:lua require('dap-python').debug_selection()<CR>
 endfunction "]]
 autocmd! User nvim-dap-python-loaded call s:nvimdappython()
-
-function!s:neogit() "[[
-    nnoremap <silent> <leader>gg :Neogit<CR>
-endfunction "]]
-autocmd! User neogit-loaded call s:neogit()
-
-function!s:monokai() "[[
-    lua require('monokai').setup { palette = require('monokai').pro }
-endfunction "]]
-autocmd! User monokai.nvim-loaded call s:monokai()
-
-function!s:nvimtree() "[[
-    lua require('nvim-tree').setup{ }
-    nnoremap <silent> <leader>n :NvimTreeToggle<CR>
-    nnoremap <silent> <leader>fn :NvimTreeFindFile<CR>
-endfunction "]]
-autocmd! User nvim-tree.lua-loaded call s:nvimtree()
-
-function!s:symbolsOutline() "[[
-    lua require('symbols-outline').setup { }
-    nnoremap <silent> <leader>so :SymbolsOutline<CR>
-endfunction "]]
-autocmd! User symbols-outline.nvim-loaded call s:symbolsOutline()
-
-function!s:webDevicons() "[[
-    lua require('nvim-web-devicons').setup { }
-endfunction "]]
-autocmd! User nvim-web-devicons-loaded call s:webDevicons()
 
 function!s:barbar() "[[
     lua require('barbar').setup { }
@@ -328,52 +250,6 @@ function!s:barbar() "[[
     nnoremap <silent> <Space>bw <Cmd>BufferOrderByWindowNumber<CR>
 endfunction "]]
 autocmd! User barbar.nvim-loaded call s:barbar()
-
-function!s:telescopeRecentFiles() "[[
-    lua require('telescope').load_extension("recent_files")
-    lua vim.api.nvim_set_keymap("n", "<Leader><Leader>", [[<cmd>lua require('telescope').extensions.recent_files.pick()<CR>]], {noremap = true, silent = true})
-endfunction "]]
-autocmd! User telescope-recent-files-loaded call s:telescopeRecentFiles()
-
-function!s:tabby() "[[
-    lua require('tabby').setup()
-endfunction "]]
-autocmd! User tabby.nvim-loaded call s:tabby()
-
-function!s:nvimCoverage() "[[
-    lua require('coverage').setup(
-                \   {
-                \ auto_reload = true;
-                \ lang = { cpp = {coverage_file = 'build/coverage.info'} }
-                \   })
-    nnoremap <leader>cv <cmd>CoverageToggle<cr>
-    nnoremap <leader>cd <cmd>CoverageLoad<cr><cmd>CoverageShow<cr>
-endfunction "]]
-autocmd! User nvim-coverage-loaded call s:nvimCoverage()
-
-function!s:gitsigns() "[[
-    lua require('gitsigns').setup()
-    nnoremap [c <cmd>Gitsigns prev_hunk<cr>
-    nnoremap ]c <cmd>Gitsigns next_hunk<cr>
-    nnoremap <leader>hp <cmd>Gitsigns prev_hunk<cr>
-    nnoremap <leader>hn <cmd>Gitsigns next_hunk<cr>
-    nnoremap <leader>hq <cmd>Gitsigns setloclist<cr>
-    nnoremap <leader>hg <cmd>GitGutterToggle<cr>
-    nnoremap <leader>hs <cmd>Gitsigns stage_hunk<cr>
-    nnoremap <leader>hS <cmd>Gitsigns stage_buffer<cr>
-    nnoremap <leader>hu <cmd>Gitsigns reset_hunk<cr>
-    nnoremap <leader>hv <cmd>Gitsigns preview_hunk_inline<cr>
-    nnoremap <leader>hV <cmd>Gitsigns preview_hunk<cr>
-    nnoremap <leader>hf <cmd>Gitsigns toggle_signs<cr>
-    nnoremap <leader>hd <cmd>Gitsigns diffthis<cr>
-endfunction "]]
-autocmd! User gitsigns.nvim-loaded call s:gitsigns()
-
-function! s:galaxyline() "[[
-    lua require("galaxyline.themes.eviline")
-    lua require('galaxyline').load_galaxyline()
-endfunction "]]
-autocmd! User galaxyline.nvim-loaded call s:galaxyline()
 
 let g:session_autosave = 'no'
 
