@@ -12,6 +12,8 @@ local function vmap(lhs, rhs)
     vim.api.nvim_set_keymap('v', lhs, rhs, { noremap = false, silent = true })
 end
 
+use 'nvim-lua/popup.nvim'
+use 'nvim-lua/plenary.nvim'
 use { "nvimdev/dashboard-nvim", config = function() require("dashboard").setup() end }
 use { 'folke/which-key.nvim', config = function() require("which-key").setup() end }
 use {
@@ -101,6 +103,12 @@ use {
     end
 }
 use {
+    'tanvirtin/monokai.nvim',
+    config = function()
+        require('monokai').setup { palette = require('monokai').pro }
+    end
+}
+use {
     'NeogitOrg/neogit',
     config = function()
         require("neogit").setup()
@@ -142,12 +150,6 @@ use {
                 }
             end
         }
-    end
-}
-use {
-    'tanvirtin/monokai.nvim',
-    config = function()
-        require('monokai').setup { palette = require('monokai').pro }
     end
 }
 use {
@@ -309,8 +311,6 @@ use {
         }
     end
 }
-use 'nvim-lua/popup.nvim'
-use 'nvim-lua/plenary.nvim'
 use 'nvim-lua/lsp-status.nvim'
 use {
     'nvim-telescope/telescope.nvim',
