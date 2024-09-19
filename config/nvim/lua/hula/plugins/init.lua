@@ -350,6 +350,7 @@ use {
         nmap("<leader>am", "<Plug>(nvim-repl-toggle-internal-external-mode)")
         nmap("<leader>ap", "<Plug>(nvim-repl-show-prompt)")
         nmap("<leader>ab", "<Plug>(nvim-repl-show-prompt-bash)")
+        nmap("<leader>aa", "<Plug>(nvim-repl-show-sessions)")
     end
 }
 use {
@@ -410,6 +411,27 @@ use {
         nnoremap("<leader>hV", "<cmd>Gitsigns preview_hunk<cr>")
         nnoremap("<leader>hf", "<cmd>Gitsigns toggle_signs<cr>")
         nnoremap("<leader>hd", "<cmd>Gitsigns diffthis<cr>")
+    end
+}
+use {
+    "akinsho/toggleterm.nvim",
+    config = function()
+        require("toggleterm").setup()
+        local Terminal = require('toggleterm.terminal').Terminal
+        local lazygit  = Terminal:new({
+            cmd = "lazygit",
+            direction = "float",
+            hidden = true,
+        })
+
+        function G_lazygit_toggle()
+            lazygit:toggle()
+        end
+
+        vim.api.nvim_set_keymap("n", "<leader>u", "<cmd>lua G_lazygit_toggle()<CR>", {
+            noremap = true,
+            silent = true
+        })
     end
 }
 use {
