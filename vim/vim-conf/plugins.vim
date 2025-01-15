@@ -17,6 +17,7 @@ let s:plugins= [
             \ [ 'mzlogin/vim-markdown-toc' ],
             \ [ 'xolox/vim-session', '!has("nvim")' ],
             \ [ 'xolox/vim-misc', '!has("nvim")' ],
+            \ [ 'Exafunction/codeium.vim' ],
             \
             \ [ 'mattn/emmet-vim' ],
             \ [ 'voldikss/vim-translator' ],
