@@ -160,7 +160,7 @@ use {
             d = {
                 a = { function() require("dap").continue() end, "DAP Debug" },
                 b = { function() require("dap").toggle_breakpoint() end, "DAP Toggle Breakpoint" },
-                l = { function() require("dap").run_last() end, "DAP Run Last" },
+                x = { function() require("dap").run_last() end, "DAP Run Last" },
                 c = { function() require("dap").run_to_cursor() end, "DAP Run until cursor" },
             }
         }, { prefix = "<leader>" })
@@ -379,6 +379,8 @@ use {
 }
 use 'f-person/git-blame.nvim'
 use 'sindrets/diffview.nvim'
+-- vim.cmd('let g:copilot_proxy = "http://localhost:11435"')
+-- vim.cmd('let g:copilot_proxy_strict_ssl = v:false')
 -- use {
 --     'github/copilot.vim',
 --     config = function()

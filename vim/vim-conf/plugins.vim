@@ -17,7 +17,6 @@ let s:plugins= [
             \ [ 'mzlogin/vim-markdown-toc' ],
             \ [ 'xolox/vim-session', '!has("nvim")' ],
             \ [ 'xolox/vim-misc', '!has("nvim")' ],
-            \ [ 'Exafunction/codeium.vim' ],
             \
             \ [ 'mattn/emmet-vim' ],
             \ [ 'voldikss/vim-translator' ],
@@ -35,6 +34,8 @@ let s:plugins= [
             \ [ 'cakebaker/scss-syntax.vim' ],
             \ [ 'digitaltoad/vim-pug' ],
             \ ]
+
+            " \ [ 'Exafunction/codeium.vim' ],
 
 let s:installed_plugins = []
 function! HulaAddPlugin(name)
