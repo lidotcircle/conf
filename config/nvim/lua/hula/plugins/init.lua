@@ -78,6 +78,7 @@ end
 use {
     'sakhnik/nvim-gdb',
     config = function()
+        nnoremap('<leader>bt', '<cmd>GdbBreakpointToggle<CR>')
         vim.api.nvim_create_autocmd({ "FileType" }, {
             callback = function(ev)
                 if type(ev.match) == "string" and string.match(ev.match, "nvimgdb") then
