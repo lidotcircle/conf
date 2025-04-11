@@ -218,7 +218,40 @@ use {
         dap.configurations.cpp = dap.configurations.c
     end
 }
-use { 'jay-babu/mason-nvim-dap.nvim' }
+use { 'jay-babu/mason-nvim-dap.nvim',
+    config = function()
+        require('mason-nvim-dap').setup {
+            automatic_setup = false,
+            handlers = {
+                node2 = function(config)
+                    config.adapters = {
+                        type = 'executable',
+                        command = vim.fn.exepath('node-debug2-adapter'),
+                    }
+                    config.configurations[#config.configurations + 1] = {
+                        type = 'node2',
+                        request = 'launch',
+                        name = 'Debug Jest Tests',
+                        runtimeExecutable = 'node',
+                        runtimeArgs = {
+                            './node_modules/jest/bin/jest.js',
+                            '--runInBand',                       -- Run tests serially (important for debugging)
+                            '--no-cache',                        -- Disable cache to ensure latest code runs
+                        },
+                        args = { '${fileBasenameNoExtension}' }, -- Run tests in the current file
+                        cwd = vim.fn.getcwd(),
+                        console = 'integratedTerminal',
+                        protocol = "inspector",
+                        internalConsoleOptions = 'neverOpen',
+                        sourceMaps = true,
+                    }
+                    require('mason-nvim-dap').default_setup(config)
+                end
+            },
+            ensure_installed = { 'js', 'node2' }
+        }
+    end
+}
 use 'mfussenegger/nvim-dap-python'
 use {
     'leoluz/nvim-dap-go',
@@ -321,6 +354,12 @@ use {
         nnoremap("<leader>fg", "<cmd>Telescope live_grep<cr>")
         nnoremap("<leader>fb", "<cmd>Telescope buffers<cr>")
         nnoremap("<leader>fh", "<cmd>Telescope help_tags<cr>")
+    end
+}
+use {
+    'ibhagwan/fzf-lua',
+    config = function()
+        nnoremap("<c-p>", "<cmd>FzfLua files<cr>")
     end
 }
 use {
