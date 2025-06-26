@@ -2,6 +2,10 @@ local mgr = require("hula.plugins.manager")
 local use = mgr.use
 local lsp_on_attach = require("hula.plugins.lsp_on_attach")
 
+local major = vim.version().major
+local minor = vim.version().minor
+local patch = vim.version().patch
+
 local function nnoremap(lhs, rhs)
     vim.api.nvim_set_keymap('n', lhs, rhs, { noremap = true, silent = true })
 end
@@ -15,6 +19,7 @@ end
 use 'nvim-lua/popup.nvim'
 use 'nvim-lua/plenary.nvim'
 use { "nvimdev/dashboard-nvim", config = function() require("dashboard").setup() end }
+use { "echasnovski/mini.icons" }
 use { 'folke/which-key.nvim', config = function() require("which-key").setup() end }
 use {
     'numToStr/Comment.nvim',
@@ -39,6 +44,15 @@ use { 'neovim/nvim-lspconfig', config = function()
     nnoremap('[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>')
     nnoremap(']d', '<cmd>lua vim.diagnostic.goto_next()<CR>')
     nnoremap('<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>')
+
+    if major > 0 or minor >= 11 then
+        local ls_list = {'clangd', 'lua_ls', 'ts_ls', 'pylsp'}
+        for _, lsp in ipairs(ls_list) do
+            require('lspconfig')[lsp].setup{
+                on_attach = lsp_on_attach,
+            }
+        end
+    end
 end
 }
 use 'hrsh7th/cmp-nvim-lsp'
@@ -124,33 +138,35 @@ use {
     'williamboman/mason-lspconfig.nvim',
     config = function()
         require("mason-lspconfig").setup()
-        require("mason-lspconfig").setup_handlers {
-            function(server_name) -- default handler (optional)
-                require("lspconfig")[server_name].setup {
-                    on_attach = lsp_on_attach,
-                    flags = {
-                        debounce_text_changes = 150,
+        if require("mason-lspconfig").setup_handlers then
+            require("mason-lspconfig").setup_handlers {
+                function(server_name) -- default handler (optional)
+                    require("lspconfig")[server_name].setup {
+                        on_attach = lsp_on_attach,
+                        flags = {
+                            debounce_text_changes = 150,
+                        }
                     }
-                }
-            end,
-            ["clangd"] = function()
-                require("lspconfig").clangd.setup {
-                    on_attach = lsp_on_attach,
-                    cmd = {
-                        "clangd",
-                        "--offset-encoding=utf-16",
-                    },
-                }
-            end,
-            ["lua_ls"] = function()
-                require("lspconfig").lua_ls.setup {
-                    on_attach = lsp_on_attach,
-                    flags = {
-                        debounce_text_changes = 150,
+                end,
+                ["clangd"] = function()
+                    require("lspconfig").clangd.setup {
+                        on_attach = lsp_on_attach,
+                        cmd = {
+                            "clangd",
+                            "--offset-encoding=utf-16",
+                        },
                     }
-                }
-            end
-        }
+                end,
+                ["lua_ls"] = function()
+                    require("lspconfig").lua_ls.setup {
+                        on_attach = lsp_on_attach,
+                        flags = {
+                            debounce_text_changes = 150,
+                        }
+                    }
+                end
+            }
+        end
     end
 }
 use {
@@ -275,6 +291,8 @@ use {
         }
     end
 }
+
+use { 'nvim-neotest/nvim-nio' }
 use {
     'rcarriga/nvim-dap-ui',
     config = function()
@@ -323,28 +341,32 @@ use {
         })
     end
 }
-use {
-    'nvim-treesitter/nvim-treesitter',
-    config = function()
-        require 'nvim-treesitter.configs'.setup {
-            ensure_installed = { "c", "cpp", "python", "lua", "vim" },
-            sync_install = false,
-            auto_install = true,
-            ignore_install = {},
-            highlight = {
-                enable = true,
-                disable = function(lang, buf)
-                    local max_filesize = 100 * 1024 -- 100 KB
-                    local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-                    if lang and ok and stats and stats.size > max_filesize then
-                        return true
-                    end
-                end,
-                additional_vim_regex_highlighting = false,
-            },
-        }
-    end
-}
+
+if major == 0 and  minor <= 10 then
+    use {
+        'nvim-treesitter/nvim-treesitter',
+        config = function()
+            require 'nvim-treesitter.configs'.setup {
+                ensure_installed = { "c", "cpp", "python", "lua", "vim" },
+                sync_install = false,
+                auto_install = true,
+                ignore_install = {},
+                highlight = {
+                    enable = true,
+                    disable = function(lang, buf)
+                        local max_filesize = 100 * 1024 -- 100 KB
+                        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+                        if lang and ok and stats and stats.size > max_filesize then
+                            return true
+                        end
+                    end,
+                    additional_vim_regex_highlighting = false,
+                },
+            }
+        end
+    }
+end
+
 use 'nvim-lua/lsp-status.nvim'
 use {
     'nvim-telescope/telescope.nvim',
@@ -419,6 +441,7 @@ use {
 }
 use 'f-person/git-blame.nvim'
 use 'sindrets/diffview.nvim'
+
 -- vim.cmd('let g:copilot_proxy = "http://localhost:11435"')
 -- vim.cmd('let g:copilot_proxy_strict_ssl = v:false')
 -- use {
@@ -428,6 +451,17 @@ use 'sindrets/diffview.nvim'
 --         vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
 --     end
 -- }
+-- use {
+--     'olimorris/codecompanion.nvim',
+--     config = function()
+--         require("codecompanion").setup({
+--             opts = {
+--                 log_level = "DEBUG", -- or "TRACE"
+--             }
+--         })
+--     end
+-- }
+
 use {
     'NTBBloodbath/galaxyline.nvim',
     config = function()
