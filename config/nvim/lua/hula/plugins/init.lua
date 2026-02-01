@@ -46,9 +46,9 @@ use { 'neovim/nvim-lspconfig', config = function()
     nnoremap('<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>')
 
     if major > 0 or minor >= 11 then
-        local ls_list = {'clangd', 'lua_ls', 'ts_ls', 'pylsp'}
+        local ls_list = { 'clangd', 'lua_ls', 'ts_ls', 'pylsp', 'cmake_language_server', 'cmake' }
         for _, lsp in ipairs(ls_list) do
-            require('lspconfig')[lsp].setup{
+            require('lspconfig')[lsp].setup {
                 on_attach = lsp_on_attach,
             }
         end
@@ -137,7 +137,9 @@ use {
 use {
     'williamboman/mason-lspconfig.nvim',
     config = function()
-        require("mason-lspconfig").setup()
+        require("mason-lspconfig").setup({
+            automatic_enable = false
+        })
         if require("mason-lspconfig").setup_handlers then
             require("mason-lspconfig").setup_handlers {
                 function(server_name) -- default handler (optional)
@@ -342,12 +344,12 @@ use {
     end
 }
 
-if major == 0 and  minor <= 10 then
+if major == 0 and minor <= 10 then
     use {
         'nvim-treesitter/nvim-treesitter',
         config = function()
             require 'nvim-treesitter.configs'.setup {
-                ensure_installed = { "c", "cpp", "python", "lua", "vim" },
+                ensure_installed = { "c", "cpp", "python", "lua", "vim", "cmake" },
                 sync_install = false,
                 auto_install = true,
                 ignore_install = {},
