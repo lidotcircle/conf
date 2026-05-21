@@ -384,6 +384,11 @@ use {
     'ibhagwan/fzf-lua',
     config = function()
         nnoremap("<c-p>", "<cmd>FzfLua files<cr>")
+        require('fzf-lua').setup({
+            files = {
+                find_opts = [[-type f \! -path '*/.git/*' \! -path '*/.cache/*' \! -path './build*']]
+            }
+        })
     end
 }
 use {
