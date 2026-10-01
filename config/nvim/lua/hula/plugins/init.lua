@@ -5,6 +5,7 @@ local lsp_on_attach = require("hula.plugins.lsp_on_attach")
 local major = vim.version().major
 local minor = vim.version().minor
 local has_ultisnips = vim.fn.has("python3") == 1
+    and vim.fn.filereadable(vim.fn.expand('~/.vim/bundle/ultisnips/pythonx/UltiSnips/__init__.py')) == 1
 
 local function nnoremap(lhs, rhs)
     vim.api.nvim_set_keymap('n', lhs, rhs, { noremap = true, silent = true })
@@ -28,6 +29,15 @@ use {
 use {
     'numToStr/Comment.nvim',
     config = function()
+        local ft = require('Comment.ft')
+        local calculate = ft.calculate
+        ft.calculate = function(ctx)
+            local ok, parser = pcall(vim.treesitter.get_parser, 0)
+            if not ok or not parser then
+                return ft.get(vim.bo.filetype, ctx.ctype)
+            end
+            return calculate(ctx)
+        end
         require('Comment').setup({
             ignore = '^$',
             toggler = {
@@ -39,6 +49,10 @@ use {
                 block = '<leader>b',
             },
         })
+        vim.keymap.set('x', '<leader>cc', '<Plug>(comment_toggle_linewise_visual)',
+            { desc = 'Comment toggle selected lines' })
+        vim.keymap.set('x', '<leader>bc', '<Plug>(comment_toggle_blockwise_visual)',
+            { desc = 'Comment toggle selected block' })
     end
 }
 use 'tjdevries/nlua.nvim'
