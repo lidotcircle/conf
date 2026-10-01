@@ -12,7 +12,7 @@ local function addPlugin(vimFunc, pluginInfo)
     elseif type(pluginInfo) == 'table' then
         if pluginInfo.requires then
             for _, i in ipairs(pluginInfo.requires) do
-                addPlugin(i)
+                addPlugin(vimFunc, i)
             end
         end
         addPluginWithPlug(vimFunc, pluginInfo[1])
@@ -26,20 +26,20 @@ local function log(...)
 end
 
 function M.AddPluginsWithVimFunction(vimFunctionName)
-    for _, pluginInfo in pairs(pluginList) do
+    for _, pluginInfo in ipairs(pluginList) do
         log("add plugin " .. vim.inspect(pluginInfo))
         addPlugin(vimFunctionName, pluginInfo)
     end
 end
 
 function M.AfterPluginsLoaded()
-    for _, callback in pairs(callbackList) do
+    for _, callback in ipairs(callbackList) do
         callback()
     end
 end
 
 function M.use(plugin)
-    table.insert(pluginList, #pluginList, plugin)
+    table.insert(pluginList, plugin)
 end
 
 return M

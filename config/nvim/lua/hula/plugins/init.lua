@@ -4,7 +4,7 @@ local lsp_on_attach = require("hula.plugins.lsp_on_attach")
 
 local major = vim.version().major
 local minor = vim.version().minor
-local patch = vim.version().patch
+local has_ultisnips = vim.fn.has("python3") == 1
 
 local function nnoremap(lhs, rhs)
     vim.api.nvim_set_keymap('n', lhs, rhs, { noremap = true, silent = true })
@@ -41,16 +41,17 @@ use 'tjdevries/nlua.nvim'
 use { 'folke/neodev.nvim', config = function() require("neodev").setup() end }
 use { 'neovim/nvim-lspconfig', config = function()
     nnoremap('<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>')
-    nnoremap('[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>')
-    nnoremap(']d', '<cmd>lua vim.diagnostic.goto_next()<CR>')
+    nnoremap('[d', '<cmd>lua vim.diagnostic.jump({ count = -1, float = true })<CR>')
+    nnoremap(']d', '<cmd>lua vim.diagnostic.jump({ count = 1, float = true })<CR>')
     nnoremap('<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>')
 
     if major > 0 or minor >= 11 then
-        local ls_list = { 'clangd', 'lua_ls', 'ts_ls', 'pylsp', 'cmake_language_server', 'cmake' }
+        local ls_list = { 'clangd', 'lua_ls', 'ts_ls', 'pylsp', 'cmake' }
         for _, lsp in ipairs(ls_list) do
-            require('lspconfig')[lsp].setup {
+            vim.lsp.config(lsp, {
                 on_attach = lsp_on_attach,
-            }
+                capabilities = require("cmp_nvim_lsp").default_capabilities(),
+            })
         end
     end
 end
@@ -61,10 +62,18 @@ use 'hrsh7th/cmp-path'
 use 'hrsh7th/cmp-cmdline'
 use { 'hrsh7th/nvim-cmp', config = function()
     local cmp = require 'cmp'
+    local sources = { { name = 'nvim_lsp' } }
+    if has_ultisnips then
+        table.insert(sources, { name = 'ultisnips' })
+    end
     cmp.setup({
         snippet = {
             expand = function(args)
-                vim.fn["UltiSnips#Anon"](args.body)
+                if has_ultisnips then
+                    vim.fn["UltiSnips#Anon"](args.body)
+                else
+                    vim.snippet.expand(args.body)
+                end
             end,
         },
         mapping = {
@@ -80,10 +89,7 @@ use { 'hrsh7th/nvim-cmp', config = function()
             ['<C-n>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'i', 'c' }),
             ['<C-p>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'i', 'c' }),
         },
-        sources = cmp.config.sources({
-            { name = 'nvim_lsp' },
-            { name = 'ultisnips' },
-        }, {
+        sources = cmp.config.sources(sources, {
             { name = 'buffer' },
         })
     })
@@ -132,7 +138,16 @@ use {
 }
 use {
     'williamboman/mason.nvim',
-    config = function() require("mason").setup() end
+    config = function()
+        require("mason").setup()
+        -- Mason adds its executables to PATH during setup.
+        for _, server in ipairs({ 'clangd', 'lua_ls', 'ts_ls', 'pylsp', 'cmake' }) do
+            local config = vim.lsp.config[server]
+            if config and type(config.cmd) == "table" and vim.fn.executable(config.cmd[1]) == 1 then
+                vim.lsp.enable(server)
+            end
+        end
+    end
 }
 use {
     'williamboman/mason-lspconfig.nvim',
@@ -140,49 +155,20 @@ use {
         require("mason-lspconfig").setup({
             automatic_enable = false
         })
-        if require("mason-lspconfig").setup_handlers then
-            require("mason-lspconfig").setup_handlers {
-                function(server_name) -- default handler (optional)
-                    require("lspconfig")[server_name].setup {
-                        on_attach = lsp_on_attach,
-                        flags = {
-                            debounce_text_changes = 150,
-                        }
-                    }
-                end,
-                ["clangd"] = function()
-                    require("lspconfig").clangd.setup {
-                        on_attach = lsp_on_attach,
-                        cmd = {
-                            "clangd",
-                            "--offset-encoding=utf-16",
-                        },
-                    }
-                end,
-                ["lua_ls"] = function()
-                    require("lspconfig").lua_ls.setup {
-                        on_attach = lsp_on_attach,
-                        flags = {
-                            debounce_text_changes = 150,
-                        }
-                    }
-                end
-            }
-        end
+
     end
 }
 use {
     'mfussenegger/nvim-dap',
     config = function()
         local wk = require("which-key")
-        wk.register({
-            d = {
-                a = { function() require("dap").continue() end, "DAP Debug" },
-                b = { function() require("dap").toggle_breakpoint() end, "DAP Toggle Breakpoint" },
-                x = { function() require("dap").run_last() end, "DAP Run Last" },
-                c = { function() require("dap").run_to_cursor() end, "DAP Run until cursor" },
-            }
-        }, { prefix = "<leader>" })
+        wk.add({
+            { "<leader>d", group = "debug" },
+            { "<leader>da", function() require("dap").continue() end, desc = "DAP Debug" },
+            { "<leader>db", function() require("dap").toggle_breakpoint() end, desc = "DAP Toggle Breakpoint" },
+            { "<leader>dx", function() require("dap").run_last() end, desc = "DAP Run Last" },
+            { "<leader>dc", function() require("dap").run_to_cursor() end, desc = "DAP Run until cursor" },
+        })
 
         local dap = require('dap')
         dap.adapters.gdb = {
@@ -239,7 +225,7 @@ use {
 use { 'jay-babu/mason-nvim-dap.nvim',
     config = function()
         require('mason-nvim-dap').setup {
-            automatic_setup = false,
+            automatic_installation = false,
             handlers = {
                 node2 = function(config)
                     config.adapters = {
@@ -312,15 +298,13 @@ use {
         end
 
         local wk = require("which-key")
-        wk.register({
-            d = {
-                u = { function() require("dapui").toggle() end, "DAP UI Toggle" },
-            }
-        }, { prefix = "<leader>" })
+        wk.add({
+            { "<leader>du", function() require("dapui").toggle() end, desc = "DAP UI Toggle" },
+        })
 
         vim.api.nvim_create_autocmd({ "FileType" }, {
             callback = function(ev)
-                if type(ev.match) == "string" and string.match(ev.match, "dapui*") then
+                if type(ev.match) == "string" and string.match(ev.match, "^dapui") then
                     vim.api.nvim_buf_set_keymap(ev.buf, "n", "<space>n", "<Cmd>lua require'dap'.step_over()<CR>",
                         { noremap = true, silent = true })
                     vim.api.nvim_buf_set_keymap(ev.buf, "n", "<space>s", "<Cmd>lua require'dap'.step_into()<CR>",
@@ -409,7 +393,7 @@ use {
     config = function()
         nmap("<leader>ax", "<Plug>(nvim-repl-current-line)")
         nmap("<leader>af", "<Plug>(nvim-repl-current-file)")
-        vmap("<silent>aa", "<Plug>(nvim-repl-selection)")
+        vmap("<leader>aa", "<Plug>(nvim-repl-selection)")
         nmap("<leader>ar", "<Plug>(nvim-repl-reset-interpreter)")
         nmap("<leader>ac", "<Plug>(nvim-repl-win-close)")
         nmap("<leader>ao", "<Plug>(nvim-repl-win-open)")
@@ -438,12 +422,13 @@ use {
 use {
     'folke/trouble.nvim',
     config = function()
-        nnoremap("<leader>xx", "<cmd>TroubleToggle<cr>")
-        nnoremap("<leader>xw", "<cmd>TroubleToggle workspace_diagnostics<cr>")
-        nnoremap("<leader>xd", "<cmd>TroubleToggle document_diagnostics<cr>")
-        nnoremap("<leader>xq", "<cmd>TroubleToggle quickfix<cr>")
-        nnoremap("<leader>xl", "<cmd>TroubleToggle loclist<cr>")
-        nnoremap("<leader>gR", "<cmd>TroubleToggle lsp_references<cr>")
+        require("trouble").setup()
+        nnoremap("<leader>xx", "<cmd>Trouble diagnostics toggle<cr>")
+        nnoremap("<leader>xw", "<cmd>Trouble diagnostics toggle<cr>")
+        nnoremap("<leader>xd", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>")
+        nnoremap("<leader>xq", "<cmd>Trouble qflist toggle<cr>")
+        nnoremap("<leader>xl", "<cmd>Trouble loclist toggle<cr>")
+        nnoremap("<leader>gR", "<cmd>Trouble lsp_references toggle<cr>")
     end
 }
 use 'f-person/git-blame.nvim'
@@ -472,8 +457,7 @@ use 'sindrets/diffview.nvim'
 use {
     'NTBBloodbath/galaxyline.nvim',
     config = function()
-        require("galaxyline.themes.eviline")
-        require("galaxyline").load_galaxyline()
+        require("hula.plugins.galaxyline").setup()
     end
 }
 -- use 'romgrk/barbar.nvim'
@@ -556,7 +540,9 @@ use {
         })
     end
 }
-use 'quangnguyen30192/cmp-nvim-ultisnips'
+if has_ultisnips then
+    use 'quangnguyen30192/cmp-nvim-ultisnips'
+end
 use 'gennaro-tedesco/nvim-peekup'
 
 return mgr

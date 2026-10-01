@@ -1,33 +1,26 @@
 local wk = require("which-key")
+local mappings = {}
 
-
-local whichkeyMap = vim.api.nvim_eval("g:which_key_map")
-if whichkeyMap then
-    for k,v in pairs(whichkeyMap) do
-        if #k == 1 then
-            local keymap = {}
-            local newkey = {}
-            for _k2,v2 in pairs(v) do
-                local k2 = tostring(_k2)
-                if type(k2) == 'string' and #k2 == 1 and
-                   type(v2) == 'table' and #v2 == 2 and
-                   type(v2[1]) == 'string' and string.sub(v2[1], 0, 1) == ':' then
-                    newkey[k2] = { v2[1] .. "<CR>", v2[2] }
+-- Translate the shared Vim mappings into which-key's current format.
+local function add_mappings(prefix, entries)
+    for key, value in pairs(entries) do
+        if key == "name" then
+            table.insert(mappings, { prefix, group = value })
+        elseif type(value) == "table" then
+            local lhs = prefix .. tostring(key)
+            if type(value[1]) == "string" and type(value[2]) == "string" then
+                local rhs = value[1]
+                if rhs:sub(1, 1) == ":" then
+                    rhs = rhs .. "<CR>"
                 end
-                if k2 == 'name' then
-                    newkey[k2] = v2
-                end
+                table.insert(mappings, { lhs, rhs, desc = value[2] })
+            else
+                add_mappings(lhs, value)
             end
-            keymap[k] = newkey
-            wk.register(keymap, { prefix = "<leader>"})
         end
     end
 end
 
-wk.register({
-  f = {
-    name = "file", -- optional group name
-    f = { "<cmd>Telescope find_files<cr>", "Find File" }, -- create a binding with label
-    b = { function() print("bar") end, "Foobar" } -- you can also pass functions!
-  },
-}, { prefix = "<leader>" })
+add_mappings("<leader>", vim.g.which_key_map or {})
+wk.add(mappings)
+wk.add({ { "<leader>f", group = "file" } })
