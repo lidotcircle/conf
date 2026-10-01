@@ -22,6 +22,10 @@ use { "nvimdev/dashboard-nvim", config = function() require("dashboard").setup()
 use { "echasnovski/mini.icons" }
 use { 'folke/which-key.nvim', config = function() require("which-key").setup() end }
 use {
+    'folke/sidekick.nvim',
+    config = function() require('hula.plugins.ai').setup() end,
+}
+use {
     'numToStr/Comment.nvim',
     config = function()
         require('Comment').setup({
